@@ -1,12 +1,12 @@
 package frc.robot.subsystems;
 
-import java.util.ArrayList;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.utilities.SwerveModule;
+import frc.robot.utilities.SwerveModuleConstants;
 
 public class Drivetrain extends SubsystemBase {
     private static final class DrivetrainConstants {
@@ -15,35 +15,21 @@ public class Drivetrain extends SubsystemBase {
         private static final Translation2d backLeftModuleLocation = new Translation2d(-1, 1); // FIXME
         private static final Translation2d backRightModuleLocation = new Translation2d(-1, -1); // FIXME
 
-        private static final int frontLeftDriveMotorID = 0; // FIXME
-        private static final int frontLeftSteerMotorID = 1; // FIXME
+        private static final SwerveModuleConstants frontLeftModuleConstants = new SwerveModuleConstants(1,
+                2, false, false, 0,
+                0, false); //FIXME
 
-        private static final int frontRightDriveMotorID = 2; // FIXME
-        private static final int frontRightSteerMotorID = 3; // FIXME
+        private static final SwerveModuleConstants frontRightModuleConstants = new SwerveModuleConstants(1,
+                2, false, false, 0,
+                0, false); //FIXME
 
-        private static final int backLeftDriveMotorID = 4; // FIXME
-        private static final int backLeftSteerMotorID = 5; // FIXME
+        private static final SwerveModuleConstants backLeftModuleConstants = new SwerveModuleConstants(1,
+                2, false, false, 0,
+                0, false); //FIXME
 
-        private static final int backRightDriveMotorID = 6; // FIXME
-        private static final int backRightSteerMotorID = 7; // FIXME
-
-
-        private static final boolean frontLeftDriveMotorReversed = false; // FIXME
-        private static final boolean frontLeftSteerMotorReversed = false; // FIXME
-
-        private static final boolean frontRightDriveMotorReversed = false; // FIXME
-        private static final boolean frontRightSteerMotorReversed = false; // FIXME
-
-        private static final boolean backLeftDriveMotorReversed = false; // FIXME
-        private static final boolean backLeftSteerMotorReversed = false; // FIXME
-
-        private static final boolean backRightDriveMotorReversed = false; // FIXME
-        private static final boolean backRightSteerMotorReversed = false; // FIXME
-
-        private static final int frontLeftAbsoluteEncoderID = 8; //FIXME
-        private static final int frontRightAbsoluteEncoderID = 9; //FIXME
-        private static final int backLeftAbsoluteEncoderID = 10; //FIXME
-        private static final int backRightAbsoluteEncoderID = 11; //FIXME
+        private static final SwerveModuleConstants backRightModuleConstants = new SwerveModuleConstants(1,
+                2, false, false, 0,
+                0, false); //FIXME
 
     }
 
@@ -62,14 +48,10 @@ public class Drivetrain extends SubsystemBase {
                 DrivetrainConstants.backRightModuleLocation);
         swerveModuleStates = driveKinematics.toSwerveModuleStates(null);
 
-        /*frontLeftModule = new SwerveModule(DrivetrainConstants.frontLeftDriveMotorID,
-                DrivetrainConstants.frontLeftSteerMotorID);
-        frontRightModule = new SwerveModule(DrivetrainConstants.frontRightDriveMotorID,
-                DrivetrainConstants.frontRightSteerMotorID);
-        backLeftModule = new SwerveModule(DrivetrainConstants.backLeftDriveMotorID,
-                DrivetrainConstants.backLeftSteerMotorID);
-        backRightModule = new SwerveModule(DrivetrainConstants.backRightDriveMotorID,
-                DrivetrainConstants.backRightSteerMotorID);*/
+        frontLeftModule = new SwerveModule(DrivetrainConstants.frontLeftModuleConstants);
+        frontRightModule = new SwerveModule(DrivetrainConstants.frontRightModuleConstants);
+        backLeftModule = new SwerveModule(DrivetrainConstants.backLeftModuleConstants);
+        backRightModule = new SwerveModule(DrivetrainConstants.backRightModuleConstants);
     }
 
     public CommandBase exampleMethodCommand() {
