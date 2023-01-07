@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Lift extends SubsystemBase {
 
-    public static final class LiftConstanst {
+    public static final class LiftConstants {
         private final static int LiftMotor1id = 13;
         private final static int LiftMotor2id = 14;
         private final static int LiftMotor3id = 15;
