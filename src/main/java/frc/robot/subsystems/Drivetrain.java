@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.sensors.Pigeon2;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -18,10 +19,6 @@ import frc.robot.utilities.SwerveModuleConstants;
 
 public class Drivetrain extends SubsystemBase {
     public static final class DrivetrainConstants {
-        public static final Translation2d frontLeftModuleLocation = new Translation2d(1, 1); // FIXME
-        public static final Translation2d frontRightModuleLocation = new Translation2d(1, -1); // FIXME
-        public static final Translation2d backLeftModuleLocation = new Translation2d(-1, 1); // FIXME
-        public static final Translation2d backRightModuleLocation = new Translation2d(-1, -1); // FIXME
 
         public static final SwerveModuleConstants frontLeftModuleConstants = new SwerveModuleConstants(1,
                 2, false, false, 1,
@@ -40,21 +37,20 @@ public class Drivetrain extends SubsystemBase {
                 58.88, false); // FIXME
 
 
-        public static final int pigeonID = 1;
+        public static final int gyroID = 1;
         public static final boolean gyroReversed = false; // Always ensure Gyro is CCW+ CW-
-        public static final boolean absoluteEncodersReversed = false;
 
         /* Drivetrain Constants */
-        public static final double trackWidth = Units.inchesToMeters(21.73);
-        public static final double wheelBase = Units.inchesToMeters(21.73);
-        public static final double wheelDiameter = Units.inchesToMeters(3.94);
+        public static final double trackWidth = Units.inchesToMeters(21.73); //FIXME
+        public static final double wheelBase = Units.inchesToMeters(21.73); //FIXME
+        public static final double wheelDiameter = Units.inchesToMeters(3.94); 
         public static final double wheelCircumference = wheelDiameter * Math.PI;
 
         public static final double openLoopRamp = 0.25;
         public static final double closedLoopRamp = 0.0;
 
-        public static final double driveGearRatio = (6.86 / 1.0); //6.86:1
-        public static final double angleGearRatio = (12.8 / 1.0); //12.8:1
+        public static final double driveGearRatio = 6.12; //CORRECT!
+        public static final double angleGearRatio = 150/7; //CORRECT!
 
         public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
                 new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
@@ -113,10 +109,9 @@ public class Drivetrain extends SubsystemBase {
 
     SwerveDriveOdometry swerveOdometry;
 
+    Pigeon2 gyro;
+
     public Drivetrain() {
-        driveKinematics = new SwerveDriveKinematics(DrivetrainConstants.frontLeftModuleLocation,
-                DrivetrainConstants.frontRightModuleLocation, DrivetrainConstants.backLeftModuleLocation,
-                DrivetrainConstants.backRightModuleLocation);
         swerveModuleStates = driveKinematics.toSwerveModuleStates(null);
 
         frontLeftModule = new SwerveModule(DrivetrainConstants.frontLeftModuleConstants);
@@ -127,7 +122,7 @@ public class Drivetrain extends SubsystemBase {
         swerveModules = new ArrayList<>(
                 Arrays.asList(frontLeftModule, frontRightModule, backLeftModule, backRightModule));
 
-        
+        gyro = new Pigeon2(DrivetrainConstants.gyroID);      
     }
 
     public CommandBase exampleMethodCommand() {
