@@ -20,7 +20,6 @@ public class Lift extends SubsystemBase {
     public TalonFX liftMotor3 = new TalonFX(LiftConstants.LiftMotor3id);
 
     
-    
     public Lift() {}
 
   public CommandBase exampleMethodCommand() {
