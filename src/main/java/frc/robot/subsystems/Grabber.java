@@ -37,10 +37,10 @@ public class Grabber extends SubsystemBase {
   }
 
   public void stopGrabbr() {
-    grabberMotor1.set(0.0);
-    grabberMotor2.set(0.0);
-    grabberMotor3.set(0.0);
-    grabberMotor4.set(0.0);
+    grabberMotor1.set(0.00);
+    grabberMotor2.set(0.00);
+    grabberMotor3.set(0.00);
+    grabberMotor4.set(0.00);
   }
 
   public boolean exampleCondition() {
