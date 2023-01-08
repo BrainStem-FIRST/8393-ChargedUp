@@ -10,6 +10,7 @@ public class SwerveModuleConstants {
 
     public boolean absoluteEncoderReversed;
     public double absoluteEncoderOffset;
+    public String moduleName;
 
     /**
      * Swerve Module Constants to be used when creating swerve modules.
@@ -19,9 +20,10 @@ public class SwerveModuleConstants {
      * @param canCoderID
      * @param angleOffset
      */
-    public SwerveModuleConstants(int driveMotorID, int steerMotorID, boolean driveMotorReversed,
+    public SwerveModuleConstants(String moduleName, int driveMotorID, int steerMotorID, boolean driveMotorReversed,
             boolean steerMotorReversed, int absoluteEncoderID, double absoluteEncoderOffset,
             boolean absoluteEncoderReversed) {
+        this.moduleName = moduleName;
         this.driveMotorID = driveMotorID;
         this.steerMotorID = steerMotorID;
         this.driveMotorReversed = driveMotorReversed;
