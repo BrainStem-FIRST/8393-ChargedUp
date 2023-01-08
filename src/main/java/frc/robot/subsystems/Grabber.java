@@ -1,9 +1,25 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenixpro.hardware.TalonFX;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Grabber extends SubsystemBase {
+
+  public final static class GrabberConstants{
+    public static final int grabberMotor1id = 18;
+    public static final int grabberMotor2id = 19;
+    public static final int grabberMotor3id = 20;
+    public static final int grabberMotor4id = 21;
+
+  }
+
+  private TalonFX grabberMotor1 = new TalonFX(GrabberConstants.grabberMotor1id);
+  private TalonFX grabberMotor2 = new TalonFX(GrabberConstants.grabberMotor2id);
+  private TalonFX grabberMotor3 = new TalonFX(GrabberConstants.grabberMotor3id);
+  private TalonFX grabberMotor4 = new TalonFX(GrabberConstants.grabberMotor4id);
+  
   public Grabber() {}
 
   public CommandBase exampleMethodCommand() {
@@ -13,7 +29,7 @@ public class Grabber extends SubsystemBase {
         });
   }
 
-<<<<<<< HEAD
+
   public void runGrabber() {
     grabberMotor1.set(0.65);
     grabberMotor2.set(0.65);
@@ -28,8 +44,7 @@ public class Grabber extends SubsystemBase {
     grabberMotor4.set(0.00);
   }
 
-=======
->>>>>>> 81ecbdaa23f80a830ef48315f5c85dffe41e7b93
+
   public boolean exampleCondition() {
     return false;
   }
