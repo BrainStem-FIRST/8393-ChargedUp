@@ -124,7 +124,7 @@ public class Drivetrain extends SubsystemBase {
         backLeftModule = new SwerveModule(DrivetrainConstants.backLeftModuleConstants);
         backRightModule = new SwerveModule(DrivetrainConstants.backRightModuleConstants);
 
-        swerveModules = new SwerveModule[] { frontLeftModule, frontRightModule, backLeftModule, backRightModule }; 
+        swerveModules = new SwerveModule[] { frontLeftModule, frontRightModule, backLeftModule, backRightModule };
         gyro = new Pigeon2(DrivetrainConstants.gyroID);
         gyro.configFactoryDefault();
 
@@ -162,7 +162,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void resetOdometry(Pose2d pose) {
-        //swerveOdometry.resetPosition(getYaw(), pose);
+        // swerveOdometry.resetPosition(getYaw(), pose);
     }
 
     public SwerveModuleState[] getStates() {
@@ -186,12 +186,17 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-        //swerveOdometry.update(getYaw(), new SwerveModulePosition[] { }, getStates());
+        swerveOdometry.update(getYaw(), new SwerveModulePosition[] { frontLeftModule.getPosition(),
+                frontRightModule.getPosition(), backLeftModule.getPosition(), backRightModule.getPosition() });
 
         for (SwerveModule module : swerveModules) {
             SmartDashboard.putNumber("Module " + module.moduleName + " Cancoder", module.getCanCoder().getDegrees());
-            SmartDashboard.putNumber("Module " + module.moduleName + " Integrated", module.getState().angle.getDegrees());
-            SmartDashboard.putNumber("Module " + module.moduleName + " Velocity", module.getState().speedMetersPerSecond);
+            SmartDashboard.putNumber("Module " + module.moduleName + " Integrated",
+                    module.getState().angle.getDegrees());
+            SmartDashboard.putNumber("Module " + module.moduleName + " Velocity",
+                    module.getState().speedMetersPerSecond);
+            SmartDashboard.putNumber("Module " + module.moduleName + " Position",
+                    module.getPosition().distanceMeters);
         }
     }
 

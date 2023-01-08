@@ -145,11 +145,13 @@ public class SwerveModule {
         return new SwerveModuleState(velocity, angle);
     }
 
-    // public SwerveModulePosition getPosition() {
-    //     double distance = driveMotor.getSelectedSensorPosition();
-    //     Rotation2d angle = Rotation2d.fromDegrees(Conversions.falconToDegrees(steerMotor.getSelectedSensorPosition(),
-    //             DrivetrainConstants.angleGearRatio));
-    //     return new SwerveModulePosition(velocity, angle);
-    // }
+    public SwerveModulePosition getPosition() {
+        double distance = Conversions.falconToMeters(driveMotor.getSelectedSensorPosition(),
+                DrivetrainConstants.wheelCircumference,
+                DrivetrainConstants.driveGearRatio);
+        Rotation2d angle = Rotation2d.fromDegrees(Conversions.falconToDegrees(steerMotor.getSelectedSensorPosition(),
+                DrivetrainConstants.angleGearRatio));
+        return new SwerveModulePosition(distance, angle);
+    }
 
 }
