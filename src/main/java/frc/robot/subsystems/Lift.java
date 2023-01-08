@@ -32,12 +32,6 @@ public class Lift extends SubsystemBase {
   public void lowerLift (int height) {
     // lowers the lift with a pid
   }
-
-  public int liftHeight() {
-    ruturn 1; 
-
-  }
-
   
   public boolean exampleCondition() {
     return false;
