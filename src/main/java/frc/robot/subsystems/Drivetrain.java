@@ -32,19 +32,19 @@ public class Drivetrain extends SubsystemBase {
         public static final double angleGearRatio = 150 / 7; // CORRECT!
 
         public static final SwerveModuleConstants frontLeftModuleConstants = new SwerveModuleConstants("Front Left",
-                1, 2, true, true, 1,
+                1, 2, false, false, 1,
                 37.5, false); // FIXME
 
         public static final SwerveModuleConstants frontRightModuleConstants = new SwerveModuleConstants("Front Right",
-                3, 4, true, true, 2,
+                3, 4, false, false, 2,
                 10.45, false); // FIXME
 
         public static final SwerveModuleConstants backLeftModuleConstants = new SwerveModuleConstants("Back Left",
-                5, 6, true, true, 3,
+                5, 6, false, false, 3,
                 38.75, false); // FIXME
 
         public static final SwerveModuleConstants backRightModuleConstants = new SwerveModuleConstants("Back Right",
-                7, 8, true, true, 4,
+                7, 8, false, false, 4,
                 58.88, false); // FIXME
 
         public static final Translation2d frontLeftPosition = new Translation2d(wheelBase / 2.0, trackWidth / 2.0);
