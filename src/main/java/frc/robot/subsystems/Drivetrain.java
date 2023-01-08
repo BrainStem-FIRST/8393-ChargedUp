@@ -162,7 +162,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void resetOdometry(Pose2d pose) {
-        swerveOdometry.resetPosition(getYaw(), pose);
+        //swerveOdometry.resetPosition(getYaw(), pose);
     }
 
     public SwerveModuleState[] getStates() {
@@ -186,7 +186,7 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-        swerveOdometry.update(getYaw(), new SwerveModulePosition[] { }, getStates());
+        //swerveOdometry.update(getYaw(), new SwerveModulePosition[] { }, getStates());
 
         for (SwerveModule module : swerveModules) {
             SmartDashboard.putNumber("Module " + module.moduleName + " Cancoder", module.getCanCoder().getDegrees());

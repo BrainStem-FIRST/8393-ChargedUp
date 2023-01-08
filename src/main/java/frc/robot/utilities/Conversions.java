@@ -32,9 +32,9 @@ public class Conversions {
         return mechRPM;
     }
 
-    public static double falconToM(double positionCount, double gearRatio) {
-        double motorDistance = gearRatio * positionCount * 
-    }
+    // public static double falconToM(double positionCount, double gearRatio) {
+    //     double motorDistance = gearRatio * positionCount * 
+    // }
 
     /**
      * @param RPM RPM of mechanism
