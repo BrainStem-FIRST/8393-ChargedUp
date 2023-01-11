@@ -35,11 +35,14 @@ public class RobotContainer {
 
   /* Subsystems */
   private final Drivetrain drivetrain = new Drivetrain();
+  private final Grabber grabber = new Grabber();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+
+    // Drivetrain 
     drivetrain.setDefaultCommand(
         new TeleopSwerve(
             drivetrain,
@@ -48,7 +51,12 @@ public class RobotContainer {
             () -> -driver1.getRawAxis(rotationAxis),
             () -> robotCentric.getAsBoolean()));
 
-    // Configure the button bindings
+    // Grabber
+    
+
+
+    
+
     configureButtonBindings();
   }
 

@@ -36,11 +36,11 @@ public class Lift extends SubsystemBase {
   }
 
   public void raiseLift (int height) {
-    // raise the lift with a pid
+    // raise the lift with a pid (if needed)
   }
 
   public void lowerLift (int height) {
-    // lowers the lift with a pid
+    // lowers the lift with a pid (if needed)
   }
 
   public void stopLift(){

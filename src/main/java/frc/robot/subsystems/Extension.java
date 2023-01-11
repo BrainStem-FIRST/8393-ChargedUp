@@ -2,21 +2,18 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenixpro.hardware.TalonFX;
-import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Extension extends SubsystemBase {
 
   public static final class ExtensionConstants {
-    private final static int extensionMotor1id = 16; //FIXME
-    private final static int extensionMotor2id = 17; //FIXME
+    private final static int extensionMotorID = 16; //FIXME
     private final static int extensionABSencoderID = 1; //FIXME
 
   }
 
-  private TalonFX extensionMotor1 = new TalonFX(ExtensionConstants.extensionMotor1id);
-  private TalonFX extensionMotor2 = new TalonFX(ExtensionConstants.extensionMotor2id);
+  private TalonFX extensionMotor = new TalonFX(ExtensionConstants.extensionABSencoderID);
   private CANCoder extensionEncoder = new CANCoder(ExtensionConstants.extensionABSencoderID);
   
 
@@ -31,8 +28,7 @@ public class Extension extends SubsystemBase {
 
 
   public void stopExtension() {
-    extensionMotor1.set(0.00);
-    extensionMotor2.set(0.00);
+    extensionMotor.set(0.00);
   }
 
   public double extensionPosition(){
@@ -40,8 +36,7 @@ public class Extension extends SubsystemBase {
   }
 
   public void runExtension(double power){
-    extensionMotor1.set(power);
-    extensionMotor2.set(power);
+    extensionMotor.set(power);
     
   }
 
