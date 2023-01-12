@@ -1,19 +1,27 @@
 package frc.robot.subsystems;
 
+
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenixpro.hardware.TalonFX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 
 public class Extension extends SubsystemBase {
 
   public static final class ExtensionConstants {
-    private final static int extensionMotorID = 16; //FIXME
+    private final static int extensionMotor1id = 16; //FIXME
+    private final static int extensionMotor2id = 17; //FIXME
     private final static int extensionABSencoderID = 1; //FIXME
 
   }
 
-  private TalonFX extensionMotor = new TalonFX(ExtensionConstants.extensionABSencoderID);
+  private CANSparkMax extensionMotor1 = new CANSparkMax(ExtensionConstants.extensionMotor1id, MotorType.kBrushless);
+  private CANSparkMax extensionMotor2 = new CANSparkMax(ExtensionConstants.extensionMotor2id, MotorType.kBrushless);
   private CANCoder extensionEncoder = new CANCoder(ExtensionConstants.extensionABSencoderID);
   
 
@@ -28,7 +36,8 @@ public class Extension extends SubsystemBase {
 
 
   public void stopExtension() {
-    extensionMotor.set(0.00);
+    extensionMotor1.set(0.00);
+    extensionMotor2.set(0.00);
   }
 
   public double extensionPosition(){
@@ -36,11 +45,12 @@ public class Extension extends SubsystemBase {
   }
 
   public void runExtension(double power){
-    extensionMotor.set(power);
+    extensionMotor1.set(power);
+    extensionMotor2.set(power);
     
   }
 
-  public void moveExtensionToHigherPosition(int position) {
+  public void extensionOut(int position) {
     if (extensionPosition() < position) {
         runExtension(0.15);
     } else if (extensionPosition() < position - 300) {
@@ -49,6 +59,8 @@ public class Extension extends SubsystemBase {
       stopExtension();
     }
   }
+
+
 
   public boolean exampleCondition() {
     return false;
@@ -64,4 +76,3 @@ public class Extension extends SubsystemBase {
 
   }
 }
-
