@@ -7,9 +7,10 @@ public class TeleopLift extends CommandBase {
 
     private Lift lift;
 
+    
     @Override
     public void execute() {
-        
+
     }
 
     
