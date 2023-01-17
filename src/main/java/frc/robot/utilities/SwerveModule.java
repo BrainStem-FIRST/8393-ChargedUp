@@ -21,7 +21,6 @@ public class SwerveModule extends SubsystemBase {
     private boolean driveMotorReversed;
     private boolean steerMotorReversed;
 
-    
     private CANCoder absoluteEncoder;
 
     private boolean absoluteEncoderReversed;
