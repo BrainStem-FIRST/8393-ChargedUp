@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.SwerveModule;
@@ -31,27 +32,27 @@ public class Drivetrain extends SubsystemBase {
         public static final double angleGearRatio = 150 / 7; // CORRECT!
 
         public static final SwerveModuleConstants frontLeftModuleConstants = new SwerveModuleConstants("Front Left",
-                1, 2, false, false, 1,
-                37.5, false); // FIXME
+                1, 5, false, false, 9,
+                Rotation2d.fromDegrees(37.5), false); 
 
         public static final SwerveModuleConstants frontRightModuleConstants = new SwerveModuleConstants("Front Right",
-                3, 4, false, false, 2,
-                10.45, false); // FIXME
+                7, 4, false, false, 10,
+                Rotation2d.fromDegrees(10.45), false); 
 
         public static final SwerveModuleConstants backLeftModuleConstants = new SwerveModuleConstants("Back Left",
-                5, 6, false, false, 3,
-                38.75, false); // FIXME
+                6, 3, false, false, 11,
+                Rotation2d.fromDegrees(38.75), false); 
 
         public static final SwerveModuleConstants backRightModuleConstants = new SwerveModuleConstants("Back Right",
-                7, 8, false, false, 4,
-                58.88, false); // FIXME
+                7, 4, false, false, 10,
+                Rotation2d.fromDegrees(58.88), false); 
 
         public static final Translation2d frontLeftPosition = new Translation2d(wheelBase / 2.0, trackWidth / 2.0);
         public static final Translation2d frontRightPosition = new Translation2d(wheelBase / 2.0, -trackWidth / 2.0);
         public static final Translation2d backLeftPosition = new Translation2d(-wheelBase / 2.0, trackWidth / 2.0);
         public static final Translation2d backRightPosition = new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0);
 
-        public static final int gyroID = 1;
+        public static final int gyroID = 0;
         public static final boolean gyroReversed = false; // Always ensure Gyro is CCW+ CW-
 
         public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
@@ -111,6 +112,8 @@ public class Drivetrain extends SubsystemBase {
     Pigeon2 gyro;
 
     public Drivetrain() {
+        gyro = new Pigeon2(DrivetrainConstants.gyroID);
+        gyro.configFactoryDefault();
 
         frontLeftModule = new SwerveModule(DrivetrainConstants.frontLeftModuleConstants);
         frontRightModule = new SwerveModule(DrivetrainConstants.frontRightModuleConstants);
@@ -118,12 +121,21 @@ public class Drivetrain extends SubsystemBase {
         backRightModule = new SwerveModule(DrivetrainConstants.backRightModuleConstants);
 
         swerveModules = new SwerveModule[] { frontLeftModule, frontRightModule, backLeftModule, backRightModule };
-        gyro = new Pigeon2(DrivetrainConstants.gyroID);
-        gyro.configFactoryDefault();
+
+        Timer.delay(1.0);
+        resetModulesToAbsolute();
+
+        swerveOdometry = new SwerveDriveOdometry(DrivetrainConstants.swerveKinematics, getYaw(), getModulePositions());
+     
 
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
+
+        gyro = new Pigeon2(DrivetrainConstants.gyroID);
+        gyro.configFactoryDefault();
+        zeroGyro();
+
         SwerveModuleState[] swerveModuleStates = DrivetrainConstants.swerveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
                         translation.getX(),
@@ -155,7 +167,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void resetOdometry(Pose2d pose) {
-        // swerveOdometry.resetPosition(getYaw(), pose);
+        swerveOdometry.resetPosition(getYaw(), getModulePositions(), pose);
     }
 
     public SwerveModuleState[] getStates() {
@@ -175,6 +187,28 @@ public class Drivetrain extends SubsystemBase {
         gyro.getYawPitchRoll(ypr);
         return (DrivetrainConstants.gyroReversed) ? Rotation2d.fromDegrees(360 - ypr[0])
                 : Rotation2d.fromDegrees(ypr[0]);
+    }
+
+    public SwerveModuleState[] getModuleStates(){
+        SwerveModuleState[] states = new SwerveModuleState[4];
+        for(SwerveModule module : swerveModules){
+            states[module.moduleNumber] = module.getState();
+        }
+        return states;
+    }
+
+    public SwerveModulePosition[] getModulePositions(){
+        SwerveModulePosition[] positions = new SwerveModulePosition[4];
+        for(SwerveModule module : swerveModules){
+            positions[module.moduleNumber] = module.getPosition();
+        }
+        return positions;
+    }
+
+    public void resetModulesToAbsolute(){
+        for(SwerveModule mod : swerveModules){
+            mod.resetToAbsolute();
+        }
     }
 
     @Override

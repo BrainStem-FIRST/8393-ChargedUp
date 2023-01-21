@@ -26,7 +26,7 @@ public class SwerveModule extends SubsystemBase {
     private CANCoder absoluteEncoder;
 
     private boolean absoluteEncoderReversed;
-    private double absoluteEncoderOffset;
+    private Rotation2d absoluteEncoderOffset;
 
     private CTREConfigs swerveModuleConfig;
 
@@ -35,6 +35,7 @@ public class SwerveModule extends SubsystemBase {
     public String moduleName;
 
     public int moduleNumber;
+
 
     SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(DrivetrainConstants.driveKS,
             DrivetrainConstants.driveKV, DrivetrainConstants.driveKA);
@@ -109,8 +110,8 @@ public class SwerveModule extends SubsystemBase {
         lastAngle = angle;
     }
 
-    private void resetToAbsolute() {
-        double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - absoluteEncoderOffset,
+    public void resetToAbsolute() {
+        double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - absoluteEncoderOffset.getDegrees(),
                 DrivetrainConstants.angleGearRatio);
         steerMotor.setSelectedSensorPosition(absolutePosition);
     }
@@ -156,5 +157,6 @@ public class SwerveModule extends SubsystemBase {
                 DrivetrainConstants.angleGearRatio));
         return new SwerveModulePosition(distance, angle);
     }
+
 
 }

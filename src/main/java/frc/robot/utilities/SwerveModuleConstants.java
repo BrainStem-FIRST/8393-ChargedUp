@@ -1,5 +1,7 @@
 package frc.robot.utilities;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+
 public class SwerveModuleConstants {
     public int driveMotorID;
     public int steerMotorID;
@@ -9,7 +11,7 @@ public class SwerveModuleConstants {
     public boolean steerMotorReversed;
 
     public boolean absoluteEncoderReversed;
-    public double absoluteEncoderOffset;
+    public Rotation2d absoluteEncoderOffset;
     public String moduleName;
 
     /**
@@ -21,7 +23,7 @@ public class SwerveModuleConstants {
      * @param angleOffset
      */
     public SwerveModuleConstants(String moduleName, int driveMotorID, int steerMotorID, boolean driveMotorReversed,
-            boolean steerMotorReversed, int absoluteEncoderID, double absoluteEncoderOffset,
+            boolean steerMotorReversed, int absoluteEncoderID, Rotation2d absoluteEncoderOffset,
             boolean absoluteEncoderReversed) {
         this.moduleName = moduleName;
         this.driveMotorID = driveMotorID;

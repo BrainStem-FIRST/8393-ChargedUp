@@ -19,14 +19,34 @@ import frc.robot.subsystems.*;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
+  public static final class JoystickConstants {
+
+    public static final int LEFT_STICK_X_AXIS = 0;
+    public static final int LEFT_STICK_Y_AXIS = 1;
+    public static final int LEFT_TRIGGER = 2;
+    public static final int RIGHT_TRIGGER = 3;
+    public static final int RIGHT_STICK_Y_AXIS = 5;
+    public static final int RIGHT_STICK_X_AXIS = 4;
+    public static final int A_BUTTON = 1;
+    public static final int B_BUTTON = 2;
+    public static final int X_BUTTON = 3;
+    public static final int Y_BUTTON = 4;
+    public static final int LEFT_BUMPER = 5;
+    public static final int RIGHT_BUMPER = 7;
+    public static final int BACK_BUTTON = 8;
+    public static final int START_BUTTON = 9;
+    public static final int LEFT_JOYSTICK_BUTTON = 10;
+    public static final int RIGHT_JOYSTICK_BUTTON = 11;
+}
   /* Controllers */
   private final Joystick driver1 = new Joystick(0);
   private final Joystick driver2 = new Joystick(1);
 
   /* Drive Controls */
-  private final int translationAxis = XboxController.Axis.kLeftY.value;
-  private final int strafeAxis = XboxController.Axis.kLeftX.value;
-  private final int rotationAxis = XboxController.Axis.kRightX.value;
+  private final int translationAxis = JoystickConstants.LEFT_STICK_Y_AXIS;
+  private final int strafeAxis = JoystickConstants.LEFT_STICK_X_AXIS;
+  private final int rotationAxis = JoystickConstants.RIGHT_STICK_X_AXIS;
 
   /* Driver Buttons */
   private final JoystickButton zeroGyro = new JoystickButton(driver1, XboxController.Button.kY.value);
