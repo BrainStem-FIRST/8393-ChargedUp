@@ -23,7 +23,7 @@ public class Grabber extends SubsystemBase {
   }
 
   public void collectorOn() {
-    leftIntake.set(0.5);
+    leftIntake.set(1.0);
   }
 
   public void collectorOff() {
