@@ -192,6 +192,7 @@ public class Drivetrain extends SubsystemBase {
                     module.getState().speedMetersPerSecond);
             SmartDashboard.putNumber("Module " + module.moduleName + " Position",
                     module.getPosition().distanceMeters);
+
         }
     }
 

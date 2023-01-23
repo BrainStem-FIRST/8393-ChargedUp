@@ -32,21 +32,24 @@ public class RobotContainer {
   /* Driver Buttons */
   private final JoystickButton zeroGyro = new JoystickButton(driver1, XboxController.Button.kY.value);
   private final JoystickButton robotCentric = new JoystickButton(driver1, XboxController.Button.kLeftBumper.value);
+  private final JoystickButton spinNeoMotor = new JoystickButton(driver1, XboxController.Button.kA.value);
 
   /* Subsystems */
-  private final Drivetrain drivetrain = new Drivetrain();
+  // private final Drivetrain drivetrain = new Drivetrain();
+  private final Grabber grabber = new Grabber();
 
+  
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    drivetrain.setDefaultCommand(
-        new TeleopSwerve(
-            drivetrain,
-            () -> -driver1.getRawAxis(translationAxis),
-            () -> -driver1.getRawAxis(strafeAxis),
-            () -> -driver1.getRawAxis(rotationAxis),
-            () -> robotCentric.getAsBoolean()));
+    // drivetrain.setDefaultCommand(
+    //     new TeleopSwerve(
+    //         drivetrain,
+    //         () -> -driver1.getRawAxis(translationAxis),
+    //         () -> -driver1.getRawAxis(strafeAxis),
+    //         () -> -driver1.getRawAxis(rotationAxis),
+    //         () -> robotCentric.getAsBoolean()));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -62,7 +65,9 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     /* Driver Buttons */
-    zeroGyro.onTrue(new InstantCommand(() -> drivetrain.zeroGyro()));
+    // zeroGyro.onTrue(new InstantCommand(() -> drivetrain.zeroGyro()));
+    spinNeoMotor.onTrue(new InstantCommand(() -> grabber.collectorOn()));
+    spinNeoMotor.onFalse(new InstantCommand(() -> grabber.collectorOff()));
   }
 
   /**
@@ -70,8 +75,8 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return new ExampleAuto(drivetrain);
-  }
+  // public Command getAutonomousCommand() {
+  //   // An ExampleCommand will run in autonomous
+  //   return new ExampleAuto(drivetrain);
+  // }
 }
