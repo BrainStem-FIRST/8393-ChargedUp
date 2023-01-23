@@ -1,50 +1,46 @@
 package frc.robot.commands;
 
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Drivetrain.DrivetrainConstants;
+import frc.robot.Constants;
+import frc.robot.subsystems.Swerve;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class TeleopSwerve extends CommandBase {
-    private static final class TeleopSwerveConstants {
-        private static final double driver1Deadzone = 0.05;
-    }
 
-    private Drivetrain drivetrain;
-    private DoubleSupplier translationSupplier;
-    private DoubleSupplier strafeSupplier;
-    private DoubleSupplier rotationSupplier;
-    private BooleanSupplier robotCentricSupplier;
+public class TeleopSwerve extends CommandBase {    
+    private Swerve s_Swerve;    
+    private DoubleSupplier translationSup;
+    private DoubleSupplier strafeSup;
+    private DoubleSupplier rotationSup;
+    private BooleanSupplier robotCentricSup;
 
-    public TeleopSwerve(Drivetrain drivetrain, DoubleSupplier translationSupplier,
-            DoubleSupplier strafeSupplier, DoubleSupplier rotationSupplier, BooleanSupplier robotCentricSupplier) {
-        this.drivetrain = drivetrain;
-        addRequirements(drivetrain);
+    public TeleopSwerve(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup) {
+        this.s_Swerve = s_Swerve;
+        addRequirements(s_Swerve);
 
-        this.translationSupplier = translationSupplier;
-        this.strafeSupplier = strafeSupplier;
-        this.rotationSupplier = rotationSupplier;
-        this.robotCentricSupplier = robotCentricSupplier;
+        this.translationSup = translationSup;
+        this.strafeSup = strafeSup;
+        this.rotationSup = rotationSup;
+        this.robotCentricSup = robotCentricSup;
     }
 
     @Override
     public void execute() {
-        /* Get Values, Deadband */
-        double translationVal = MathUtil.applyDeadband(translationSupplier.getAsDouble(),
-                TeleopSwerveConstants.driver1Deadzone);
-        double strafeVal = MathUtil.applyDeadband(strafeSupplier.getAsDouble(), TeleopSwerveConstants.driver1Deadzone);
-        double rotationVal = MathUtil.applyDeadband(rotationSupplier.getAsDouble(),
-                TeleopSwerveConstants.driver1Deadzone);
+        /* Get Values, Deadband*/
+        double translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.stickDeadband);
+        double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband);
+        double rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.stickDeadband);
 
         /* Drive */
-        drivetrain.drive(
-                new Translation2d(translationVal, strafeVal).times(DrivetrainConstants.maxSpeed),
-                rotationVal * DrivetrainConstants.maxAngularVelocity,
-                !robotCentricSupplier.getAsBoolean(),
-                true);
+        s_Swerve.drive(
+            new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed), 
+            rotationVal * Constants.Swerve.maxAngularVelocity, 
+            !robotCentricSup.getAsBoolean(), 
+            true
+        );
     }
 }

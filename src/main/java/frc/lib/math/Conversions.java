@@ -1,6 +1,4 @@
-package frc.robot.utilities;
-
-import frc.robot.subsystems.Drivetrain.DrivetrainConstants;
+package frc.lib.math;
 
 public class Conversions {
 
