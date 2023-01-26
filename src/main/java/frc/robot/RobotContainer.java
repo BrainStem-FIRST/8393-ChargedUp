@@ -80,7 +80,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return new InstantCommand(grabber::collectorOn);
-    //return new exampleAuto(s_Swerve);
+    //return new InstantCommand(grabber::collectorOn);
+    return new exampleAuto(s_Swerve);
   }
 }
