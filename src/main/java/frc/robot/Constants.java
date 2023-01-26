@@ -44,6 +44,8 @@ public final class Constants {
         /* Angle Encoder Invert */
         public static final boolean canCoderInvert = chosenModule.canCoderInvert;
 
+        public static final double drivetrainLimit = 1;
+
         /* Swerve Current Limiting */
         public static final int angleContinuousCurrentLimit = 25;
         public static final int anglePeakCurrentLimit = 40;

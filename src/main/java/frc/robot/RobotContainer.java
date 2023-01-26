@@ -1,8 +1,10 @@
 package frc.robot;
 
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -37,11 +39,12 @@ public class RobotContainer {
   private final Drivetrain drivetrain = new Drivetrain();
   private final Grabber grabber = new Grabber();
 
-  
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(
             s_Swerve,
@@ -71,11 +74,13 @@ public class RobotContainer {
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
+  
    *
    * @return the command to run in autonomous
    */
-  // public Command getAutonomousCommand() {
-  //   // An ExampleCommand will run in autonomous
-  //   return new ExampleAuto(drivetrain);
-  // }
+  public Command getAutonomousCommand() {
+    // An ExampleCommand will run in autonomous
+    return new InstantCommand(grabber::collectorOn);
+    //return new exampleAuto(s_Swerve);
+  }
 }

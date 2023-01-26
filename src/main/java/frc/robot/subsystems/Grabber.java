@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
@@ -16,14 +17,14 @@ public class Grabber extends SubsystemBase {
         });
   }
 
-  private CANSparkMax leftIntake = new CANSparkMax(26, MotorType.kBrushless);
-
+  public CANSparkMax leftIntake = new CANSparkMax(26, MotorType.kBrushless);
+  private RelativeEncoder leftIntakeEncoder = leftIntake.getEncoder();
   public boolean exampleCondition() {
     return false;
   }
 
   public void collectorOn() {
-    leftIntake.set(1.0);
+    leftIntake.set(0.1);
   }
 
   public void collectorOff() {
@@ -32,7 +33,8 @@ public class Grabber extends SubsystemBase {
 
   @Override
   public void periodic() {
-
+    // SmartDashboard.putNumber("Grabber Velocity", leftIntakeEncoder.getVelocity());
+    // SmartDashboard.putNumber("Grabber Current", leftIntake.getOutputCurrent());
   }
 
   @Override
