@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.Lift.Position;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -30,13 +31,17 @@ public class RobotContainer {
     private final int rotationAxis = XboxController.Axis.kRightX.value;
 
   /* Driver Buttons */
-  private final JoystickButton  zeroGyro = new JoystickButton(driver1, XboxController.Button.kY.value);
+  private final JoystickButton liftUp = new JoystickButton(driver1, XboxController.Button.kB.value);
+  private final JoystickButton liftDown = new JoystickButton(driver1, XboxController.Button.kY.value);
+  private final JoystickButton liftStop = new JoystickButton(driver1, XboxController.Button.kX.value);
+  private final JoystickButton zeroGyro = new JoystickButton(driver1, XboxController.Button.kY.value);
   private final JoystickButton robotCentric = new JoystickButton(driver1, XboxController.Button.kLeftBumper.value);
   private final JoystickButton spinNeoMotor = new JoystickButton(driver1, XboxController.Button.kA.value);
     /* Subsystems */
   private final Swerve s_Swerve = new Swerve();
   private final Drivetrain drivetrain = new Drivetrain();
   private final Grabber grabber = new Grabber();
+  private final Lift lift = new Lift();
 
 
   /**
@@ -54,6 +59,7 @@ public class RobotContainer {
             () -> robotCentric.getAsBoolean()));
 
     
+            lift.initialize();
 
     // Configure the button bindings
     configureButtonBindings();
@@ -69,6 +75,9 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     /* Driver Buttons */
+    liftUp.onTrue(new InstantCommand(() -> lift.state = Position.UP));
+    liftDown.onTrue(new InstantCommand(() -> lift.state = Position.DOWN));
+    liftStop.onTrue(new InstantCommand(() -> lift.state = Position.STOP));
     zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
     spinNeoMotor.onTrue(new InstantCommand(() -> grabber.collectorOn()));
     spinNeoMotor.onFalse(new InstantCommand(() -> grabber.collectorOff()));
