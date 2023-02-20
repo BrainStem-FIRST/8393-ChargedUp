@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Lift.LiftPosition;
 import frc.robot.utilities.BrainSTEMSubsystem;
 
@@ -88,6 +89,9 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    
+     
+
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
@@ -100,6 +104,9 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    // if(m_robotContainer.driver1.getRawAxis(m_robotContainer.translationAxis) > 0.1){
+    //   m_robotContainer.mlift = new Lift();
+    // }
     if(!m_robotContainer.liftUp.getAsBoolean() && !m_robotContainer.liftDown.getAsBoolean()){
       m_robotContainer.mlift.state = LiftPosition.STOP;
     }

@@ -47,7 +47,6 @@ public class SwerveModule implements BrainSTEMSubsystem {
 
     @Override
     public void initialize(){
-        SmartDashboard.putBoolean("Swerve Module " + this.moduleNumber + " set to zero", true);
         mDriveMotor.set(ControlMode.PercentOutput, 0);
         mAngleMotor.set(ControlMode.PercentOutput, 0);
     }

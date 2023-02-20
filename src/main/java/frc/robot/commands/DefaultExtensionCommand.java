@@ -10,7 +10,7 @@ public class DefaultExtensionCommand extends CommandBase {
     private Extension extension;    
     private DoubleSupplier extendDistance;
     private BooleanSupplier balance;
-    public DefaultExtensionCommand(Extension extension, DoubleSupplier extendDistance, BooleanSupplier balance) {
+    public DefaultExtensionCommand(Extension extension, DoubleSupplier extendDistance) {
 
         this.extension = extension;
         this.balance = balance;
@@ -20,6 +20,8 @@ public class DefaultExtensionCommand extends CommandBase {
     }
     @Override
     public void execute() {
-        
+        if(extendDistance.getAsDouble() > 0.1){
+            extension.extensionMotorOn();
+        }
     }
 }

@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
+import frc.robot.Constants.JoystickConstants;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -25,15 +25,16 @@ import frc.robot.utilities.BrainSTEMSubsystem;
  */
 public class RobotContainer {
     /* Controllers */
-    private final Joystick driver1 = new Joystick(0);
+    public final Joystick driver1 = new Joystick(0);
     private final Joystick driver2 = new Joystick(1);
 
     /* Drive Controls */
-    private final int translationAxis = XboxController.Axis.kLeftY.value;
+    final int translationAxis = XboxController.Axis.kLeftY.value;
     private final int strafeAxis = XboxController.Axis.kLeftX.value;
     private final int rotationAxis = XboxController.Axis.kRightX.value;
 
   /* Driver Buttons */
+  private final JoystickButton extensionOn = new JoystickButton(driver1, JoystickConstants.RIGHT_TRIGGER);
   public final JoystickButton liftUp = new JoystickButton(driver1, XboxController.Button.kY.value);
   public final JoystickButton liftDown = new JoystickButton(driver1, XboxController.Button.kB.value); 
   private final JoystickButton liftStop = new JoystickButton(driver1, XboxController.Button.kX.value);
@@ -43,10 +44,10 @@ public class RobotContainer {
   private final JoystickButton robotCentric = new JoystickButton(driver1, XboxController.Button.kLeftBumper.value);
   private final JoystickButton spinNeoMotor = new JoystickButton(driver1, XboxController.Button.kA.value);
     /* Subsystems */
-  private final Swerve s_Swerve = new Swerve();
-  private final Grabber mgrabber = new Grabber();
-  public final Lift mlift = new Lift();
-  public Extension mextension = new Extension();
+  private Swerve s_Swerve;
+  private Grabber mgrabber;
+  public Lift mlift;
+  public Extension mextension;
   
   
 
@@ -54,8 +55,11 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-
     
+    s_Swerve = new Swerve();
+    mgrabber = new Grabber();
+    mextension = new Extension();
+    mlift = new Lift();
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(
             s_Swerve,
@@ -64,10 +68,13 @@ public class RobotContainer {
             () -> -driver1.getRawAxis(rotationAxis) * 0.5,
             () -> robotCentric.getAsBoolean()));
 
+    //mextension.setDefaultCommand(new DefaultExtensionCommand(mextension, () -> -driver1.getRawAxis(JoystickConstants.RIGHT_TRIGGER)));
+
     
     // Configure the button bindings
     configureButtonBindings();
   }
+  
 
   /**
    * Use this method to define your button->command mappings. Buttons can be
@@ -79,8 +86,10 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     /* Driver Buttons */
+ 
     liftUp.whileTrue(new InstantCommand(() -> mlift.state = LiftPosition.UP));
     liftDown.whileTrue(new InstantCommand(() -> mlift.state = LiftPosition.DOWN));
+    liftStop.whileTrue(new InstantCommand(mextension::extensionMotorOn));
     // liftStop.whileTrue(new InstantCommand(() -> mlift.state = LiftPosition.STOP));
     resetEncoders.whileTrue(new InstantCommand(mlift::resetLiftEncoder));
     servoToMin.whileTrue(new InstantCommand(mextension::moveServoToMin));
