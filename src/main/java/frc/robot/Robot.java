@@ -4,10 +4,14 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.Lift.LiftPosition;
+import frc.robot.utilities.BrainSTEMSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -32,6 +36,9 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    
+    
+
   }
 
   /**
@@ -65,6 +72,10 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+    ArrayList<BrainSTEMSubsystem> brainSTEMSubsystems = m_robotContainer.getBrainSTEMSubsystems();
+    for(BrainSTEMSubsystem isubsystem: brainSTEMSubsystems){
+      isubsystem.initialize();
+    }
   }
 
   /** This function is called periodically during autonomous. */
@@ -80,11 +91,18 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    ArrayList<BrainSTEMSubsystem> brainSTEMSubsystems = m_robotContainer.getBrainSTEMSubsystems();
+    for(BrainSTEMSubsystem isubsystem: brainSTEMSubsystems){
+      isubsystem.initialize();
+    }
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    if(!m_robotContainer.liftUp.getAsBoolean() && !m_robotContainer.liftDown.getAsBoolean()){
+      m_robotContainer.mlift.state = LiftPosition.STOP;
+    }
   }
 
   @Override

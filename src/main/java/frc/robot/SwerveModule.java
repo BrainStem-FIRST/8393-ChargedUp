@@ -4,17 +4,18 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lib.math.Conversions;
 import frc.lib.util.CTREModuleState;
 import frc.lib.util.SwerveModuleConstants;
+import frc.robot.utilities.BrainSTEMSubsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
  
-public class SwerveModule {
+public class SwerveModule implements BrainSTEMSubsystem {
     public int moduleNumber;
     private Rotation2d angleOffset;
     private Rotation2d lastAngle;
@@ -42,6 +43,13 @@ public class SwerveModule {
         configDriveMotor();
 
         lastAngle = getState().angle;
+    }
+
+    @Override
+    public void initialize(){
+        SmartDashboard.putBoolean("Swerve Module " + this.moduleNumber + " set to zero", true);
+        mDriveMotor.set(ControlMode.PercentOutput, 0);
+        mAngleMotor.set(ControlMode.PercentOutput, 0);
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){

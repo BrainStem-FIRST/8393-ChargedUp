@@ -4,26 +4,42 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.utilities.BrainSTEMSubsystem;
 
 
-public class Extension extends SubsystemBase {
+public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
 
   private static final class ExtensionConstants {
     private static final int extensionMotorID = 69; //FIXME
-    private static final int extensionServoID = 70; //FIXME
+    private static final int extensionServoID = 9; //FIXME
   }
   
-  TalonFX extensionMotor;
+  //TalonFX extensionMotor;
   Servo extensionServo;
 
   public Extension() {
-    extensionMotor = new TalonFX(ExtensionConstants.extensionMotorID);
+    //extensionMotor = new TalonFX(ExtensionConstants.extensionMotorID);
     extensionServo = new Servo(ExtensionConstants.extensionServoID);
+    extensionServo.setBounds(2750, 125, 1375, 75, 0);
+  }
+
+  @Override
+  public void initialize(){
+
   }
 
   public void fullExtend(){
 
   }
+
+  public void moveServoToMin(){
+    extensionServo.set(0);
+  }
+
+  public void moveServoToMax(){
+    extensionServo.set(1);
+  }
+
 
   public void extend(double distance){
 

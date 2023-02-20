@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -12,7 +14,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.Lift.Position;
+import frc.robot.subsystems.Lift.LiftPosition;
+import frc.robot.utilities.BrainSTEMSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -31,18 +34,21 @@ public class RobotContainer {
     private final int rotationAxis = XboxController.Axis.kRightX.value;
 
   /* Driver Buttons */
-  private final JoystickButton liftUp = new JoystickButton(driver1, XboxController.Button.kB.value);
-  private final JoystickButton liftDown = new JoystickButton(driver1, XboxController.Button.kY.value);
+  public final JoystickButton liftUp = new JoystickButton(driver1, XboxController.Button.kY.value);
+  public final JoystickButton liftDown = new JoystickButton(driver1, XboxController.Button.kB.value); 
   private final JoystickButton liftStop = new JoystickButton(driver1, XboxController.Button.kX.value);
+  private final JoystickButton resetEncoders = new JoystickButton(driver1, XboxController.Button.kRightBumper.value);
+  private final JoystickButton servoToMin = new JoystickButton(driver1, XboxController.Button.kLeftBumper.value);
   private final JoystickButton zeroGyro = new JoystickButton(driver1, XboxController.Button.kY.value);
   private final JoystickButton robotCentric = new JoystickButton(driver1, XboxController.Button.kLeftBumper.value);
   private final JoystickButton spinNeoMotor = new JoystickButton(driver1, XboxController.Button.kA.value);
     /* Subsystems */
   private final Swerve s_Swerve = new Swerve();
-  private final Drivetrain drivetrain = new Drivetrain();
-  private final Grabber grabber = new Grabber();
-  private final Lift lift = new Lift();
-
+  private final Grabber mgrabber = new Grabber();
+  public final Lift mlift = new Lift();
+  public Extension mextension = new Extension();
+  
+  
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -59,8 +65,6 @@ public class RobotContainer {
             () -> robotCentric.getAsBoolean()));
 
     
-            lift.initialize();
-
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -75,12 +79,14 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     /* Driver Buttons */
-    liftUp.onTrue(new InstantCommand(() -> lift.state = Position.UP));
-    liftDown.onTrue(new InstantCommand(() -> lift.state = Position.DOWN));
-    liftStop.onTrue(new InstantCommand(() -> lift.state = Position.STOP));
-    zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
-    spinNeoMotor.onTrue(new InstantCommand(() -> grabber.collectorOn()));
-    spinNeoMotor.onFalse(new InstantCommand(() -> grabber.collectorOff()));
+    liftUp.whileTrue(new InstantCommand(() -> mlift.state = LiftPosition.UP));
+    liftDown.whileTrue(new InstantCommand(() -> mlift.state = LiftPosition.DOWN));
+    // liftStop.whileTrue(new InstantCommand(() -> mlift.state = LiftPosition.STOP));
+    resetEncoders.whileTrue(new InstantCommand(mlift::resetLiftEncoder));
+    servoToMin.whileTrue(new InstantCommand(mextension::moveServoToMin));
+    zeroGyro.whileTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
+    // spinNeoMotor.whileTrue(new InstantCommand(() -> mgrabber.collectorOn()));
+    // spinNeoMotor.onFalse(new InstantCommand(() -> mgrabber.collectorOff()));
   }
 
   /**
@@ -93,5 +99,14 @@ public class RobotContainer {
     // An ExampleCommand will run in autonomous
     //return new InstantCommand(grabber::collectorOn);
     return new exampleAuto(s_Swerve);
+  }
+
+  public ArrayList<BrainSTEMSubsystem> getBrainSTEMSubsystems(){
+    ArrayList<BrainSTEMSubsystem> brainSTEMSubsystems = new ArrayList<>();
+    brainSTEMSubsystems.add(mlift);
+    brainSTEMSubsystems.add(mextension);
+    brainSTEMSubsystems.add(s_Swerve);
+
+    return brainSTEMSubsystems;
   }
 }
