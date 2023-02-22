@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
@@ -50,7 +51,11 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
 
   @Override
   public void initialize(){
+    resetEncoder();
+  }
 
+  public void resetEncoder(){
+    telescopeMotor.setSelectedSensorPosition(0);
   }
 
   public void fullExtend(){
@@ -98,14 +103,22 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     }
   }
 
-  @Override
-  public void periodic() {
-    ratchetControl();
-    telescopeControl();
+  private void updateWithPID(){
     telescopeMotor.set(
       TalonFXControlMode.PercentOutput, 
       telescopePIDController.calculate(telescopeMotor.getSelectedSensorPosition(), telescopeSetPoint)
     );
+  }
+
+  @Override
+  public void periodic() {
+    ratchetControl();
+    telescopeControl();
+    if(telescopeSetPoint > telescopeMotor.getSelectedSensorPosition()){
+      telescopeMotor.setNeutralMode(NeutralMode.Coast);
+    } else {
+      updateWithPID();
+    }
   }
 
   @Override

@@ -21,7 +21,7 @@ public class DefaultExtensionCommand extends CommandBase {
     @Override
     public void execute() {
         if(extendDistance.getAsDouble() > 0.1){
-            extension.extensionMotorOn();
+            // extension.extensionMotorOn();
         }
     }
 }
