@@ -92,8 +92,8 @@ public class RobotContainer {
  
     liftUp.whileTrue(new InstantCommand(() -> mlift.state = LiftPosition.UP));
     liftDown.whileTrue(new InstantCommand(() -> mlift.state = LiftPosition.DOWN));
-    liftStop.whileTrue(new InstantCommand(mextension::extensionMotorOn));
-    liftStop.whileTrue(new InstantCommand(mextension::extensionMotorOn));
+
+    
     // liftStop.whileTrue(new InstantCommand(() -> mlift.state = LiftPosition.STOP));
     // resetEncoders.whileTrue(new InstantCommand(mlift::resetLiftEncoder));
     // extensionRatchet.whileTrue(new InstantCommand(() -> mextension.ratchetState = RatchetPosition.DISENGAGED));

@@ -54,12 +54,12 @@ public class Collector extends SubsystemBase {
   public void initialize() {
     clawMotorEncoder.setPosition(0);
     clawMotor.setIdleMode(IdleMode.kBrake);
-    m_clawPID.setTolerance(15);
+    clawMotorPIDController.setTolerance(15);
     clawMotor.set(0);
   }
 
   public void resetLiftEncoder(){
-    mliftForwardEncoder.setPosition(0);
+    clawMotorEncoder.setPosition(0);
   }
 
   public CommandBase exampleMethodCommand() {

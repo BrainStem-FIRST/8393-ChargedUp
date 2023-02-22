@@ -30,7 +30,6 @@ public class ExtendTelescopeCommand extends CommandBase {
         } else {
             return false;
         }
-        
     }
 
     

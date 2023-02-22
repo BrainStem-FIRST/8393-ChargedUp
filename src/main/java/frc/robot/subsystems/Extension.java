@@ -1,8 +1,10 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -14,6 +16,9 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
   private static final class ExtensionConstants {
     private static final int extensionMotorID = 14; 
     private static final int extensionServoID = 9; 
+    private static final double PROPORTIONAL = 0.1; //FIXME
+    private static final double INTEGRAL = 1; //FIXME
+    private static final double DERIVATIVE = 0; //FIXME
   }
 
   public enum RatchetPosition {
@@ -31,12 +36,15 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
   public RatchetPosition ratchetState = RatchetPosition.ENGAGED;
   public TelescopePosition telescopeState = TelescopePosition.RETRACTED;
   
-  TalonFX extensionMotor;
-  Servo extensionServo;
+  TalonFX telescopeMotor;
+  Servo ratchetServo;
+  PIDController telescopePIDController;
+  private int telescopeSetPoint = 0;
 
   public Extension() {
-    extensionMotor = new TalonFX(ExtensionConstants.extensionMotorID);
-    extensionServo = new Servo(ExtensionConstants.extensionServoID);
+    telescopeMotor = new TalonFX(ExtensionConstants.extensionMotorID);
+    ratchetServo = new Servo(ExtensionConstants.extensionServoID);
+    telescopePIDController = new PIDController(ExtensionConstants.PROPORTIONAL, ExtensionConstants.INTEGRAL, ExtensionConstants.DERIVATIVE);
     // extensionServo.setBounds(1200, 125, 1100, 75, 1000);
   }
 
@@ -49,18 +57,12 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
 
   }
 
-  public void extensionMotorOn(){
-    extensionMotor.set(ControlMode.PercentOutput, 0.02);
+  public void ratchetDisengage(){
+    ratchetServo.set(0.0);
   }
 
-  public void moveServoToMin(){
-    SmartDashboard.putNumber("Ratchet Servo Position", 0.5);
-    extensionServo.setAngle(0.99);
-  }
-
-  public void moveServoToMax(){
-    SmartDashboard.putNumber("Ratchet Servo Position", 0.51);
-    extensionServo.set(0.98);
+  public void ratchetEngage(){
+    ratchetServo.set(1.0);
   }
 
 
@@ -68,16 +70,42 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
 
   }
 
-  @Override
-  public void periodic() {
-    switch (ratchetState) {
+  private void ratchetControl() {
+      switch (ratchetState) {
       case ENGAGED:
-        moveServoToMin();
+        ratchetEngage();
         break;
       case DISENGAGED:
-        moveServoToMax();
+        ratchetDisengage();
         break;
     }
+  }
+
+  private void telescopeControl() {
+      switch (telescopeState) {
+      case RETRACTED:
+        telescopeSetPoint = 0;
+        break;
+      case COLLECTION:
+        telescopeSetPoint = 100;
+        break;
+      case LOW_POLE:
+        telescopeSetPoint = 200;
+        break;
+      case HIGH_POLE:
+        telescopeSetPoint = 300;
+        break;
+    }
+  }
+
+  @Override
+  public void periodic() {
+    ratchetControl();
+    telescopeControl();
+    telescopeMotor.set(
+      TalonFXControlMode.PercentOutput, 
+      telescopePIDController.calculate(telescopeMotor.getSelectedSensorPosition(), telescopeSetPoint)
+    );
   }
 
   @Override
