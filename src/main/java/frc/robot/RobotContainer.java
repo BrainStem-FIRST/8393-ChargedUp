@@ -14,6 +14,8 @@ import frc.robot.Constants.JoystickConstants;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.Collector.IntakeState;
+import frc.robot.subsystems.Extension.RatchetPosition;
 import frc.robot.subsystems.Lift.LiftPosition;
 import frc.robot.utilities.BrainSTEMSubsystem;
 
@@ -38,16 +40,16 @@ public class RobotContainer {
   public final JoystickButton liftUp = new JoystickButton(driver1, XboxController.Button.kY.value);
   public final JoystickButton liftDown = new JoystickButton(driver1, XboxController.Button.kB.value); 
   private final JoystickButton liftStop = new JoystickButton(driver1, XboxController.Button.kX.value);
-  private final JoystickButton resetEncoders = new JoystickButton(driver1, XboxController.Button.kRightBumper.value);
-  private final JoystickButton servoToMin = new JoystickButton(driver1, XboxController.Button.kLeftBumper.value);
+  private final JoystickButton collectorOn = new JoystickButton(driver1, XboxController.Button.kRightBumper.value);
+  private final JoystickButton collectorOut = new JoystickButton(driver1, XboxController.Button.kLeftBumper.value);
   private final JoystickButton zeroGyro = new JoystickButton(driver1, XboxController.Button.kY.value);
   private final JoystickButton robotCentric = new JoystickButton(driver1, XboxController.Button.kLeftBumper.value);
-  private final JoystickButton spinNeoMotor = new JoystickButton(driver1, XboxController.Button.kA.value);
     /* Subsystems */
   private Swerve s_Swerve;
   private Grabber mgrabber;
   public Lift mlift;
   public Extension mextension;
+  public Collector m_collector;
   
   
 
@@ -59,6 +61,7 @@ public class RobotContainer {
     s_Swerve = new Swerve();
     mgrabber = new Grabber();
     mextension = new Extension();
+    m_collector = new Collector();
     mlift = new Lift();
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(
@@ -90,9 +93,16 @@ public class RobotContainer {
     liftUp.whileTrue(new InstantCommand(() -> mlift.state = LiftPosition.UP));
     liftDown.whileTrue(new InstantCommand(() -> mlift.state = LiftPosition.DOWN));
     liftStop.whileTrue(new InstantCommand(mextension::extensionMotorOn));
+    liftStop.whileTrue(new InstantCommand(mextension::extensionMotorOn));
     // liftStop.whileTrue(new InstantCommand(() -> mlift.state = LiftPosition.STOP));
-    resetEncoders.whileTrue(new InstantCommand(mlift::resetLiftEncoder));
-    servoToMin.whileTrue(new InstantCommand(mextension::moveServoToMin));
+    // resetEncoders.whileTrue(new InstantCommand(mlift::resetLiftEncoder));
+    // extensionRatchet.whileTrue(new InstantCommand(() -> mextension.ratchetState = RatchetPosition.DISENGAGED));
+    // extensionRatchet.whileFalse(new InstantCommand(() -> mextension.ratchetState = RatchetPosition.ENGAGED));
+
+    collectorOn.whileTrue(new InstantCommand(() -> m_collector.intakeState = IntakeState.IN));
+    // collectorOut.whileTrue(new InstantCommand(() -> m_collector.intakeState = IntakeState.OUT));
+    collectorOn.whileFalse(new InstantCommand(() -> m_collector.intakeState = IntakeState.OFF));
+
     zeroGyro.whileTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
     // spinNeoMotor.whileTrue(new InstantCommand(() -> mgrabber.collectorOn()));
     // spinNeoMotor.onFalse(new InstantCommand(() -> mgrabber.collectorOff()));

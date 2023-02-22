@@ -1,18 +1,20 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Collector extends SubsystemBase {
   private static final class CollectorConstants {
-    private static final int clawMotorID = 26; //FIXME
-    private static final int wheelMotorID = 71; //FIXME
-    private static final double wheelMotorSpeed = 1; //FIXME
+    private static final int clawMotorID = 19;
+    private static final int wheelMotorID = 22;
+    private static final double wheelMotorSpeed = 0.1; //FIXME
     private static final int clawOpenPosition = 900; //FIXME
     private static final int clawClosePosition = 500; //FIXME
     private static final double PROPORTIONAL = 0.1; //FIXME
@@ -22,8 +24,20 @@ public class Collector extends SubsystemBase {
 
   }
 
-  
-  
+  public enum CollectorState {
+    OPEN,
+    CLOSED
+  }
+
+  public enum IntakeState {
+    IN,
+    OFF,
+    OUT
+  }
+
+  public CollectorState collectorState = CollectorState.CLOSED;
+  public IntakeState intakeState = IntakeState.OFF;
+
   CANSparkMax clawMotor;
   CANSparkMax wheelMotor;
   RelativeEncoder clawMotorEncoder;
@@ -34,7 +48,18 @@ public class Collector extends SubsystemBase {
     clawMotorEncoder = clawMotor.getEncoder();
     wheelMotor = new CANSparkMax(CollectorConstants.wheelMotorID, MotorType.kBrushless);
     clawMotorPIDController = new PIDController(CollectorConstants.PROPORTIONAL, CollectorConstants.INTEGRAL, CollectorConstants.DERIVATIVE);
-    
+    wheelMotor.setInverted(true); 
+  }
+
+  public void initialize() {
+    clawMotorEncoder.setPosition(0);
+    clawMotor.setIdleMode(IdleMode.kBrake);
+    m_clawPID.setTolerance(15);
+    clawMotor.set(0);
+  }
+
+  public void resetLiftEncoder(){
+    mliftForwardEncoder.setPosition(0);
   }
 
   public CommandBase exampleMethodCommand() {
@@ -44,8 +69,12 @@ public class Collector extends SubsystemBase {
         });
   }
 
-  private void collectorOn() {
+  private void collectorIn() {
     wheelMotor.set(CollectorConstants.wheelMotorSpeed);
+  }
+
+  private void collectorOut() {
+    wheelMotor.set(-CollectorConstants.wheelMotorSpeed);
   }
 
   private void collectorOff() {
@@ -60,21 +89,29 @@ public class Collector extends SubsystemBase {
     clawMotorSetPoint = CollectorConstants.clawClosePosition;
   }
 
-  public void runCollector(boolean collectorOn, boolean closed) {
-    if(collectorOn) {
-      collectorOn();
-    } else {
-      collectorOff();
-    }
-    if(closed) {
-      closeCollector();
-    } else {
-      openCollector();
-    }
-  }
-
   @Override
   public void periodic() {
+    switch (intakeState) {
+      case IN:
+        collectorIn();
+        break;
+      case OFF:
+        collectorOff();
+        break;
+      case OUT:
+        collectorOut();
+        break;
+    } 
+
+    switch (collectorState) {
+      case OPEN:
+        openCollector();
+        break;
+      case CLOSED:
+        closeCollector();
+        break;
+    }
+
     clawMotor.set(clawMotorPIDController.calculate(clawMotorEncoder.getPosition(), clawMotorSetPoint));
   }
 
