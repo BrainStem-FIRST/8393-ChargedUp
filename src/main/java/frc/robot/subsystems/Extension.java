@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commandGroups.HighPoleExtensionCommandGroup;
 import frc.robot.utilities.BrainSTEMSubsystem;
 
 
@@ -41,8 +42,10 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
   Servo ratchetServo;
   PIDController telescopePIDController;
   private int telescopeSetPoint = 0;
+  private HighPoleExtensionCommandGroup highPoleExtensionCommandGroup;
 
   public Extension() {
+    this.highPoleExtensionCommandGroup = new HighPoleExtensionCommandGroup(this);
     telescopeMotor = new TalonFX(ExtensionConstants.extensionMotorID);
     ratchetServo = new Servo(ExtensionConstants.extensionServoID);
     telescopePIDController = new PIDController(ExtensionConstants.kproportional, ExtensionConstants.INTEGRAL, ExtensionConstants.DERIVATIVE);
@@ -75,6 +78,29 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
         ratchetDisengage();
         break;
     }
+  }
+
+  public void scheduleHighPole() {
+    telescopeState = TelescopePosition.HIGH_POLE;
+    scheduleTelescopeCommand();
+  }
+
+  private void scheduleTelescopeCommand() {
+    switch (telescopeState) {
+      case RETRACTED:
+        telescopeSetPoint = 0; //make these constants //FIXME
+        break;
+      case COLLECTION:
+        telescopeSetPoint = 100;
+        break;
+      case LOW_POLE:
+        telescopeSetPoint = 200;
+        break;
+      case HIGH_POLE:
+        highPoleExtensionCommandGroup.schedule();
+        break;
+    }
+
   }
 
   private void telescopeControl() { //set telescope state FIXME

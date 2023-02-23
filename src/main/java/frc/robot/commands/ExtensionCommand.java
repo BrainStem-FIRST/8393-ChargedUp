@@ -26,6 +26,7 @@ public class ExtensionCommand extends CommandBase {
 
     @Override
     public void execute() {
+        SmartDashboard.putString("Extension Command", "true");
         m_extension.telescopeState = m_telescopePosition;
         stop = true;
     }

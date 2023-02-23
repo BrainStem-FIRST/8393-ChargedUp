@@ -120,11 +120,10 @@ public class RobotContainer {
     // extensionRatchet.whileTrue(new InstantCommand(() -> mextension.ratchetState = RatchetPosition.DISENGAGED));
     // extensionRatchet.whileFalse(new InstantCommand(() -> mextension.ratchetState = RatchetPosition.ENGAGED));
 
-    extend.whileTrue(extendHigh);
+    extend.toggleOnTrue(new InstantCommand(() -> mextension.scheduleHighPole()));
     // extend.whileTrue(new InstantCommand(() -> SmartDashboard.putBoolean("High Not Being Called", false)));
     // extend.whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("High Not Being Called", true)));
 
-    retract.whileTrue(extendRetract);
     // retract.whileTrue(new InstantCommand(() -> SmartDashboard.putBoolean("Retract Not Being Called", false)));
     // retract.whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Retract Not Being Called", true)));
 

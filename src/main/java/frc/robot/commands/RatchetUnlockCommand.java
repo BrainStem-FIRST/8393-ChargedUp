@@ -10,8 +10,7 @@ public class RatchetUnlockCommand extends CommandBase {
     
     private final Extension m_extension;
     private double m_startTime;
-    private double SERVO_RATCHET_TIME = 2;
-    private boolean isDone = false;
+    private double SERVO_RATCHET_TIME = 5;
 
     public RatchetUnlockCommand(Extension extension) {
         m_extension = extension;
@@ -20,27 +19,29 @@ public class RatchetUnlockCommand extends CommandBase {
 
     @Override
     public void initialize() {
+        SmartDashboard.putBoolean("Rachet Unlock Initialize", true);
+        SmartDashboard.putBoolean("Rachet Unlock Execute", false); 
+        SmartDashboard.putBoolean("Rachet Unlock Finished", false);
+        m_startTime = Timer.getFPGATimestamp();
         
     }
 
     @Override
     public void execute() {
-        if(!isDone) {
-            m_startTime = Timer.getFPGATimestamp();
-            while((Timer.getFPGATimestamp() - m_startTime) < SERVO_RATCHET_TIME) {
-                
-            }// FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
-            isDone = true;
-        } 
+        SmartDashboard.putBoolean("Rachet Unlock Execute", true);
     }
 
     @Override
     public boolean isFinished() {
-        if(isDone) {
-            isDone = false;
-            return true;
-        } else {
+        SmartDashboard.putNumber("Rachet Unlock Time", m_startTime);
+        SmartDashboard.putNumber("Rachet Current Time", Timer.getFPGATimestamp());
+        SmartDashboard.putNumber("Rachet Delta Time", Timer.getFPGATimestamp() - m_startTime);
+        if ((Timer.getFPGATimestamp() - m_startTime) < SERVO_RATCHET_TIME) {
+            SmartDashboard.putBoolean("Rachet Unlock Finished", false);
             return false;
+        } else {
+            SmartDashboard.putBoolean("Rachet Unlock Finished", true);
+            return true;
         }
     }
 
