@@ -10,10 +10,12 @@ import frc.robot.subsystems.Extension.TelescopePosition;
 public class HighPoleExtensionCommandGroup extends SequentialCommandGroup {
     
     public HighPoleExtensionCommandGroup(Extension extension) {
+
         addCommands(
             new RatchetUnlockCommand(extension),
             new ExtensionCommand(extension, TelescopePosition.HIGH_POLE)
         );
+       
     }
 
 }

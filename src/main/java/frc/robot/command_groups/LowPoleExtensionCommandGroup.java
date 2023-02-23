@@ -14,6 +14,7 @@ public class LowPoleExtensionCommandGroup extends SequentialCommandGroup {
             new RatchetUnlockCommand(extension),
             new ExtensionCommand(extension, TelescopePosition.LOW_POLE)
         );
+      
     }
 
 }

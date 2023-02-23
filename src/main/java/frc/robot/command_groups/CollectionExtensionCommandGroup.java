@@ -14,6 +14,7 @@ public class CollectionExtensionCommandGroup extends SequentialCommandGroup {
             new RatchetUnlockCommand(extension),
             new ExtensionCommand(extension, TelescopePosition.COLLECTION)
         );
+        
     }
 
 }

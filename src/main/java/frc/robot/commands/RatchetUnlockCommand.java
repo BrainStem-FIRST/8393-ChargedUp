@@ -11,6 +11,7 @@ public class RatchetUnlockCommand extends CommandBase {
     private final Extension m_extension;
     private double m_startTime;
     private double SERVO_RATCHET_TIME = 2;
+    private boolean isDone = false;
 
     public RatchetUnlockCommand(Extension extension) {
         m_extension = extension;
@@ -19,21 +20,29 @@ public class RatchetUnlockCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        m_startTime = Timer.getFPGATimestamp();
-        m_extension.ratchetState = RatchetPosition.DISENGAGED;
-        SmartDashboard.putNumber("Ratchet Start Time", m_startTime);
+        
+    }
+
+    @Override
+    public void execute(){
+        if(isDone){
+        } else {
+            m_startTime = Timer.getFPGATimestamp();
+            while((Timer.getFPGATimestamp() - m_startTime) < SERVO_RATCHET_TIME){
+                
+            }
+            isDone = true;
+        } 
     }
 
     @Override
     public boolean isFinished() {
-        double m_currentTime = Timer.getFPGATimestamp();
-        SmartDashboard.putNumber("Ratchet Elapsed Time", (m_currentTime - m_startTime));
-        if ((m_currentTime - m_startTime) > SERVO_RATCHET_TIME) {
+        if(isDone){
+            isDone = false;
             return true;
         } else {
             return false;
         }
-        
     }
 
     

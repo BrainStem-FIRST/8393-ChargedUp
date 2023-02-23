@@ -11,6 +11,7 @@ public class ExtensionCommand extends CommandBase {
     
     private final Extension m_extension;
     private final TelescopePosition m_telescopePosition;
+    private boolean stop = false;
 
     public ExtensionCommand(Extension extension, TelescopePosition telescopePosition) {
         m_extension = extension;
@@ -20,12 +21,23 @@ public class ExtensionCommand extends CommandBase {
 
     @Override
     public void initialize() {
+        //m_extension.telescopeState = m_telescopePosition;
+    }
+
+    @Override
+    public void execute(){
         m_extension.telescopeState = m_telescopePosition;
+        stop = true;
     }
 
     @Override
     public boolean isFinished() {
-       return true;
+        if(stop){
+            stop = false;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     

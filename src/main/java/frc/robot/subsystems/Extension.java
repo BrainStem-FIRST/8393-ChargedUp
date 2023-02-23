@@ -116,9 +116,11 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     telescopeControl();
     if(telescopeSetPoint > telescopeMotor.getSelectedSensorPosition()){
       SmartDashboard.putBoolean("Extension Coast", true);
+      SmartDashboard.putBoolean("Extension Power", false);
       telescopeMotor.set(ControlMode.PercentOutput, 0);
       telescopeMotor.setNeutralMode(NeutralMode.Coast);
     } else {
+      SmartDashboard.putBoolean("Extension Coast", false);
       SmartDashboard.putBoolean("Extension Power", true);
       updateWithPID();
     }

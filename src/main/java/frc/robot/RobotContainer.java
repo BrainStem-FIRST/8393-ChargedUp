@@ -55,11 +55,11 @@ public class RobotContainer {
   public final JoystickButton extend = new JoystickButton(driver2, XboxController.Button.kB.value);
 
     /* Subsystems */
-  private Swerve s_Swerve;
-  private Grabber mgrabber;
-  public Lift mlift;
-  public Extension mextension;
-  public Collector m_collector;
+  Swerve s_Swerve = new Swerve();
+  Grabber mgrabber = new Grabber();
+  Lift mlift = new Lift();
+  Extension mextension = new Extension();
+  Collector m_collector = new Collector();
   
 
   /* Commands */
@@ -67,23 +67,19 @@ public class RobotContainer {
   private LowPoleExtensionCommandGroup extendLow;
   private RetractedExtensionCommandGroup extendRetract;
   private CollectionExtensionCommandGroup extendCollect;
-  
+
+
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    s_Swerve = new Swerve();
-    mgrabber = new Grabber();
-    mextension = new Extension();
-    m_collector = new Collector();
-
+    
     extendHigh = new HighPoleExtensionCommandGroup(mextension);
     extendLow = new LowPoleExtensionCommandGroup(mextension);
     extendCollect = new CollectionExtensionCommandGroup(mextension);
     extendRetract = new RetractedExtensionCommandGroup(mextension);
     
-    mlift = new Lift();
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(
             s_Swerve,
@@ -122,7 +118,12 @@ public class RobotContainer {
     // extensionRatchet.whileFalse(new InstantCommand(() -> mextension.ratchetState = RatchetPosition.ENGAGED));
 
     extend.whileTrue(extendHigh);
+    // extend.whileTrue(new InstantCommand(() -> SmartDashboard.putBoolean("High Not Being Called", false)));
+    // extend.whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("High Not Being Called", true)));
+
     retract.whileTrue(extendRetract);
+    // retract.whileTrue(new InstantCommand(() -> SmartDashboard.putBoolean("Retract Not Being Called", false)));
+    // retract.whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Retract Not Being Called", true)));
 
     collectorOn.whileTrue(new InstantCommand(() -> m_collector.intakeState = IntakeState.IN));
     // collectorOut.whileTrue(new InstantCommand(() -> m_collector.intakeState = IntakeState.OUT));
@@ -150,6 +151,7 @@ public class RobotContainer {
     brainSTEMSubsystems.add(mlift);
     brainSTEMSubsystems.add(mextension);
     brainSTEMSubsystems.add(s_Swerve);
+
 
     return brainSTEMSubsystems;
   }
