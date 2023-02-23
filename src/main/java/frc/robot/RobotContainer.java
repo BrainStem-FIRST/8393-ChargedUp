@@ -52,10 +52,12 @@ public class RobotContainer {
   private final JoystickButton robotCentric = new JoystickButton(driver1, XboxController.Button.kLeftBumper.value);
 
   /* Driver 2 Buttons */
-  private final JoystickButton retract = new JoystickButton(driver2, XboxController.Button.kA.value);
-  public final JoystickButton extend = new JoystickButton(driver2, XboxController.Button.kB.value);
-  public final JoystickButton collectorOpen = new JoystickButton(driver2, XboxController.Button.kY.value);
-  public final JoystickButton collectorClose = new JoystickButton(driver2, XboxController.Button.kX.value);
+  private final JoystickButton retracted = new JoystickButton(driver2, XboxController.Button.kA.value);
+  private final JoystickButton collection = new JoystickButton(driver2, XboxController.Button.kB.value);
+  public final JoystickButton highPole = new JoystickButton(driver2, XboxController.Button.kY.value);
+  public final JoystickButton lowPole = new JoystickButton(driver2, XboxController.Button.kX.value);
+  public final JoystickButton collectorRun = new JoystickButton(driver2, XboxController.Button.kLeftBumper.value);
+  public final JoystickButton collectorClose = new JoystickButton(driver2, XboxController.Button.kRightBumper.value);
 
     /* Subsystems */
   Swerve s_Swerve = new Swerve();
@@ -119,17 +121,20 @@ public class RobotContainer {
     // resetEncoders.whileTrue(new InstantCommand(mlift::resetLiftEncoder));
     // extensionRatchet.whileTrue(new InstantCommand(() -> mextension.ratchetState = RatchetPosition.DISENGAGED));
     // extensionRatchet.whileFalse(new InstantCommand(() -> mextension.ratchetState = RatchetPosition.ENGAGED));
-
-    extend.toggleOnTrue(new InstantCommand(() -> mextension.scheduleHighPole()));
+    
+    retracted.toggleOnTrue(new InstantCommand(() -> mextension.scheduleRetracted()));
+    collection.toggleOnTrue(new InstantCommand(() -> mextension.scheduleCollection()));
+    lowPole.toggleOnTrue(new InstantCommand(() -> mextension.scheduleLowPole()));
+    highPole.toggleOnTrue(new InstantCommand(() -> mextension.scheduleHighPole()));
     // extend.whileTrue(new InstantCommand(() -> SmartDashboard.putBoolean("High Not Being Called", false)));
     // extend.whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("High Not Being Called", true)));
 
     // retract.whileTrue(new InstantCommand(() -> SmartDashboard.putBoolean("Retract Not Being Called", false)));
     // retract.whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Retract Not Being Called", true)));
 
-    collectorOn.whileTrue(new InstantCommand(() -> m_collector.intakeState = IntakeState.IN));
+    collectorRun.whileTrue(new InstantCommand(() -> m_collector.intakeState = IntakeState.IN));
     // collectorOut.whileTrue(new InstantCommand(() -> m_collector.intakeState = IntakeState.OUT));
-    collectorOn.whileFalse(new InstantCommand(() -> m_collector.intakeState = IntakeState.OFF));
+    collectorRun.whileFalse(new InstantCommand(() -> m_collector.intakeState = IntakeState.OFF));
 
     // collectorClose.whileTrue(new InstantCommand(() -> m_collector.collectorState = CollectorState.CLOSED));
     // collectorClose.whileFalse(new InstantCommand(() -> m_collector.collectorState = CollectorState.OFF));

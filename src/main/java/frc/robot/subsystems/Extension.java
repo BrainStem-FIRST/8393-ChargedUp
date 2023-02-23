@@ -5,11 +5,15 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commandGroups.CollectionExtensionCommandGroup;
 import frc.robot.commandGroups.HighPoleExtensionCommandGroup;
+import frc.robot.commandGroups.LowPoleExtensionCommandGroup;
+import frc.robot.commandGroups.RetractedExtensionCommandGroup;
 import frc.robot.utilities.BrainSTEMSubsystem;
 
 
@@ -21,6 +25,12 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     private static final double kproportional = 0.1; //FIXME //rename with ks snake case
     private static final double INTEGRAL = 1; //FIXME
     private static final double DERIVATIVE = 0; //FIXME
+    private static final int RETRACTED_TELESCOPE_VALUE = 0;
+    private static final int COLLECTION_TELESCOPE_VALUE = 5000;
+    private static final int LOW_POLE_TELESCOPE_VALUE = 10000;
+    private static final int HIGH_POLE_TELESCOPE_VALUE = 15000;
+    private static final int TELESCOPE_TOLERANCE = 200;
+    private static final double TELESCOPE_MAX_POWER = 0.35;
   }
 
   public enum RatchetPosition {
@@ -32,7 +42,8 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     RETRACTED,
     COLLECTION,
     LOW_POLE,
-    HIGH_POLE
+    HIGH_POLE,
+    TRANSITION
   }
 
   public RatchetPosition ratchetState = RatchetPosition.ENGAGED;
@@ -42,13 +53,21 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
   Servo ratchetServo;
   PIDController telescopePIDController;
   private int telescopeSetPoint = 0;
+  private RetractedExtensionCommandGroup retractedExtensionCommandGroup;
+  private CollectionExtensionCommandGroup collectionExtensionCommandGroup;
+  private LowPoleExtensionCommandGroup lowPoleExtensionCommandGroup;
   private HighPoleExtensionCommandGroup highPoleExtensionCommandGroup;
 
   public Extension() {
+    this.retractedExtensionCommandGroup = new RetractedExtensionCommandGroup(this);
+    this.collectionExtensionCommandGroup = new CollectionExtensionCommandGroup(this);
+    this.lowPoleExtensionCommandGroup = new LowPoleExtensionCommandGroup(this);
     this.highPoleExtensionCommandGroup = new HighPoleExtensionCommandGroup(this);
     telescopeMotor = new TalonFX(ExtensionConstants.extensionMotorID);
+    telescopeMotor.setInverted(true);
     ratchetServo = new Servo(ExtensionConstants.extensionServoID);
     telescopePIDController = new PIDController(ExtensionConstants.kproportional, ExtensionConstants.INTEGRAL, ExtensionConstants.DERIVATIVE);
+    telescopePIDController.setTolerance(ExtensionConstants.TELESCOPE_TOLERANCE);
     // extensionServo.setBounds(1200, 125, 1100, 75, 1000);
   }
 
@@ -69,7 +88,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     ratchetServo.set(1.0);
   }
 
-  private void ratchetControl() {
+  private void setRatchetState() {
       switch (ratchetState) {
       case ENGAGED:
         ratchetEngage();
@@ -80,6 +99,21 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     }
   }
 
+  public void scheduleRetracted() {
+    telescopeState = TelescopePosition.RETRACTED;
+    scheduleTelescopeCommand();
+  }
+
+  public void scheduleCollection() {
+    telescopeState = TelescopePosition.COLLECTION;
+    scheduleTelescopeCommand();
+  }
+
+  public void scheduleLowPole() {
+    telescopeState = TelescopePosition.LOW_POLE;
+    scheduleTelescopeCommand();
+  }
+
   public void scheduleHighPole() {
     telescopeState = TelescopePosition.HIGH_POLE;
     scheduleTelescopeCommand();
@@ -88,55 +122,86 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
   private void scheduleTelescopeCommand() {
     switch (telescopeState) {
       case RETRACTED:
-        telescopeSetPoint = 0; //make these constants //FIXME
+        retractedExtensionCommandGroup.schedule();
         break;
       case COLLECTION:
-        telescopeSetPoint = 100;
+        collectionExtensionCommandGroup.schedule();
         break;
       case LOW_POLE:
-        telescopeSetPoint = 200;
+        lowPoleExtensionCommandGroup.schedule();
         break;
       case HIGH_POLE:
         highPoleExtensionCommandGroup.schedule();
         break;
     }
-
   }
 
-  private void telescopeControl() { //set telescope state FIXME
+  public TelescopePosition getTelescopeState() {
+    if (inTolerance((int) telescopeMotor.getSelectedSensorPosition(), ExtensionConstants.RETRACTED_TELESCOPE_VALUE, ExtensionConstants.TELESCOPE_TOLERANCE)) {
+      return TelescopePosition.RETRACTED;
+    } else if (inTolerance((int) telescopeMotor.getSelectedSensorPosition(), ExtensionConstants.COLLECTION_TELESCOPE_VALUE, ExtensionConstants.TELESCOPE_TOLERANCE)) {
+      return TelescopePosition.COLLECTION;
+    } else if (inTolerance((int) telescopeMotor.getSelectedSensorPosition(), ExtensionConstants.LOW_POLE_TELESCOPE_VALUE, ExtensionConstants.TELESCOPE_TOLERANCE)) {
+      return TelescopePosition.LOW_POLE;
+    } else if (inTolerance((int) telescopeMotor.getSelectedSensorPosition(), ExtensionConstants.HIGH_POLE_TELESCOPE_VALUE, ExtensionConstants.TELESCOPE_TOLERANCE)) {
+      return TelescopePosition.HIGH_POLE;
+    } else {
+      return TelescopePosition.TRANSITION;
+    }
+      
+  }
+
+  public double getTelescopeMotorPosition() {
+    return telescopeMotor.getSelectedSensorPosition();
+  }
+
+  private boolean inTolerance(int currentPosition, int targetPosition, int tolerance) {
+    return (currentPosition > (targetPosition - tolerance)) &&
+      (currentPosition < (targetPosition + tolerance));
+  }
+
+  private void setTelescopeState() {
       switch (telescopeState) {
-      case RETRACTED:
-        telescopeSetPoint = 0; //make these constants //FIXME
+        case RETRACTED:
+        telescopeSetPoint = ExtensionConstants.RETRACTED_TELESCOPE_VALUE;
         break;
       case COLLECTION:
-        telescopeSetPoint = 100;
+        telescopeSetPoint = ExtensionConstants.COLLECTION_TELESCOPE_VALUE;
         break;
       case LOW_POLE:
-        telescopeSetPoint = 200;
+        telescopeSetPoint = ExtensionConstants.LOW_POLE_TELESCOPE_VALUE;
         break;
       case HIGH_POLE:
-        telescopeSetPoint = 300;
+        telescopeSetPoint = ExtensionConstants.HIGH_POLE_TELESCOPE_VALUE;
         break;
     }
   }
 
   private void updateWithPID(){
-    telescopeMotor.setNeutralMode(NeutralMode.Brake);
+    telescopeMotor.setNeutralMode(NeutralMode.Coast);
     telescopeMotor.set(
       TalonFXControlMode.PercentOutput, 
-      telescopePIDController.calculate(telescopeMotor.getSelectedSensorPosition(), telescopeSetPoint)
+      MathUtil.clamp(
+        telescopePIDController.calculate(telescopeMotor.getSelectedSensorPosition(), telescopeSetPoint),
+        -ExtensionConstants.TELESCOPE_MAX_POWER, ExtensionConstants.TELESCOPE_MAX_POWER
+      )
     );
   }
 
   @Override
   public void periodic() {
-    ratchetControl();
-    telescopeControl();
-    if(telescopeSetPoint > telescopeMotor.getSelectedSensorPosition()){
-      telescopeMotor.set(ControlMode.PercentOutput, 0);
-      telescopeMotor.setNeutralMode(NeutralMode.Coast);
+    setRatchetState();
+    setTelescopeState();
+    SmartDashboard.putNumber("Telescope Set Point", telescopeSetPoint);
+    SmartDashboard.putNumber("Telescope Current Position", telescopeMotor.getSelectedSensorPosition());
+    if(telescopeSetPoint > telescopeMotor.getSelectedSensorPosition()) {
+      SmartDashboard.putBoolean("Telescope Motor Power", false);
+      // telescopeMotor.set(ControlMode.PercentOutput, 0);
+      // telescopeMotor.setNeutralMode(NeutralMode.Coast);
+      // updateWithPID();
     } else {
-      updateWithPID();
+      SmartDashboard.putBoolean("Telescope Motor Power", true);
+      // updateWithPID();
     }
   }
 
