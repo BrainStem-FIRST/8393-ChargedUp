@@ -11,16 +11,21 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Collector extends SubsystemBase {
+  
   private static final class CollectorConstants {
-    private static final int clawMotorID = 19;
-    private static final int wheelMotorID = 22;
-    private static final double wheelMotorSpeed = 0.1; //FIXME
+    private static final int kclawMotorID = 19;
+    private static final int kwheelMotorID = 22;
     private static final int clawOpenPosition = 900; //FIXME
     private static final int clawClosePosition = 500; //FIXME
     private static final double PROPORTIONAL = 0.1; //FIXME
     private static final double INTEGRAL = 1; //FIXME
     private static final double DERIVATIVE = 0; //FIXME
     private static final double FEED_FORWARD = 0.000015; //FIXME
+    private static final double kclawMotorCurrentDrawLimit = 1; //FIXME
+    private static final double kclawMotorHoldingSpeed = 0; //FIXME
+    private static final double kwheelMotorSpeed = 0.1; //FIXME
+    private static final double kwheelMotorCurrentDrawLimit = 1; //FIXME
+  
 
   }
 
@@ -42,11 +47,11 @@ public class Collector extends SubsystemBase {
   CANSparkMax wheelMotor;
   RelativeEncoder clawMotorEncoder;
   PIDController clawMotorPIDController;
-  double clawMotorSetPoint = CollectorConstants.clawOpenPosition;
+  //double clawMotorSetPoint = CollectorConstants.clawOpenPosition;
   public Collector() {
-    clawMotor = new CANSparkMax(CollectorConstants.clawMotorID, MotorType.kBrushless);
+    clawMotor = new CANSparkMax(CollectorConstants.kclawMotorID, MotorType.kBrushless);
     clawMotorEncoder = clawMotor.getEncoder();
-    wheelMotor = new CANSparkMax(CollectorConstants.wheelMotorID, MotorType.kBrushless);
+    wheelMotor = new CANSparkMax(CollectorConstants.kwheelMotorID, MotorType.kBrushless);
     clawMotorPIDController = new PIDController(CollectorConstants.PROPORTIONAL, CollectorConstants.INTEGRAL, CollectorConstants.DERIVATIVE);
     wheelMotor.setInverted(true); 
   }
@@ -70,11 +75,15 @@ public class Collector extends SubsystemBase {
   }
 
   private void collectorIn() {
-    wheelMotor.set(CollectorConstants.wheelMotorSpeed);
+    if (wheelMotor.getOutputCurrent() < CollectorConstants.kwheelMotorCurrentDrawLimit) {
+      wheelMotor.set(CollectorConstants.kwheelMotorSpeed);
+    } else {
+      intakeState = IntakeState.OFF; // FIXME set a tiny power
+    }
   }
 
   private void collectorOut() {
-    wheelMotor.set(-CollectorConstants.wheelMotorSpeed);
+    wheelMotor.set(-CollectorConstants.kwheelMotorSpeed);
   }
 
   private void collectorOff() {
@@ -82,15 +91,19 @@ public class Collector extends SubsystemBase {
   }
 
   private void openCollector() {
-    clawMotorSetPoint = CollectorConstants.clawOpenPosition;
+    clawMotor.set(0.02);
   }
 
   private void closeCollector() {
-    clawMotorSetPoint = CollectorConstants.clawClosePosition;
+    if (clawMotor.getOutputCurrent() > CollectorConstants.kclawMotorCurrentDrawLimit) {
+      clawMotor.set(0.02);
+    } else {
+      clawMotor.set(CollectorConstants.kclawMotorHoldingSpeed);
+    }
   }
 
   @Override
-  public void periodic() {
+  public void periodic() { //single responsibility principle so yea
     switch (intakeState) {
       case IN:
         collectorIn();
@@ -112,7 +125,11 @@ public class Collector extends SubsystemBase {
         break;
     }
 
-    clawMotor.set(clawMotorPIDController.calculate(clawMotorEncoder.getPosition(), clawMotorSetPoint));
+    //clawMotor.set(clawMotorPIDController.calculate(clawMotorEncoder.getPosition(), clawMotorSetPoint));
+
+    SmartDashboard.putNumber("Collector Spinning Wheel Current Draw ", wheelMotor.getOutputCurrent());
+    SmartDashboard.putNumber("Collector Claw Motor Current Draw", clawMotor.getOutputCurrent());
+    
   }
 
   @Override

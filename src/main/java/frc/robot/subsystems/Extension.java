@@ -17,7 +17,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
   private static final class ExtensionConstants {
     private static final int extensionMotorID = 14; 
     private static final int extensionServoID = 9; 
-    private static final double PROPORTIONAL = 0.1; //FIXME
+    private static final double kproportional = 0.1; //FIXME //rename with ks snake case
     private static final double INTEGRAL = 1; //FIXME
     private static final double DERIVATIVE = 0; //FIXME
   }
@@ -45,7 +45,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
   public Extension() {
     telescopeMotor = new TalonFX(ExtensionConstants.extensionMotorID);
     ratchetServo = new Servo(ExtensionConstants.extensionServoID);
-    telescopePIDController = new PIDController(ExtensionConstants.PROPORTIONAL, ExtensionConstants.INTEGRAL, ExtensionConstants.DERIVATIVE);
+    telescopePIDController = new PIDController(ExtensionConstants.kproportional, ExtensionConstants.INTEGRAL, ExtensionConstants.DERIVATIVE);
     // extensionServo.setBounds(1200, 125, 1100, 75, 1000);
   }
 

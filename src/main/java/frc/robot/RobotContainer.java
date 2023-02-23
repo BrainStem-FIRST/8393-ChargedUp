@@ -53,10 +53,11 @@ public class RobotContainer {
   /* Driver 2 Buttons */
   private final JoystickButton retract = new JoystickButton(driver2, XboxController.Button.kA.value);
   public final JoystickButton extend = new JoystickButton(driver2, XboxController.Button.kB.value);
+  public final JoystickButton collectorOpen = new JoystickButton(driver2, XboxController.Button.kY.value);
+  public final JoystickButton collectorClose = new JoystickButton(driver2, XboxController.Button.kX.value);
 
     /* Subsystems */
   Swerve s_Swerve = new Swerve();
-  Grabber mgrabber = new Grabber();
   Lift mlift = new Lift();
   Extension mextension = new Extension();
   Collector m_collector = new Collector();
@@ -109,6 +110,7 @@ public class RobotContainer {
  
     liftUp.whileTrue(new InstantCommand(() -> mlift.state = LiftPosition.UP));
     liftDown.whileTrue(new InstantCommand(() -> mlift.state = LiftPosition.DOWN));
+
 
 
 
