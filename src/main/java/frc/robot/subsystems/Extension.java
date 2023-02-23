@@ -29,9 +29,9 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     private static final int k_collectionTelescopeValue = 60000;
     private static final int k_lowPoleTelescopeValue = 180000;
     private static final int k_highPoleTelescopeValue = 245000;
-    private static final int k_telescopeTolerance = 200;
+    private static final int k_telescopeTolerance = 1000;
     private static final double k_telescopeMaxPower = 0.35;
-    public static final int k_backMotorOffRatchetValue = 500; //FIXME
+    public static final int k_backMotorOffRatchetValue = 5000; //FIXME
   }
 
   public enum RatchetPosition {

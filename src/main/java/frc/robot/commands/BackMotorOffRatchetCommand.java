@@ -24,8 +24,7 @@ public class BackMotorOffRatchetCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        //if(m_extension.getTelescopeMotorPosition() )
-        return true;
+        return m_extension.isBackedOff();
     }
 
     
