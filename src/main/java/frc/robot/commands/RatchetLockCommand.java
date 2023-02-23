@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Extension;
 import frc.robot.subsystems.Extension.RatchetPosition;
@@ -20,17 +19,11 @@ public class RatchetLockCommand extends CommandBase {
     @Override
     public void initialize() {
         m_startTime = Timer.getFPGATimestamp();
-        m_extension.ratchetState = RatchetPosition.ENGAGED;
+        m_extension.m_ratchetState = RatchetPosition.ENGAGED;
     }
 
     @Override
     public boolean isFinished() {
-        if ((Timer.getFPGATimestamp() - m_startTime) < SERVO_RATCHET_TIME) {
-            return false;
-        } else {
-            return true;
-        }
+        return !((Timer.getFPGATimestamp() - m_startTime) < SERVO_RATCHET_TIME);
     }
-
-    
 }

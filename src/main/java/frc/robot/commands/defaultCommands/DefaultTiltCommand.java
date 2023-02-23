@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.defaultCommands;
 
 import frc.robot.subsystems.Tilt;
 import java.util.function.Supplier;

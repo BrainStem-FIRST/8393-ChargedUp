@@ -20,7 +20,7 @@ public class RatchetUnlockCommand extends CommandBase {
     @Override
     public void initialize() {
         m_startTime = Timer.getFPGATimestamp();
-        m_extension.ratchetState = RatchetPosition.DISENGAGED;
+        m_extension.m_ratchetState = RatchetPosition.DISENGAGED;
     }
 
     @Override

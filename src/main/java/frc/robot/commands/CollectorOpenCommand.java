@@ -23,7 +23,7 @@ public class CollectorOpenCommand extends CommandBase {
 
     @Override
     public void execute() {
-        collector.collectorState = CollectorState.OPEN;
+        collector.m_collectorState = CollectorState.OPEN;
     }
 
 

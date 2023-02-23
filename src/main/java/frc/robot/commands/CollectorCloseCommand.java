@@ -23,7 +23,7 @@ public class CollectorCloseCommand extends CommandBase {
 
     @Override
     public void execute() {
-        collector.collectorState = CollectorState.CLOSED;
+        collector.m_collectorState = CollectorState.CLOSED;
     }
 
 

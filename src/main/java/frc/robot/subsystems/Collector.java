@@ -6,20 +6,19 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Collector extends SubsystemBase {
   
   private static final class CollectorConstants {
-    private static final int kclawMotorID = 19;
-    private static final int kwheelMotorID = 22;
+    private static final int k_clawMotorID = 19;
+    private static final int k_wheelMotorID = 22;
   
-    private static final double kclawMotorCurrentDrawLimit = 0.15;
-    private static final double kclawMotorHoldingSpeed = 0;
-    private static final double kwheelMotorSpeed = 0.1; //FIXME
-    private static final double kwheelMotorCurrentDrawLimit = 1; //FIXME
+    private static final double k_clawMotorCurrentDrawLimit = 0.15;
+    private static final double k_clawMotorHoldingSpeed = 0;
+    private static final double k_wheelMotorSpeed = 0.1; //FIXME
+    private static final double k_wheelMotorCurrentDrawLimit = 3; //FIXME
 
   }
 
@@ -35,32 +34,33 @@ public class Collector extends SubsystemBase {
     OUT
   }
 
-  public CollectorState collectorState = CollectorState.OFF;
-  public IntakeState intakeState = IntakeState.OFF;
+  public CollectorState m_collectorState = CollectorState.OFF;
+  public IntakeState m_intakeState = IntakeState.OFF;
 
-  CANSparkMax clawMotor;
-  CANSparkMax wheelMotor;
-  RelativeEncoder clawMotorEncoder;
-  PIDController clawMotorPIDController;
+  CANSparkMax m_clawMotor;
+  CANSparkMax m_wheelMotor;
+  RelativeEncoder m_clawMotorEncoder;
+  PIDController m_clawMotorPIDController;
 
-  private boolean clawButtonPressed = false;
+  private boolean m_clawButtonPressed = false;
+  private boolean m_intakeButtonPressed = false;
 
   //double clawMotorSetPoint = CollectorConstants.clawOpenPosition;
   public Collector() {
-    clawMotor = new CANSparkMax(CollectorConstants.kclawMotorID, MotorType.kBrushless);
-    clawMotorEncoder = clawMotor.getEncoder();
-    wheelMotor = new CANSparkMax(CollectorConstants.kwheelMotorID, MotorType.kBrushless);
-    wheelMotor.setInverted(true); 
+    m_clawMotor = new CANSparkMax(CollectorConstants.k_clawMotorID, MotorType.kBrushless);
+    m_clawMotorEncoder = m_clawMotor.getEncoder();
+    m_wheelMotor = new CANSparkMax(CollectorConstants.k_wheelMotorID, MotorType.kBrushless);
+    m_wheelMotor.setInverted(true); 
   }
 
   public void initialize() {
-    clawMotorEncoder.setPosition(0);
-    clawMotor.setIdleMode(IdleMode.kBrake);
-    clawMotor.set(0);
+    m_clawMotorEncoder.setPosition(0);
+    m_clawMotor.setIdleMode(IdleMode.kBrake);
+    m_clawMotor.set(0);
   }
 
   public void resetLiftEncoder(){
-    clawMotorEncoder.setPosition(0);
+    m_clawMotorEncoder.setPosition(0);
   }
 
   public CommandBase exampleMethodCommand() {
@@ -71,69 +71,90 @@ public class Collector extends SubsystemBase {
   }
 
   private void collectorIn() {
-    if (wheelMotor.getOutputCurrent() < CollectorConstants.kwheelMotorCurrentDrawLimit) {
-      wheelMotor.set(CollectorConstants.kwheelMotorSpeed);
+    SmartDashboard.putNumber("Collector Current Draw", m_wheelMotor.getOutputCurrent());
+    if (m_wheelMotor.getOutputCurrent() < CollectorConstants.k_wheelMotorCurrentDrawLimit) {
+      m_wheelMotor.set(CollectorConstants.k_wheelMotorSpeed);
     } else {
-      intakeState = IntakeState.OFF; // FIXME set a tiny power
+      m_intakeState = IntakeState.OFF; // FIXME set a tiny power
     }
   }
 
   private void collectorOut() {
-    wheelMotor.set(-CollectorConstants.kwheelMotorSpeed);
+    m_wheelMotor.set(-CollectorConstants.k_wheelMotorSpeed);
   }
 
   private void collectorOff() {
-    wheelMotor.stopMotor();
+    m_wheelMotor.stopMotor();
   }
 
   private void stopCollector() {
-    clawMotor.stopMotor();
+    m_clawMotor.stopMotor();
   }
 
   private void openCollector() {
-    if (clawMotor.getOutputCurrent() < CollectorConstants.kclawMotorCurrentDrawLimit) {
-      clawMotor.set(-0.02);
+    if (m_clawMotor.getOutputCurrent() < CollectorConstants.k_clawMotorCurrentDrawLimit) {
+      m_clawMotor.set(-0.02);
       SmartDashboard.putNumber("Collector Power", -0.02);
     } else {
-      clawMotor.set(CollectorConstants.kclawMotorHoldingSpeed);
+      m_clawMotor.set(CollectorConstants.k_clawMotorHoldingSpeed);
       SmartDashboard.putNumber("Collector Power", 0.0);
     }
   }
 
   private void closeCollector() {
-    if (clawMotor.getOutputCurrent() < CollectorConstants.kclawMotorCurrentDrawLimit) {
-      clawMotor.set(0.02);
+    if (m_clawMotor.getOutputCurrent() < CollectorConstants.k_clawMotorCurrentDrawLimit) {
+      m_clawMotor.set(0.02);
       SmartDashboard.putNumber("Collector Power", 0.02);
     } else {
-      clawMotor.set(CollectorConstants.kclawMotorHoldingSpeed);
+      m_clawMotor.set(CollectorConstants.k_clawMotorHoldingSpeed);
       SmartDashboard.putNumber("Collector Power", 0.0);
     }
   }
 
   public void toggleClawButton() {
-    clawButtonPressed = false;
+    m_clawButtonPressed = false;
   }
 
   public void toggleClawState() {
-    if (!clawButtonPressed) {
-      switch (collectorState) {
+    if (!m_clawButtonPressed) {
+      switch (m_collectorState) {
         case OPEN:
-          collectorState = CollectorState.CLOSED;
+          m_collectorState = CollectorState.CLOSED;
           break;
         case CLOSED:
-          collectorState = CollectorState.OPEN;
+          m_collectorState = CollectorState.OPEN;
           break;
         case OFF:
-          collectorState = CollectorState.OPEN;
+          m_collectorState = CollectorState.OPEN;
           break;
       }
     } else {
-      clawButtonPressed = true;
+      m_clawButtonPressed = true;
     }
   }
 
+  public void toggleIntakeState() {
+    if (!m_intakeButtonPressed) {
+      switch (m_intakeState) {
+        case IN:
+          m_intakeState = IntakeState.OFF;
+          break;
+        case OFF:
+          m_intakeState = IntakeState.IN;
+          break;
+      }
+    } else {
+      m_intakeButtonPressed = true;
+    }
+  }
+
+  public void toggleIntakeButton() {
+    m_intakeButtonPressed = false;
+  }
+
+
   private void setIntakeState() {
-    switch (intakeState) {
+    switch (m_intakeState) {
       case IN:
         collectorIn();
         break;
@@ -147,7 +168,7 @@ public class Collector extends SubsystemBase {
   }
 
   private void setCollectorState() {
-    switch (collectorState) {
+    switch (m_collectorState) {
       case OPEN:
         openCollector();
         break;
@@ -166,8 +187,8 @@ public class Collector extends SubsystemBase {
     setCollectorState();
 
 
-    SmartDashboard.putNumber("Collector Spinning Wheel Current Draw ", wheelMotor.getOutputCurrent());
-    SmartDashboard.putNumber("Collector Claw Motor Current Draw", clawMotor.getOutputCurrent());
+    SmartDashboard.putNumber("Collector Spinning Wheel Current Draw ", m_wheelMotor.getOutputCurrent());
+    SmartDashboard.putNumber("Collector Claw Motor Current Draw", m_clawMotor.getOutputCurrent());
     
   }
 

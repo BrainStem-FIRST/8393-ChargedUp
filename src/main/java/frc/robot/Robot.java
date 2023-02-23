@@ -107,8 +107,8 @@ public class Robot extends TimedRobot {
     // if(m_robotContainer.driver1.getRawAxis(m_robotContainer.translationAxis) > 0.1){
     //   m_robotContainer.mlift = new Lift();
     // }
-    if(!m_robotContainer.liftUp.getAsBoolean() && !m_robotContainer.liftDown.getAsBoolean()){
-      m_robotContainer.mlift.state = LiftPosition.STOP;
+    if(!m_robotContainer.m_liftUp.getAsBoolean() && !m_robotContainer.m_liftDown.getAsBoolean()){
+      m_robotContainer.m_lift.state = LiftPosition.STOP;
     }
   }
 
