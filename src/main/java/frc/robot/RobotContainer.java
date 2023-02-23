@@ -77,6 +77,11 @@ public class RobotContainer {
     mgrabber = new Grabber();
     mextension = new Extension();
     m_collector = new Collector();
+
+    extendHigh = new HighPoleExtensionCommandGroup(mextension);
+    extendLow = new LowPoleExtensionCommandGroup(mextension);
+    extendCollect = new CollectionExtensionCommandGroup(mextension);
+    extendRetract = new RetractedExtensionCommandGroup(mextension);
     
     mlift = new Lift();
     s_Swerve.setDefaultCommand(
