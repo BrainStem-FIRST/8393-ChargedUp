@@ -25,7 +25,7 @@ public class ExtensionCommand extends CommandBase {
     }
 
     @Override
-    public void execute(){
+    public void execute() {
         m_extension.telescopeState = m_telescopePosition;
         stop = true;
     }

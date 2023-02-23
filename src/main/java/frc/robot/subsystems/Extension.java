@@ -58,21 +58,12 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     telescopeMotor.setSelectedSensorPosition(0);
   }
 
-  public void fullExtend(){
-
-  }
-
   public void ratchetDisengage(){
     ratchetServo.set(0.0);
   }
 
   public void ratchetEngage(){
     ratchetServo.set(1.0);
-  }
-
-
-  public void extend(double distance){
-
   }
 
   private void ratchetControl() {
@@ -86,10 +77,10 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     }
   }
 
-  private void telescopeControl() {
+  private void telescopeControl() { //set telescope state FIXME
       switch (telescopeState) {
       case RETRACTED:
-        telescopeSetPoint = 0;
+        telescopeSetPoint = 0; //make these constants //FIXME
         break;
       case COLLECTION:
         telescopeSetPoint = 100;
@@ -104,6 +95,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
   }
 
   private void updateWithPID(){
+    telescopeMotor.setNeutralMode(NeutralMode.Brake);
     telescopeMotor.set(
       TalonFXControlMode.PercentOutput, 
       telescopePIDController.calculate(telescopeMotor.getSelectedSensorPosition(), telescopeSetPoint)
@@ -115,13 +107,9 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     ratchetControl();
     telescopeControl();
     if(telescopeSetPoint > telescopeMotor.getSelectedSensorPosition()){
-      SmartDashboard.putBoolean("Extension Coast", true);
-      SmartDashboard.putBoolean("Extension Power", false);
       telescopeMotor.set(ControlMode.PercentOutput, 0);
       telescopeMotor.setNeutralMode(NeutralMode.Coast);
     } else {
-      SmartDashboard.putBoolean("Extension Coast", false);
-      SmartDashboard.putBoolean("Extension Power", true);
       updateWithPID();
     }
   }

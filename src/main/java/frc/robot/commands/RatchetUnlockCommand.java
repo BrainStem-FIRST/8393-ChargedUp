@@ -24,20 +24,19 @@ public class RatchetUnlockCommand extends CommandBase {
     }
 
     @Override
-    public void execute(){
-        if(isDone){
-        } else {
+    public void execute() {
+        if(!isDone) {
             m_startTime = Timer.getFPGATimestamp();
-            while((Timer.getFPGATimestamp() - m_startTime) < SERVO_RATCHET_TIME){
+            while((Timer.getFPGATimestamp() - m_startTime) < SERVO_RATCHET_TIME) {
                 
-            }
+            }// FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
             isDone = true;
         } 
     }
 
     @Override
     public boolean isFinished() {
-        if(isDone){
+        if(isDone) {
             isDone = false;
             return true;
         } else {
