@@ -15,14 +15,9 @@ public class Collector extends SubsystemBase {
   private static final class CollectorConstants {
     private static final int kclawMotorID = 19;
     private static final int kwheelMotorID = 22;
-    private static final int clawOpenPosition = 900; //FIXME
-    private static final int clawClosePosition = 500; //FIXME
-    private static final double PROPORTIONAL = 0.1; //FIXME
-    private static final double INTEGRAL = 1; //FIXME
-    private static final double DERIVATIVE = 0; //FIXME
-    private static final double FEED_FORWARD = 0.000015; //FIXME
-    private static final double kclawMotorCurrentDrawLimit = 1; //FIXME
-    private static final double kclawMotorHoldingSpeed = 0; //FIXME
+  
+    private static final double kclawMotorCurrentDrawLimit = 0.15;
+    private static final double kclawMotorHoldingSpeed = 0;
     private static final double kwheelMotorSpeed = 0.1; //FIXME
     private static final double kwheelMotorCurrentDrawLimit = 1; //FIXME
 
@@ -55,14 +50,12 @@ public class Collector extends SubsystemBase {
     clawMotor = new CANSparkMax(CollectorConstants.kclawMotorID, MotorType.kBrushless);
     clawMotorEncoder = clawMotor.getEncoder();
     wheelMotor = new CANSparkMax(CollectorConstants.kwheelMotorID, MotorType.kBrushless);
-    clawMotorPIDController = new PIDController(CollectorConstants.PROPORTIONAL, CollectorConstants.INTEGRAL, CollectorConstants.DERIVATIVE);
     wheelMotor.setInverted(true); 
   }
 
   public void initialize() {
     clawMotorEncoder.setPosition(0);
     clawMotor.setIdleMode(IdleMode.kBrake);
-    clawMotorPIDController.setTolerance(15);
     clawMotor.set(0);
   }
 
@@ -100,16 +93,20 @@ public class Collector extends SubsystemBase {
   private void openCollector() {
     if (clawMotor.getOutputCurrent() < CollectorConstants.kclawMotorCurrentDrawLimit) {
       clawMotor.set(-0.02);
+      SmartDashboard.putNumber("Collector Power", -0.02);
     } else {
       clawMotor.set(CollectorConstants.kclawMotorHoldingSpeed);
+      SmartDashboard.putNumber("Collector Power", 0.0);
     }
   }
 
   private void closeCollector() {
     if (clawMotor.getOutputCurrent() < CollectorConstants.kclawMotorCurrentDrawLimit) {
       clawMotor.set(0.02);
+      SmartDashboard.putNumber("Collector Power", 0.02);
     } else {
       clawMotor.set(CollectorConstants.kclawMotorHoldingSpeed);
+      SmartDashboard.putNumber("Collector Power", 0.0);
     }
   }
 
