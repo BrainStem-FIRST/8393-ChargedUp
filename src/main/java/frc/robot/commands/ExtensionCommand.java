@@ -21,24 +21,18 @@ public class ExtensionCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        //m_extension.telescopeState = m_telescopePosition;
+        SmartDashboard.putBoolean("Extension Command", true);
+        m_extension.telescopeState = m_telescopePosition;
     }
 
     @Override
     public void execute() {
-        SmartDashboard.putString("Extension Command", "true");
-        m_extension.telescopeState = m_telescopePosition;
-        stop = true;
+    
     }
 
     @Override
     public boolean isFinished() {
-        if(stop){
-            stop = false;
-            return true;
-        } else {
-            return false;
-        }
+        return true;
     }
 
     
