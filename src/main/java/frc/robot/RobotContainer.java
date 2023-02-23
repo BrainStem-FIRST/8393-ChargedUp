@@ -18,6 +18,7 @@ import frc.robot.commandGroups.LowPoleExtensionCommandGroup;
 import frc.robot.commandGroups.RetractedExtensionCommandGroup;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.Collector.CollectorState;
 import frc.robot.subsystems.Collector.IntakeState;
 import frc.robot.subsystems.Extension.RatchetPosition;
 import frc.robot.subsystems.Extension.TelescopePosition;
@@ -130,6 +131,12 @@ public class RobotContainer {
     collectorOn.whileTrue(new InstantCommand(() -> m_collector.intakeState = IntakeState.IN));
     // collectorOut.whileTrue(new InstantCommand(() -> m_collector.intakeState = IntakeState.OUT));
     collectorOn.whileFalse(new InstantCommand(() -> m_collector.intakeState = IntakeState.OFF));
+
+    // collectorClose.whileTrue(new InstantCommand(() -> m_collector.collectorState = CollectorState.CLOSED));
+    // collectorClose.whileFalse(new InstantCommand(() -> m_collector.collectorState = CollectorState.OFF));
+
+    collectorClose.toggleOnTrue(new InstantCommand(() -> m_collector.toggleClawState()));
+    collectorClose.toggleOnFalse(new InstantCommand(() -> m_collector.toggleClawButton()));
 
     zeroGyro.whileTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
     // spinNeoMotor.whileTrue(new InstantCommand(() -> mgrabber.collectorOn()));

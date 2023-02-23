@@ -25,13 +25,13 @@ public class Collector extends SubsystemBase {
     private static final double kclawMotorHoldingSpeed = 0; //FIXME
     private static final double kwheelMotorSpeed = 0.1; //FIXME
     private static final double kwheelMotorCurrentDrawLimit = 1; //FIXME
-  
 
   }
 
   public enum CollectorState {
     OPEN,
-    CLOSED
+    CLOSED,
+    OFF
   }
 
   public enum IntakeState {
@@ -40,13 +40,16 @@ public class Collector extends SubsystemBase {
     OUT
   }
 
-  public CollectorState collectorState = CollectorState.CLOSED;
+  public CollectorState collectorState = CollectorState.OFF;
   public IntakeState intakeState = IntakeState.OFF;
 
   CANSparkMax clawMotor;
   CANSparkMax wheelMotor;
   RelativeEncoder clawMotorEncoder;
   PIDController clawMotorPIDController;
+
+  private boolean clawButtonPressed = false;
+
   //double clawMotorSetPoint = CollectorConstants.clawOpenPosition;
   public Collector() {
     clawMotor = new CANSparkMax(CollectorConstants.kclawMotorID, MotorType.kBrushless);
@@ -90,20 +93,49 @@ public class Collector extends SubsystemBase {
     wheelMotor.stopMotor();
   }
 
+  private void stopCollector() {
+    clawMotor.stopMotor();
+  }
+
   private void openCollector() {
-    clawMotor.set(0.02);
+    if (clawMotor.getOutputCurrent() < CollectorConstants.kclawMotorCurrentDrawLimit) {
+      clawMotor.set(-0.02);
+    } else {
+      clawMotor.set(CollectorConstants.kclawMotorHoldingSpeed);
+    }
   }
 
   private void closeCollector() {
-    if (clawMotor.getOutputCurrent() > CollectorConstants.kclawMotorCurrentDrawLimit) {
+    if (clawMotor.getOutputCurrent() < CollectorConstants.kclawMotorCurrentDrawLimit) {
       clawMotor.set(0.02);
     } else {
       clawMotor.set(CollectorConstants.kclawMotorHoldingSpeed);
     }
   }
 
-  @Override
-  public void periodic() { //single responsibility principle so yea
+  public void toggleClawButton() {
+    clawButtonPressed = false;
+  }
+
+  public void toggleClawState() {
+    if (!clawButtonPressed) {
+      switch (collectorState) {
+        case OPEN:
+          collectorState = CollectorState.CLOSED;
+          break;
+        case CLOSED:
+          collectorState = CollectorState.OPEN;
+          break;
+        case OFF:
+          collectorState = CollectorState.OPEN;
+          break;
+      }
+    } else {
+      clawButtonPressed = true;
+    }
+  }
+
+  private void setIntakeState() {
     switch (intakeState) {
       case IN:
         collectorIn();
@@ -115,7 +147,9 @@ public class Collector extends SubsystemBase {
         collectorOut();
         break;
     } 
+  }
 
+  private void setCollectorState() {
     switch (collectorState) {
       case OPEN:
         openCollector();
@@ -123,9 +157,17 @@ public class Collector extends SubsystemBase {
       case CLOSED:
         closeCollector();
         break;
+      case OFF:
+        stopCollector();
+        break;
     }
+  }
 
-    //clawMotor.set(clawMotorPIDController.calculate(clawMotorEncoder.getPosition(), clawMotorSetPoint));
+  @Override
+  public void periodic() { //single responsibility principle so yea
+    setIntakeState();
+    setCollectorState();
+
 
     SmartDashboard.putNumber("Collector Spinning Wheel Current Draw ", wheelMotor.getOutputCurrent());
     SmartDashboard.putNumber("Collector Claw Motor Current Draw", clawMotor.getOutputCurrent());
