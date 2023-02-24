@@ -19,7 +19,7 @@ public class BackMotorOffRatchetCommand extends CommandBase {
 
     @Override
     public void initialize(){
-        m_extension.m_unlockPosition = ExtensionConstants.k_backMotorOffRatchetValue;
+        m_extension.m_telescopeState = TelescopePosition.BACK_OFF;
     }
 
     @Override

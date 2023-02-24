@@ -41,44 +41,44 @@ public class RobotContainer {
     public static final int k_rightJoystickButton = 11;
 }
 
-    /* Controllers */
+  /* Controllers */
     public final Joystick m_driver1 = new Joystick(0);
     private final Joystick m_driver2 = new Joystick(1);
     public static final double k_stickDeadband = 0.1;
 
-    /* Drive Controls */
+  /* Drive Controls */
     final int k_translationAxis = XboxController.Axis.kLeftY.value;
     private final int k_strafeAxis = XboxController.Axis.kLeftX.value;
     private final int k_rotationAxis = XboxController.Axis.kRightX.value;
 
   /* Driver 1 Buttons */
-  private final JoystickButton m_extensionOn = new JoystickButton(m_driver1, JoystickConstants.k_rightTrigger);
-  public final JoystickButton m_liftUp = new JoystickButton(m_driver1, JoystickConstants.k_yButton);
-  public final JoystickButton m_liftDown = new JoystickButton(m_driver1, JoystickConstants.k_bButton); 
-  private final JoystickButton m_liftStop = new JoystickButton(m_driver1, JoystickConstants.k_xButton);
-  private final JoystickButton m_collectorOn = new JoystickButton(m_driver1, JoystickConstants.k_rightBumper);
-  private final JoystickButton m_collectorOut = new JoystickButton(m_driver1, JoystickConstants.k_leftBumper);
-  private final JoystickButton m_zeroGyro = new JoystickButton(m_driver1, JoystickConstants.k_yButton);
-  private final JoystickButton m_robotCentric = new JoystickButton(m_driver1, JoystickConstants.k_leftBumper);
+    private final JoystickButton m_extensionOn = new JoystickButton(m_driver1, JoystickConstants.k_rightTrigger);
+    public final JoystickButton m_liftUp = new JoystickButton(m_driver1, JoystickConstants.k_yButton);
+    public final JoystickButton m_liftDown = new JoystickButton(m_driver1, JoystickConstants.k_bButton); 
+    private final JoystickButton m_liftStop = new JoystickButton(m_driver1, JoystickConstants.k_xButton);
+    private final JoystickButton m_collectorOn = new JoystickButton(m_driver1, JoystickConstants.k_rightBumper);
+    private final JoystickButton m_collectorOut = new JoystickButton(m_driver1, JoystickConstants.k_leftBumper);
+    private final JoystickButton m_zeroGyro = new JoystickButton(m_driver1, JoystickConstants.k_yButton);
+    private final JoystickButton m_robotCentric = new JoystickButton(m_driver1, JoystickConstants.k_leftBumper);
 
   /* Driver 2 Buttons */
-  private final JoystickButton m_retracted = new JoystickButton(m_driver2, JoystickConstants.k_aButton);
-  private final JoystickButton m_collection = new JoystickButton(m_driver2, JoystickConstants.k_bButton);
-  public final JoystickButton m_highPole = new JoystickButton(m_driver2, JoystickConstants.k_yButton);
-  public final JoystickButton m_lowPole = new JoystickButton(m_driver2, JoystickConstants.k_xButton);
-  public final JoystickButton m_collectorRun = new JoystickButton(m_driver2, JoystickConstants.k_leftBumper);
-  public final JoystickButton m_collectorClose = new JoystickButton(m_driver2, JoystickConstants.k_rightBumper);
+    private final JoystickButton m_retracted = new JoystickButton(m_driver2, JoystickConstants.k_aButton);
+    private final JoystickButton m_collection = new JoystickButton(m_driver2, JoystickConstants.k_bButton);
+    public final JoystickButton m_highPole = new JoystickButton(m_driver2, JoystickConstants.k_yButton);
+    public final JoystickButton m_lowPole = new JoystickButton(m_driver2, JoystickConstants.k_xButton);
+    public final JoystickButton m_collectorRun = new JoystickButton(m_driver2, JoystickConstants.k_leftBumper);
+    public final JoystickButton m_collectorClose = new JoystickButton(m_driver2, JoystickConstants.k_rightBumper);
 
-    /* Subsystems */
-  Swerve m_swerve = new Swerve();
-  Lift m_lift = new Lift();
-  Extension m_extension = new Extension();
-  Collector m_collector = new Collector();
+  /* Subsystems */
+    Swerve m_swerve = new Swerve();
+    Lift m_lift = new Lift();
+    Extension m_extension = new Extension();
+    Collector m_collector = new Collector();
   
 
-  /* Commands */
+  
 
-  /**
+  /*
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
@@ -108,7 +108,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    /* Driver Buttons */
+  /* Driver Buttons */
  
     m_liftUp.whileTrue(new InstantCommand(() -> m_lift.state = LiftPosition.UP));
     m_liftDown.whileTrue(new InstantCommand(() -> m_lift.state = LiftPosition.DOWN));

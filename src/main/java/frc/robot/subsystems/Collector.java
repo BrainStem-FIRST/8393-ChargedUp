@@ -15,10 +15,10 @@ public class Collector extends SubsystemBase {
     private static final int k_clawMotorID = 19;
     private static final int k_wheelMotorID = 22;
   
-    private static final double k_clawMotorCurrentDrawLimit = 0.15;
+    private static final double k_clawMotorCurrentDrawLimit = 0.3;
     private static final double k_clawMotorHoldingSpeed = 0;
-    private static final double k_wheelMotorSpeed = 0.1; //FIXME
-    private static final double k_wheelMotorCurrentDrawLimit = 3; //FIXME
+    private static final double k_wheelMotorSpeed = 0.2; //FIXME
+    private static final double k_wheelMotorCurrentDrawLimit = 6; //FIXME
 
   }
 
