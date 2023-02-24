@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.Collector.CollectorState;
+import frc.robot.subsystems.Collector.IntakeState;
 import frc.robot.subsystems.Lift.LiftPosition;
 import frc.robot.utilities.BrainSTEMSubsystem;
 
@@ -52,13 +54,10 @@ public class RobotContainer {
     private final int k_rotationAxis = XboxController.Axis.kRightX.value;
 
   /* Driver 1 Buttons */
-    private final JoystickButton m_extensionOn = new JoystickButton(m_driver1, JoystickConstants.k_rightTrigger);
-    public final JoystickButton m_liftUp = new JoystickButton(m_driver1, JoystickConstants.k_yButton);
-    public final JoystickButton m_liftDown = new JoystickButton(m_driver1, JoystickConstants.k_bButton); 
-    private final JoystickButton m_liftStop = new JoystickButton(m_driver1, JoystickConstants.k_xButton);
-    private final JoystickButton m_collectorOn = new JoystickButton(m_driver1, JoystickConstants.k_rightBumper);
-    private final JoystickButton m_collectorOut = new JoystickButton(m_driver1, JoystickConstants.k_leftBumper);
-    private final JoystickButton m_zeroGyro = new JoystickButton(m_driver1, JoystickConstants.k_yButton);
+    private final JoystickButton m_driver1AButton = new JoystickButton(m_driver1, JoystickConstants.k_aButton);
+    private final JoystickButton m_driver1BButton = new JoystickButton(m_driver1, JoystickConstants.k_bButton);
+    private final JoystickButton m_driver1XButton = new JoystickButton(m_driver1, JoystickConstants.k_xButton);
+    private final JoystickButton m_zeroGyro = new JoystickButton(m_driver1, JoystickConstants.k_startButton);
     private final JoystickButton m_robotCentric = new JoystickButton(m_driver1, JoystickConstants.k_leftBumper);
 
   /* Driver 2 Buttons */
@@ -66,17 +65,14 @@ public class RobotContainer {
     private final JoystickButton m_collection = new JoystickButton(m_driver2, JoystickConstants.k_bButton);
     public final JoystickButton m_highPole = new JoystickButton(m_driver2, JoystickConstants.k_yButton);
     public final JoystickButton m_lowPole = new JoystickButton(m_driver2, JoystickConstants.k_xButton);
-    public final JoystickButton m_collectorRun = new JoystickButton(m_driver2, JoystickConstants.k_leftBumper);
-    public final JoystickButton m_collectorClose = new JoystickButton(m_driver2, JoystickConstants.k_rightBumper);
+    public final JoystickButton m_driver2LeftBumper = new JoystickButton(m_driver2, JoystickConstants.k_leftBumper);
+    public final JoystickButton m_driver2RightBumper = new JoystickButton(m_driver2, JoystickConstants.k_rightBumper);
 
   /* Subsystems */
     Swerve m_swerve = new Swerve();
     Lift m_lift = new Lift();
     Extension m_extension = new Extension();
     Collector m_collector = new Collector();
-  
-
-  
 
   /*
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -110,40 +106,22 @@ public class RobotContainer {
   private void configureButtonBindings() {
   /* Driver Buttons */
  
-    m_liftUp.whileTrue(new InstantCommand(() -> m_lift.state = LiftPosition.UP));
-    m_liftDown.whileTrue(new InstantCommand(() -> m_lift.state = LiftPosition.DOWN));
+    m_driver1AButton.toggleOnTrue(new InstantCommand(() -> m_collector.turnOnCollection()));
+    m_driver1BButton.toggleOnTrue(new InstantCommand(() -> m_collector.turnOffCollection()));
+    m_driver1XButton.toggleOnTrue(new InstantCommand(() -> m_collector.turnOnDepositing()));
 
-
-
-
-    // liftStop.whileTrue(new InstantCommand(() -> mlift.state = LiftPosition.STOP));
-    // resetEncoders.whileTrue(new InstantCommand(mlift::resetLiftEncoder));
-    // extensionRatchet.whileTrue(new InstantCommand(() -> mextension.ratchetState = RatchetPosition.DISENGAGED));
-    // extensionRatchet.whileFalse(new InstantCommand(() -> mextension.ratchetState = RatchetPosition.ENGAGED));
-    
     m_retracted.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleRetracted()));
+    m_retracted.toggleOnTrue(new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF));
+    m_retracted.toggleOnTrue(new InstantCommand(() -> m_collector.m_collectorState = CollectorState.OFF));
+    
     m_collection.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleCollection()));
     m_lowPole.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleLowPole()));
     m_highPole.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleHighPole()));
-    // extend.whileTrue(new InstantCommand(() -> SmartDashboard.putBoolean("High Not Being Called", false)));
-    // extend.whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("High Not Being Called", true)));
 
-    // retract.whileTrue(new InstantCommand(() -> SmartDashboard.putBoolean("Retract Not Being Called", false)));
-    // retract.whileFalse(new InstantCommand(() -> SmartDashboard.putBoolean("Retract Not Being Called", true)));
-
-    m_collectorRun.toggleOnTrue(new InstantCommand(() -> m_collector.toggleIntakeState()));
-    // collectorOut.whileTrue(new InstantCommand(() -> m_collector.intakeState = IntakeState.OUT));
-    m_collectorRun.toggleOnFalse(new InstantCommand(() -> m_collector.toggleIntakeButton()));
-
-    // collectorClose.whileTrue(new InstantCommand(() -> m_collector.collectorState = CollectorState.CLOSED));
-    // collectorClose.whileFalse(new InstantCommand(() -> m_collector.collectorState = CollectorState.OFF));
-
-    m_collectorClose.toggleOnTrue(new InstantCommand(() -> m_collector.toggleClawState()));
-    m_collectorClose.toggleOnFalse(new InstantCommand(() -> m_collector.toggleClawButton()));
+    m_driver2LeftBumper.toggleOnTrue(new InstantCommand(() -> m_lift.m_state = LiftPosition.GROUND_COLLECTION));
+    m_driver2RightBumper.toggleOnTrue(new InstantCommand(() -> m_lift.m_state = LiftPosition.CARRY));
 
     m_zeroGyro.whileTrue(new InstantCommand(() -> m_swerve.zeroGyro()));
-    // spinNeoMotor.whileTrue(new InstantCommand(() -> mgrabber.collectorOn()));
-    // spinNeoMotor.onFalse(new InstantCommand(() -> mgrabber.collectorOff()));
   }
 
   /**

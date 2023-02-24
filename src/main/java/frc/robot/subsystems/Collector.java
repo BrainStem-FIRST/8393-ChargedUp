@@ -15,10 +15,12 @@ public class Collector extends SubsystemBase {
     private static final int k_clawMotorID = 19;
     private static final int k_wheelMotorID = 22;
   
-    private static final double k_clawMotorCurrentDrawLimit = 0.3;
-    private static final double k_clawMotorHoldingSpeed = 0;
-    private static final double k_wheelMotorSpeed = 0.2; //FIXME
-    private static final double k_wheelMotorCurrentDrawLimit = 6; //FIXME
+    private static final double k_clawMotorCurrentDrawLimit = 10;
+    private static final double k_clawMotorHoldingSpeed = 0.01;
+    private static final double k_clawMotorCloseSpeed = 0.05;
+    private static final double k_clawMotorOpenSpeed = -0.05;
+    private static final double k_wheelMotorSpeed = 0.3; //FIXME
+    private static final double k_wheelMotorCurrentDrawLimit = 25; //FIXME
 
   }
 
@@ -70,12 +72,28 @@ public class Collector extends SubsystemBase {
         });
   }
 
+  public void turnOnCollection() {
+    m_intakeState = IntakeState.IN;
+    m_collectorState = CollectorState.OFF;
+  }
+
+  public void turnOnDepositing() {
+    m_intakeState = IntakeState.OUT;
+    m_collectorState = CollectorState.OPEN;
+  }
+
+  public void turnOffCollection() {
+    m_intakeState = IntakeState.OFF;
+    m_collectorState = CollectorState.OFF;
+  }
+
   private void collectorIn() {
     SmartDashboard.putNumber("Collector Current Draw", m_wheelMotor.getOutputCurrent());
     if (m_wheelMotor.getOutputCurrent() < CollectorConstants.k_wheelMotorCurrentDrawLimit) {
       m_wheelMotor.set(CollectorConstants.k_wheelMotorSpeed);
     } else {
-      m_intakeState = IntakeState.OFF; // FIXME set a tiny power
+      m_intakeState = IntakeState.OFF;
+      m_collectorState = CollectorState.CLOSED;
     }
   }
 
@@ -93,21 +111,17 @@ public class Collector extends SubsystemBase {
 
   private void openCollector() {
     if (m_clawMotor.getOutputCurrent() < CollectorConstants.k_clawMotorCurrentDrawLimit) {
-      m_clawMotor.set(-0.02);
-      SmartDashboard.putNumber("Collector Power", -0.02);
+      m_clawMotor.set(CollectorConstants.k_clawMotorOpenSpeed);
     } else {
       m_clawMotor.set(CollectorConstants.k_clawMotorHoldingSpeed);
-      SmartDashboard.putNumber("Collector Power", 0.0);
     }
   }
 
   private void closeCollector() {
     if (m_clawMotor.getOutputCurrent() < CollectorConstants.k_clawMotorCurrentDrawLimit) {
-      m_clawMotor.set(0.02);
-      SmartDashboard.putNumber("Collector Power", 0.02);
+      m_clawMotor.set(CollectorConstants.k_clawMotorCloseSpeed);
     } else {
       m_clawMotor.set(CollectorConstants.k_clawMotorHoldingSpeed);
-      SmartDashboard.putNumber("Collector Power", 0.0);
     }
   }
 

@@ -11,6 +11,8 @@ import frc.robot.subsystems.Extension.TelescopePosition;
 public class BackMotorOffRatchetCommand extends CommandBase {
     
     private final Extension m_extension;
+    private double m_startTime;
+    private double BACKOFF_TIME = 0.25;
     
     public BackMotorOffRatchetCommand(Extension extension) {
         m_extension = extension;
@@ -18,14 +20,18 @@ public class BackMotorOffRatchetCommand extends CommandBase {
     }
 
     @Override
-    public void initialize(){
-        m_extension.m_telescopeState = TelescopePosition.BACK_OFF;
+    public void initialize() {
+        m_startTime = Timer.getFPGATimestamp();
+        m_extension.m_telescopeBackOff = true;
     }
 
     @Override
     public boolean isFinished() {
-        return m_extension.isBackedOff();
+        if ((Timer.getFPGATimestamp() - m_startTime) > BACKOFF_TIME) {
+            m_extension.m_telescopeBackOff = false;
+            return true;
+        } else {
+            return false;
+        }
     }
-
-    
 }

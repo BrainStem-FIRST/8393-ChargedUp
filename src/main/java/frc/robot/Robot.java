@@ -104,12 +104,6 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    // if(m_robotContainer.driver1.getRawAxis(m_robotContainer.translationAxis) > 0.1){
-    //   m_robotContainer.mlift = new Lift();
-    // }
-    if(!m_robotContainer.m_liftUp.getAsBoolean() && !m_robotContainer.m_liftDown.getAsBoolean()){
-      m_robotContainer.m_lift.state = LiftPosition.STOP;
-    }
   }
 
   @Override

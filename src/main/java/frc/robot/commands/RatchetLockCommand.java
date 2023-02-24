@@ -9,7 +9,7 @@ public class RatchetLockCommand extends CommandBase {
     
     private final Extension m_extension;
     private double m_startTime;
-    private double SERVO_RATCHET_TIME = 1;
+    private double SERVO_RATCHET_TIME = 0.25;
 
     public RatchetLockCommand(Extension extension) {
         m_extension = extension;
@@ -24,6 +24,6 @@ public class RatchetLockCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return !((Timer.getFPGATimestamp() - m_startTime) < SERVO_RATCHET_TIME);
+        return ((Timer.getFPGATimestamp() - m_startTime) > SERVO_RATCHET_TIME);
     }
 }

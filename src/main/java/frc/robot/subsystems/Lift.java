@@ -18,11 +18,19 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     private static final double kP = 0.001;
     private static final double kI = 0.001;
     private static final double kD = 0.000001;
+
+    private static final int k_groundCollectionValue = 0;
+    private static final int k_carryValue = 500;
+    private static final int k_shelfCollectionValue = 1500;
+    private static final int k_lowPoleValue = 1500;
+    private static final int k_highPoleValue = 2000;
+    private static final double k_MaxPower = 0.2;
   }
 
   private CANSparkMax mforwardLift;
   private CANSparkMax mbackLift;
   private RelativeEncoder mliftForwardEncoder;
+  private int m_liftSetPoint = 0;
 
   PIDController mliftPID;
 
@@ -41,13 +49,15 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   }
 
   public enum LiftPosition {
-    UP,
-    DOWN,
-    STOP
+    GROUND_COLLECTION,
+    CARRY,
+    SHELF_COLLECTION,
+    LOW_POLE,
+    HIGH_POLE
   }
   
 
-  public LiftPosition state = LiftPosition.UP;
+  public LiftPosition m_state = LiftPosition.GROUND_COLLECTION;
 
   public boolean exampleCondition() {
     return false;
@@ -90,24 +100,47 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     mforwardLift.set(0);
   }
 
+  private boolean inTolerance(int currentPosition, int targetPosition, int tolerance) {
+    return (currentPosition > (targetPosition - tolerance)) &&
+      (currentPosition < (targetPosition + tolerance));
+  }
+
+  private void setLiftState() {
+    switch (m_state) {
+      case GROUND_COLLECTION:
+        m_liftSetPoint = LiftConstants.k_groundCollectionValue;
+        break;
+      case CARRY:
+        m_liftSetPoint = LiftConstants.k_carryValue;
+        break;
+      case SHELF_COLLECTION:
+        m_liftSetPoint = LiftConstants.k_shelfCollectionValue;
+        break;
+      case LOW_POLE:
+        m_liftSetPoint = LiftConstants.k_lowPoleValue;
+        break;
+      case HIGH_POLE:
+        m_liftSetPoint = LiftConstants.k_highPoleValue;
+        break;
+    }
+  }
+
+  private void updateWithPID(){
+    mforwardLift.setIdleMode(IdleMode.kBrake);
+
+    mforwardLift.set( 
+      MathUtil.clamp(
+        mliftPID.calculate(mliftForwardEncoder.getPosition(), m_liftSetPoint),
+        -LiftConstants.k_MaxPower, LiftConstants.k_MaxPower
+      )
+    );
+  }
+
   @Override
   public void periodic() {
     mbackLift.follow(mforwardLift, true);
-    switch (state) {
-      case UP:
-        liftUp();
-        break;
-      case STOP:
-        liftStop();
-        break;
-      case DOWN:
-        liftDown();
-        break;
-    }
-    SmartDashboard.putNumber("Forward Lift Motor Position", mliftForwardEncoder.getPosition());
-    SmartDashboard.putNumber("Forward Lift Motor Power", mforwardLift.get());
-    SmartDashboard.putNumber("Back Lift Motor Power", mbackLift.get());
-    SmartDashboard.putNumber("PID Output", mliftPID.calculate(mliftForwardEncoder.getPosition()));
+    setLiftState();
+    updateWithPID();
   }
 
   @Override
