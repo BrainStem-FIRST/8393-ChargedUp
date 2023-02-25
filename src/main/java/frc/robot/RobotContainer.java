@@ -36,35 +36,36 @@ public class RobotContainer {
     public static final int k_xButton = 3;
     public static final int k_yButton = 4;
     public static final int k_leftBumper = 5;
-    public static final int k_rightBumper = 7;
-    public static final int k_backButton = 8;
-    public static final int k_startButton = 9;
-    public static final int k_leftJoystickButton = 10;
-    public static final int k_rightJoystickButton = 11;
+    public static final int k_rightBumper = 6;
+    public static final int k_backButton = 7;
+    public static final int k_startButton = 8;
+    public static final int k_leftJoystickButton = 9;
+    public static final int k_rightJoystickButton = 10;
 }
 
   /* Controllers */
     public final Joystick m_driver1 = new Joystick(0);
     private final Joystick m_driver2 = new Joystick(1);
     public static final double k_stickDeadband = 0.1;
-
+  
   /* Drive Controls */
     final int k_translationAxis = XboxController.Axis.kLeftY.value;
     private final int k_strafeAxis = XboxController.Axis.kLeftX.value;
     private final int k_rotationAxis = XboxController.Axis.kRightX.value;
 
   /* Driver 1 Buttons */
-    private final JoystickButton m_driver1AButton = new JoystickButton(m_driver1, JoystickConstants.k_aButton);
+    private final JoystickButton m_driver1AButton = new JoystickButton(m_driver1, XboxController.Button.kLeftBumper.value); //JoystickConstants.k_aButton);
     private final JoystickButton m_driver1BButton = new JoystickButton(m_driver1, JoystickConstants.k_bButton);
     private final JoystickButton m_driver1XButton = new JoystickButton(m_driver1, JoystickConstants.k_xButton);
     private final JoystickButton m_zeroGyro = new JoystickButton(m_driver1, JoystickConstants.k_startButton);
     private final JoystickButton m_robotCentric = new JoystickButton(m_driver1, JoystickConstants.k_leftBumper);
+    private final JoystickButton m_driver1YButton = new JoystickButton(m_driver1, JoystickConstants.k_yButton);
 
   /* Driver 2 Buttons */
-    private final JoystickButton m_retracted = new JoystickButton(m_driver2, JoystickConstants.k_aButton);
-    private final JoystickButton m_collection = new JoystickButton(m_driver2, JoystickConstants.k_bButton);
-    public final JoystickButton m_highPole = new JoystickButton(m_driver2, JoystickConstants.k_yButton);
-    public final JoystickButton m_lowPole = new JoystickButton(m_driver2, JoystickConstants.k_xButton);
+    private final JoystickButton m_driver2AButton = new JoystickButton(m_driver2, JoystickConstants.k_aButton);
+    private final JoystickButton m_driver2BButton = new JoystickButton(m_driver2, JoystickConstants.k_bButton);
+    public final JoystickButton m_driver2YButton = new JoystickButton(m_driver2, JoystickConstants.k_yButton);
+    public final JoystickButton m_driver2XButton = new JoystickButton(m_driver2, JoystickConstants.k_xButton);
     public final JoystickButton m_driver2LeftBumper = new JoystickButton(m_driver2, JoystickConstants.k_leftBumper);
     public final JoystickButton m_driver2RightBumper = new JoystickButton(m_driver2, JoystickConstants.k_rightBumper);
 
@@ -110,16 +111,16 @@ public class RobotContainer {
     m_driver1BButton.toggleOnTrue(new InstantCommand(() -> m_collector.turnOffCollection()));
     m_driver1XButton.toggleOnTrue(new InstantCommand(() -> m_collector.turnOnDepositing()));
 
-    m_retracted.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleRetracted()));
-    m_retracted.toggleOnTrue(new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF));
-    m_retracted.toggleOnTrue(new InstantCommand(() -> m_collector.m_collectorState = CollectorState.OFF));
+    m_driver2AButton.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleRetracted()));
+    m_driver2AButton.toggleOnTrue(new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF));
+    m_driver2AButton.toggleOnTrue(new InstantCommand(() -> m_collector.m_collectorState = CollectorState.OFF));
     
-    m_collection.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleCollection()));
-    m_lowPole.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleLowPole()));
-    m_highPole.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleHighPole()));
+    m_driver2BButton.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleCollection()));
+    m_driver2XButton.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleLowPole()));
+    m_driver2YButton.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleHighPole()));
 
-    m_driver2LeftBumper.toggleOnTrue(new InstantCommand(() -> m_lift.m_state = LiftPosition.GROUND_COLLECTION));
-    m_driver2RightBumper.toggleOnTrue(new InstantCommand(() -> m_lift.m_state = LiftPosition.CARRY));
+    m_driver2LeftBumper.toggleOnTrue(new InstantCommand(() -> m_lift.decrementLiftHeight()));
+    m_driver2RightBumper.toggleOnTrue(new InstantCommand(() -> m_lift.incrementLiftHeight()));
 
     m_zeroGyro.whileTrue(new InstantCommand(() -> m_swerve.zeroGyro()));
   }
@@ -141,8 +142,8 @@ public class RobotContainer {
     brainSTEMSubsystems.add(m_lift);
     brainSTEMSubsystems.add(m_extension);
     brainSTEMSubsystems.add(m_swerve);
-
-
     return brainSTEMSubsystems;
   }
+
+  
 }

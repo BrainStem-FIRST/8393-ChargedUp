@@ -26,6 +26,7 @@ public class SwerveModule implements BrainSTEMSubsystem {
     private CANCoder angleEncoder;
 
     SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(SwerveConstants.k_driveKS, SwerveConstants.k_driveKV, SwerveConstants.k_driveKA);
+    private boolean m_enableSwerveModulePeriodic = false;
 
     public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants){
         this.moduleNumber = moduleNumber;
@@ -50,6 +51,16 @@ public class SwerveModule implements BrainSTEMSubsystem {
     public void initialize(){
         mDriveMotor.set(ControlMode.PercentOutput, 0);
         mAngleMotor.set(ControlMode.PercentOutput, 0);
+    }
+
+    @Override
+    public void enablePeriodic(){
+        m_enableSwerveModulePeriodic = true;
+    }
+
+    @Override
+    public void disablePeriodic(){
+        m_enableSwerveModulePeriodic = false;
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){

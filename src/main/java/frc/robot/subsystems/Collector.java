@@ -20,7 +20,7 @@ public class Collector extends SubsystemBase {
     private static final double k_clawMotorCloseSpeed = 0.05;
     private static final double k_clawMotorOpenSpeed = -0.05;
     private static final double k_wheelMotorSpeed = 0.3; //FIXME
-    private static final double k_wheelMotorCurrentDrawLimit = 25; //FIXME
+    private static final double k_wheelMotorCurrentDrawLimit = 40; //FIXME
 
   }
 
@@ -59,6 +59,12 @@ public class Collector extends SubsystemBase {
     m_clawMotorEncoder.setPosition(0);
     m_clawMotor.setIdleMode(IdleMode.kBrake);
     m_clawMotor.set(0);
+    m_wheelMotor.setIdleMode(IdleMode.kBrake);
+    m_wheelMotor.set(0);
+    m_clawButtonPressed = false;
+    m_intakeButtonPressed = false;
+    m_collectorState = CollectorState.OFF;
+    m_intakeState = IntakeState.OFF;  
   }
 
   public void resetLiftEncoder(){
@@ -203,6 +209,8 @@ public class Collector extends SubsystemBase {
 
     SmartDashboard.putNumber("Collector Spinning Wheel Current Draw ", m_wheelMotor.getOutputCurrent());
     SmartDashboard.putNumber("Collector Claw Motor Current Draw", m_clawMotor.getOutputCurrent());
+    SmartDashboard.putString("Intake State", m_intakeState.toString());
+
     
   }
 

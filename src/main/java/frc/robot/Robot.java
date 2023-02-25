@@ -60,7 +60,12 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    ArrayList<BrainSTEMSubsystem> brainSTEMSubsystems = m_robotContainer.getBrainSTEMSubsystems();
+    for(BrainSTEMSubsystem isubsystem: brainSTEMSubsystems){
+      isubsystem.disablePeriodic();
+    }
+  }
 
   @Override
   public void disabledPeriodic() {}

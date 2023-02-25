@@ -16,22 +16,21 @@ import frc.robot.commandGroups.LowPoleExtensionCommandGroup;
 import frc.robot.commandGroups.RetractedExtensionCommandGroup;
 import frc.robot.utilities.BrainSTEMSubsystem;
 
-
 public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
 
   public static final class ExtensionConstants {
-    private static final int k_extensionMotorID = 14; 
-    private static final int k_extensionServoID = 9; 
-    private static final double k_proportional = 1; 
-    private static final double k_integral = 0; //FIXME
-    private static final double k_derivative = 0; //FIXME
+    private static final int k_extensionMotorID = 14;
+    private static final int k_extensionServoID = 9;
+    private static final double k_proportional = 0.01;
+    private static final double k_integral = 0;
+    private static final double k_derivative = 0;
     private static final int k_retractedTelescopeValue = 0;
     private static final int k_collectionTelescopeValue = 60000;
     private static final int k_lowPoleTelescopeValue = 180000;
     private static final int k_highPoleTelescopeValue = 245000;
     private static final int k_telescopeTolerance = 2500;
     private static final double k_telescopeMaxPower = 0.75;
-    public static final int k_backMotorOffRatchetValue = 500; //FIXME
+    public static final int k_backMotorOffRatchetValue = 1000; // FIXME
     public static final double k_backOffMotorSpeed = -0.01; // FIXME
   }
 
@@ -52,7 +51,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
 
   public RatchetPosition m_ratchetState = RatchetPosition.ENGAGED;
   public TelescopePosition m_telescopeState = TelescopePosition.RETRACTED;
-  
+
   TalonFX m_telescopeMotor;
   Servo m_ratchetServo;
   PIDController m_telescopePIDController;
@@ -62,6 +61,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
   private CollectionExtensionCommandGroup m_collectionExtensionCommandGroup;
   private LowPoleExtensionCommandGroup m_lowPoleExtensionCommandGroup;
   private HighPoleExtensionCommandGroup m_highPoleExtensionCommandGroup;
+  private boolean m_enableExtensionPeriodic = false;
 
   public Extension() {
     this.m_retractedExtensionCommandGroup = new RetractedExtensionCommandGroup(this);
@@ -70,30 +70,42 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     this.m_highPoleExtensionCommandGroup = new HighPoleExtensionCommandGroup(this);
     m_telescopeMotor = new TalonFX(ExtensionConstants.k_extensionMotorID);
     m_ratchetServo = new Servo(ExtensionConstants.k_extensionServoID);
-    m_telescopePIDController = new PIDController(ExtensionConstants.k_proportional, ExtensionConstants.k_integral, ExtensionConstants.k_derivative);
+    m_telescopePIDController = new PIDController(ExtensionConstants.k_proportional, ExtensionConstants.k_integral,
+        ExtensionConstants.k_derivative);
     m_telescopePIDController.setTolerance(ExtensionConstants.k_telescopeTolerance);
     // extensionServo.setBounds(1200, 125, 1100, 75, 1000);
   }
 
   @Override
-  public void initialize(){
+  public void initialize() {
     resetEncoder();
+    enablePeriodic();
   }
 
-  public void resetEncoder(){
+  @Override
+  public void enablePeriodic() {
+    m_enableExtensionPeriodic = true;
+  }
+
+  @Override
+  public void disablePeriodic() {
+    m_enableExtensionPeriodic = false;
+  }
+
+  public void resetEncoder() {
     m_telescopeMotor.setSelectedSensorPosition(0);
   }
 
-  public void ratchetDisengage(){
+  public void ratchetDisengage() {
     m_ratchetServo.set(0.7);
   }
 
-  public void ratchetEngage(){
+  public void ratchetEngage() {
     m_ratchetServo.set(0.3);
   }
 
   private void setRatchetState() {
-      switch (m_ratchetState) {
+    switch (m_ratchetState) {
       case ENGAGED:
         ratchetEngage();
         break;
@@ -142,13 +154,17 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
   }
 
   public TelescopePosition getM_telescopeState() {
-    if (inTolerance((int) m_telescopeMotor.getSelectedSensorPosition(), ExtensionConstants.k_retractedTelescopeValue, ExtensionConstants.k_telescopeTolerance)) {
+    if (inTolerance((int) m_telescopeMotor.getSelectedSensorPosition(), ExtensionConstants.k_retractedTelescopeValue,
+        ExtensionConstants.k_telescopeTolerance)) {
       return TelescopePosition.RETRACTED;
-    } else if (inTolerance((int) m_telescopeMotor.getSelectedSensorPosition(), ExtensionConstants.k_collectionTelescopeValue, ExtensionConstants.k_telescopeTolerance)) {
+    } else if (inTolerance((int) m_telescopeMotor.getSelectedSensorPosition(),
+        ExtensionConstants.k_collectionTelescopeValue, ExtensionConstants.k_telescopeTolerance)) {
       return TelescopePosition.COLLECTION;
-    } else if (inTolerance((int) m_telescopeMotor.getSelectedSensorPosition(), ExtensionConstants.k_lowPoleTelescopeValue, ExtensionConstants.k_telescopeTolerance)) {
+    } else if (inTolerance((int) m_telescopeMotor.getSelectedSensorPosition(),
+        ExtensionConstants.k_lowPoleTelescopeValue, ExtensionConstants.k_telescopeTolerance)) {
       return TelescopePosition.LOW_POLE;
-    } else if (inTolerance((int) m_telescopeMotor.getSelectedSensorPosition(), ExtensionConstants.k_highPoleTelescopeValue, ExtensionConstants.k_telescopeTolerance)) {
+    } else if (inTolerance((int) m_telescopeMotor.getSelectedSensorPosition(),
+        ExtensionConstants.k_highPoleTelescopeValue, ExtensionConstants.k_telescopeTolerance)) {
       return TelescopePosition.HIGH_POLE;
     } else {
       return TelescopePosition.TRANSITION;
@@ -161,12 +177,12 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
 
   private boolean inTolerance(int currentPosition, int targetPosition, int tolerance) {
     return (currentPosition > (targetPosition - tolerance)) &&
-      (currentPosition < (targetPosition + tolerance));
+        (currentPosition < (targetPosition + tolerance));
   }
 
   private void setTelescopeState() {
-      switch (m_telescopeState) {
-        case RETRACTED:
+    switch (m_telescopeState) {
+      case RETRACTED:
         m_telescopeSetPoint = ExtensionConstants.k_retractedTelescopeValue;
         break;
       case COLLECTION:
@@ -181,39 +197,38 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     }
   }
 
-  private void updateWithPID(){
-      m_telescopeMotor.setNeutralMode(NeutralMode.Brake);
-      double k_MaxPower = 0;
+  private void updateWithPID() {
+    m_telescopeMotor.setNeutralMode(NeutralMode.Brake);
+    double k_MaxPower = 0;
 
-      if (inTolerance((int) getTelescopeMotorPosition(), m_telescopeSetPoint, ExtensionConstants.k_telescopeTolerance)) {
-        k_MaxPower = ExtensionConstants.k_telescopeMaxPower / 10;
-      } else {
-        k_MaxPower = ExtensionConstants.k_telescopeMaxPower;
-      }
+    if (inTolerance((int) getTelescopeMotorPosition(), m_telescopeSetPoint, ExtensionConstants.k_telescopeTolerance)) {
+      k_MaxPower = ExtensionConstants.k_telescopeMaxPower / 10;
+    } else {
+      k_MaxPower = ExtensionConstants.k_telescopeMaxPower;
+    }
 
-      SmartDashboard.putNumber("k_MaxPower", k_MaxPower);
+    SmartDashboard.putNumber("k_MaxPower", k_MaxPower);
 
-      m_telescopeMotor.set(
-        TalonFXControlMode.PercentOutput, 
+    m_telescopeMotor.set(
+        TalonFXControlMode.PercentOutput,
         MathUtil.clamp(
-          m_telescopePIDController.calculate(m_telescopeMotor.getSelectedSensorPosition(), m_telescopeSetPoint),
-          -k_MaxPower, k_MaxPower
-        )
-      );
-    
-    
+            m_telescopePIDController.calculate(m_telescopeMotor.getSelectedSensorPosition(), m_telescopeSetPoint),
+            -k_MaxPower, k_MaxPower));
+
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Telescope Set Point", m_telescopeSetPoint);
-    SmartDashboard.putNumber("Telescope Current Position", m_telescopeMotor.getSelectedSensorPosition());
-    setRatchetState();
-    setTelescopeState();
-    if (m_telescopeBackOff) {
-      m_telescopeMotor.set(TalonFXControlMode.PercentOutput, -ExtensionConstants.k_telescopeMaxPower/2);
-    } else {
-      updateWithPID();
+    if (m_enableExtensionPeriodic) {
+      SmartDashboard.putNumber("Telescope Set Point", m_telescopeSetPoint);
+      SmartDashboard.putNumber("Telescope Current Position", m_telescopeMotor.getSelectedSensorPosition());
+      setRatchetState();
+      setTelescopeState();
+      if (m_telescopeBackOff) {
+        m_telescopeMotor.set(TalonFXControlMode.PercentOutput, -ExtensionConstants.k_telescopeMaxPower / 2);
+      } else {
+        updateWithPID();
+      }
     }
   }
 

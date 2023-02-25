@@ -147,6 +147,7 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem{
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
+    public boolean m_enableSwervePeriodic = false;
 
     public Swerve() {
         gyro = new Pigeon2(SwerveConstants.k_pigeonID, "CANivore_dt");
@@ -195,6 +196,17 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem{
         for(SwerveModule swerveModule : mSwerveMods){
             swerveModule.initialize();
         }
+        enablePeriodic();
+    }
+
+    @Override
+    public void enablePeriodic(){
+        m_enableSwervePeriodic = true;
+    }
+
+    @Override
+    public void disablePeriodic(){
+        m_enableSwervePeriodic = false;
     }
 
     /* Used by SwerveControllerCommand in Auto */
@@ -246,13 +258,15 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem{
 
     @Override
     public void periodic(){
-        swerveOdometry.update(getYaw(), getModulePositions());  
+        if(false){ //m_enableSwervePeriodic
+            swerveOdometry.update(getYaw(), getModulePositions());  
 
-        for(SwerveModule mod : mSwerveMods){
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
+            for(SwerveModule mod : mSwerveMods){
+                SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
+                SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
+                SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
+            }
+            SmartDashboard.putNumber("Robot Heading", getYaw().getDegrees());
         }
-        SmartDashboard.putNumber("Robot Heading", getYaw().getDegrees());
     }
 }

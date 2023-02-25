@@ -1,5 +1,7 @@
 package frc.robot.utilities;
 
 public interface BrainSTEMSubsystem {
-    void initialize();
+    public void initialize();
+    public void enablePeriodic();
+    public void disablePeriodic();
 }
