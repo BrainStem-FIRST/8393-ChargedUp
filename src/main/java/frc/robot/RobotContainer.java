@@ -54,7 +54,7 @@ public class RobotContainer {
     private final int k_rotationAxis = XboxController.Axis.kRightX.value;
 
   /* Driver 1 Buttons */
-    private final JoystickButton m_driver1AButton = new JoystickButton(m_driver1, XboxController.Button.kLeftBumper.value); //JoystickConstants.k_aButton);
+    private final JoystickButton m_driver1AButton = new JoystickButton(m_driver1, JoystickConstants.k_aButton);
     private final JoystickButton m_driver1BButton = new JoystickButton(m_driver1, JoystickConstants.k_bButton);
     private final JoystickButton m_driver1XButton = new JoystickButton(m_driver1, JoystickConstants.k_xButton);
     private final JoystickButton m_zeroGyro = new JoystickButton(m_driver1, JoystickConstants.k_startButton);
@@ -142,6 +142,7 @@ public class RobotContainer {
     brainSTEMSubsystems.add(m_lift);
     brainSTEMSubsystems.add(m_extension);
     brainSTEMSubsystems.add(m_swerve);
+    brainSTEMSubsystems.add(m_collector);
     return brainSTEMSubsystems;
   }
 

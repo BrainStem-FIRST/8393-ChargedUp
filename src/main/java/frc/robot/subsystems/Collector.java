@@ -4,12 +4,14 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.utilities.BrainSTEMSubsystem;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-public class Collector extends SubsystemBase {
+public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   
   private static final class CollectorConstants {
     private static final int k_clawMotorID = 19;
@@ -46,6 +48,7 @@ public class Collector extends SubsystemBase {
 
   private boolean m_clawButtonPressed = false;
   private boolean m_intakeButtonPressed = false;
+  private boolean m_collectorPeriodicEnabled = false;
 
   //double clawMotorSetPoint = CollectorConstants.clawOpenPosition;
   public Collector() {
@@ -55,6 +58,7 @@ public class Collector extends SubsystemBase {
     m_wheelMotor.setInverted(true); 
   }
 
+  @Override
   public void initialize() {
     m_clawMotorEncoder.setPosition(0);
     m_clawMotor.setIdleMode(IdleMode.kBrake);
@@ -64,7 +68,18 @@ public class Collector extends SubsystemBase {
     m_clawButtonPressed = false;
     m_intakeButtonPressed = false;
     m_collectorState = CollectorState.OFF;
-    m_intakeState = IntakeState.OFF;  
+    m_intakeState = IntakeState.OFF; 
+    enablePeriodic();
+  }
+
+  @Override
+  public void enablePeriodic(){
+    m_collectorPeriodicEnabled = true;
+  }
+
+  @Override
+  public void disablePeriodic(){
+    m_collectorPeriodicEnabled = false;
   }
 
   public void resetLiftEncoder(){
@@ -80,7 +95,7 @@ public class Collector extends SubsystemBase {
 
   public void turnOnCollection() {
     m_intakeState = IntakeState.IN;
-    m_collectorState = CollectorState.OFF;
+    m_collectorState = CollectorState.CLOSED;
   }
 
   public void turnOnDepositing() {
@@ -94,13 +109,14 @@ public class Collector extends SubsystemBase {
   }
 
   private void collectorIn() {
-    SmartDashboard.putNumber("Collector Current Draw", m_wheelMotor.getOutputCurrent());
-    if (m_wheelMotor.getOutputCurrent() < CollectorConstants.k_wheelMotorCurrentDrawLimit) {
-      m_wheelMotor.set(CollectorConstants.k_wheelMotorSpeed);
-    } else {
-      m_intakeState = IntakeState.OFF;
-      m_collectorState = CollectorState.CLOSED;
-    }
+    // SmartDashboard.putNumber("Collector Current Draw", m_wheelMotor.getOutputCurrent());
+    // if (m_wheelMotor.getOutputCurrent() < CollectorConstants.k_wheelMotorCurrentDrawLimit) {
+    //   m_wheelMotor.set(CollectorConstants.k_wheelMotorSpeed);
+    // } else {
+    //   m_intakeState = IntakeState.OFF;
+    //   m_collectorState = CollectorState.CLOSED;
+    // }
+    m_wheelMotor.set(CollectorConstants.k_wheelMotorSpeed);
   }
 
   private void collectorOut() {
@@ -203,15 +219,13 @@ public class Collector extends SubsystemBase {
 
   @Override
   public void periodic() { //single responsibility principle so yea
-    setIntakeState();
-    setCollectorState();
-
-
-    SmartDashboard.putNumber("Collector Spinning Wheel Current Draw ", m_wheelMotor.getOutputCurrent());
-    SmartDashboard.putNumber("Collector Claw Motor Current Draw", m_clawMotor.getOutputCurrent());
-    SmartDashboard.putString("Intake State", m_intakeState.toString());
-
-    
+    if(m_collectorPeriodicEnabled){
+      setIntakeState();
+      setCollectorState();
+      SmartDashboard.putNumber("Collector Spinning Wheel Current Draw ", m_wheelMotor.getOutputCurrent());
+      SmartDashboard.putNumber("Collector Claw Motor Current Draw", m_clawMotor.getOutputCurrent());
+      SmartDashboard.putString("Intake State", m_intakeState.toString());
+    }
   }
 
   @Override

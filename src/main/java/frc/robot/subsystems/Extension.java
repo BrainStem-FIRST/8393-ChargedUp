@@ -79,6 +79,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
   @Override
   public void initialize() {
     resetEncoder();
+    m_telescopeState = TelescopePosition.RETRACTED;
     enablePeriodic();
   }
 
