@@ -35,7 +35,8 @@ public class TeleopSwerve extends CommandBase {
             double translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(),
                     RobotContainer.k_stickDeadband);
             double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), RobotContainer.k_stickDeadband);
-            double rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), RobotContainer.k_stickDeadband);
+            //double rotationVal = MathUtil.applyDeadband(Math.pow(rotationSup.getAsDouble() * 0.2, 3), RobotContainer.k_stickDeadband);
+            double rotationVal = 0.2* MathUtil.applyDeadband(rotationSup.getAsDouble(), RobotContainer.k_stickDeadband);
 
             /* Drive */
             s_Swerve.drive(

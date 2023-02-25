@@ -17,11 +17,11 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     private static final int k_clawMotorID = 19;
     private static final int k_wheelMotorID = 22;
   
-    private static final double k_clawMotorCurrentDrawLimit = 10;
+    private static final double k_clawMotorCurrentDrawLimit = 30;
     private static final double k_clawMotorHoldingSpeed = 0.01;
     private static final double k_clawMotorCloseSpeed = 0.05;
-    private static final double k_clawMotorOpenSpeed = -0.05;
-    private static final double k_wheelMotorSpeed = 0.3; //FIXME
+    private static final double k_clawMotorOpenSpeed = -0.075;
+    private static final double k_wheelMotorSpeed = 0.4; //FIXME
     private static final double k_wheelMotorCurrentDrawLimit = 40; //FIXME
 
   }
@@ -124,11 +124,15 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   }
 
   private void collectorOff() {
-    m_wheelMotor.stopMotor();
+    m_wheelMotor.setIdleMode(IdleMode.kBrake);
+    m_wheelMotor.set(0);
+    //m_wheelMotor.stopMotor();
   }
 
   private void stopCollector() {
-    m_clawMotor.stopMotor();
+    m_wheelMotor.setIdleMode(IdleMode.kBrake);
+    m_wheelMotor.set(0);
+    //m_clawMotor.stopMotor();
   }
 
   private void openCollector() {
