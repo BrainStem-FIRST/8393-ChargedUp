@@ -7,6 +7,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
@@ -43,12 +44,15 @@ public class exampleAuto extends SequentialCommandGroup {
         // An example trajectory to follow.  All units in meters.
         Trajectory exampleTrajectory =
             TrajectoryGenerator.generateTrajectory(
-                // Start at the origin facing the +X direction
-                new Pose2d(0, 0, new Rotation2d(0)),
+                // Set the origin at (5,0) facing the +X direction
+                // Robot starts facing the poles
+                new Pose2d(5, 0, new Rotation2d(0)),
                 // Pass through these two interior waypoints, making an 's' curve path
-                List.of(),
-                // End 3 meters straight ahead of where we started, facing forward
-                new Pose2d(-8, 0, new Rotation2d(0)),
+                List.of(
+                    new Translation2d(3, 0) //Just kind of a test thing to see if another waypooint fixes auto
+                ),
+                // End 5 meters behind ahead of where we started, rotating 180 degrees, now facing forward
+                new Pose2d(0, 0, new Rotation2d(Math.PI)),
                 config);
 
         var thetaController =
