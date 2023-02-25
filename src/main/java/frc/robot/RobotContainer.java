@@ -83,9 +83,9 @@ public class RobotContainer {
     m_swerve.setDefaultCommand(
         new TeleopSwerve(
             m_swerve,
-            () -> -m_driver1.getRawAxis(k_translationAxis) * 0.5,
-            () -> -m_driver1.getRawAxis(k_strafeAxis) * 0.5,
-            () -> -m_driver1.getRawAxis(k_rotationAxis) * 0.5,
+            () -> -m_driver1.getRawAxis(k_translationAxis),
+            () -> -m_driver1.getRawAxis(k_strafeAxis),
+            () -> -m_driver1.getRawAxis(k_rotationAxis),
             () -> m_robotCentric.getAsBoolean()));
 
     //mextension.setDefaultCommand(new DefaultExtensionCommand(mextension, () -> -driver1.getRawAxis(JoystickConstants.RIGHT_TRIGGER)));

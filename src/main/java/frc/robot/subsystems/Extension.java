@@ -21,7 +21,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
   public static final class ExtensionConstants {
     private static final int k_extensionMotorID = 14;
     private static final int k_extensionServoID = 9;
-    private static final double k_proportional = 0.01;
+    private static final double k_proportional = 0.0001;
     private static final double k_integral = 0;
     private static final double k_derivative = 0;
     private static final int k_retractedTelescopeValue = 0;
@@ -98,11 +98,11 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
   }
 
   public void ratchetDisengage() {
-    m_ratchetServo.set(0.7);
+    m_ratchetServo.set(0.6);
   }
 
   public void ratchetEngage() {
-    m_ratchetServo.set(0.3);
+    m_ratchetServo.set(0.6);
   }
 
   private void setRatchetState() {
@@ -203,7 +203,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     double k_MaxPower = 0;
 
     if (inTolerance((int) getTelescopeMotorPosition(), m_telescopeSetPoint, ExtensionConstants.k_telescopeTolerance)) {
-      k_MaxPower = ExtensionConstants.k_telescopeMaxPower / 10;
+      k_MaxPower = ExtensionConstants.k_telescopeMaxPower;
     } else {
       k_MaxPower = ExtensionConstants.k_telescopeMaxPower;
     }

@@ -32,8 +32,6 @@ public class TeleopSwerve extends CommandBase {
 
     @Override
     public void execute() {
-        if (false) { //s_Swerve.m_enableSwervePeriodic
-            /* Get Values, Deadband */
             double translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(),
                     RobotContainer.k_stickDeadband);
             double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), RobotContainer.k_stickDeadband);
@@ -45,7 +43,5 @@ public class TeleopSwerve extends CommandBase {
                     rotationVal * SwerveConstants.k_maxAngularVelocity,
                     !robotCentricSup.getAsBoolean(),
                     true);
-        }
-
     }
 }
