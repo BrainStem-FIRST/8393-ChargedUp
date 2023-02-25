@@ -4,6 +4,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.utilities.BrainSTEMSubsystem;
 
 import com.revrobotics.CANSparkMax;
@@ -23,6 +24,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     private static final double k_clawMotorOpenSpeed = -0.075;
     private static final double k_wheelMotorSpeed = 0.4; //FIXME
     private static final double k_wheelMotorCurrentDrawLimit = 40; //FIXME
+    
 
   }
 
@@ -49,6 +51,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   private boolean m_clawButtonPressed = false;
   private boolean m_intakeButtonPressed = false;
   private boolean m_collectorPeriodicEnabled = false;
+  private Timer m_timer = new Timer();
 
   //double clawMotorSetPoint = CollectorConstants.clawOpenPosition;
   public Collector() {
@@ -116,6 +119,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     //   m_intakeState = IntakeState.OFF;
     //   m_collectorState = CollectorState.CLOSED;
     // }
+    m_timer.reset();
     m_wheelMotor.set(CollectorConstants.k_wheelMotorSpeed);
   }
 
@@ -133,6 +137,12 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     m_wheelMotor.setIdleMode(IdleMode.kBrake);
     m_wheelMotor.set(0);
     //m_clawMotor.stopMotor();
+  }
+
+
+  public void stopCollectorAndIntake(){
+    m_collectorState = CollectorState.OFF;
+    m_intakeState = IntakeState.OFF;
   }
 
   private void openCollector() {
@@ -165,7 +175,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
           m_collectorState = CollectorState.OPEN;
           break;
         case OFF:
-          m_collectorState = CollectorState.OPEN;
+          m_collectorState = CollectorState.OFF;
           break;
       }
     } else {

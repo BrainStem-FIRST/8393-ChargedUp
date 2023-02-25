@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
@@ -132,9 +133,10 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+
+    return new SequentialCommandGroup(new AutoDepositCommand(m_collector, m_extension, 3), new exampleAuto(m_swerve));
     // An ExampleCommand will run in autonomous
     //return new InstantCommand(grabber::collectorOn);
-    return new exampleAuto(m_swerve);
   }
 
   public ArrayList<BrainSTEMSubsystem> getBrainSTEMSubsystems(){

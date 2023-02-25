@@ -55,7 +55,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
   TalonFX m_telescopeMotor;
   Servo m_ratchetServo;
   PIDController m_telescopePIDController;
-  private int m_telescopeSetPoint = 0;
+  public int m_telescopeSetPoint = 0;
   public int m_unlockPosition = 0;
   private RetractedExtensionCommandGroup m_retractedExtensionCommandGroup;
   private CollectionExtensionCommandGroup m_collectionExtensionCommandGroup;
