@@ -46,6 +46,7 @@ public class exampleAuto extends SequentialCommandGroup {
             TrajectoryGenerator.generateTrajectory(
                 // Set the origin at (5,0) facing the +X direction
                 // Robot starts facing the poles
+                //
                 new Pose2d(5, 0, new Rotation2d(0)),
                 // Pass through these two interior waypoints, making an 's' curve path
                 List.of(
