@@ -17,15 +17,16 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   private static final class CollectorConstants {
     private static final int k_clawMotorID = 19;
     private static final int k_wheelMotorID = 22;
-  
+    private static final int k_clawDepositPosition = 509;
     private static final double k_clawMotorCurrentDrawLimit = 30;
     private static final double k_clawMotorHoldingSpeed = 0.01;
     private static final double k_clawMotorCloseSpeed = 0.15;
     private static final double k_clawMotorOpenSpeed = -0.075;
     private static final double k_wheelMotorSpeed = 0.4; //FIXME
     private static final double k_wheelMotorCurrentDrawLimit = 40; //FIXME
-    
-
+    private static final double k_p = 0.0005; //FIXME
+    private static final double k_i = 0; //FIXME
+    private static final double k_d = 0; //FIXME
   }
 
   public enum CollectorState {
@@ -52,6 +53,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   private boolean m_intakeButtonPressed = false;
   private boolean m_collectorPeriodicEnabled = false;
   private Timer m_timer = new Timer();
+  PIDController m_collectorPID;
 
   //double clawMotorSetPoint = CollectorConstants.clawOpenPosition;
   public Collector() {
@@ -59,6 +61,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     m_clawMotorEncoder = m_clawMotor.getEncoder();
     m_wheelMotor = new CANSparkMax(CollectorConstants.k_wheelMotorID, MotorType.kBrushless);
     m_wheelMotor.setInverted(true); 
+    m_collectorPID = new PIDController(CollectorConstants.k_p, CollectorConstants.k_i, CollectorConstants.k_d);
+    m_clawMotorEncoder.setPositionConversionFactor(42);
   }
 
   @Override
@@ -239,6 +243,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
       SmartDashboard.putNumber("Collector Spinning Wheel Current Draw ", m_wheelMotor.getOutputCurrent());
       SmartDashboard.putNumber("Collector Claw Motor Current Draw", m_clawMotor.getOutputCurrent());
       SmartDashboard.putString("Intake State", m_intakeState.toString());
+      SmartDashboard.putNumber("Collector Claw Encoder Position", m_clawMotorEncoder.getPosition());
     }
   }
 

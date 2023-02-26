@@ -4,7 +4,6 @@ import frc.robot.SwerveModule;
 import frc.robot.utilities.BrainSTEMSubsystem;
 import frc.lib.util.COTSFalconSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
-import frc.robot.Constants;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -250,6 +249,10 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem{
         return (SwerveConstants.k_invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw()) : Rotation2d.fromDegrees(gyro.getYaw());
     }
 
+    public double getTilt(){
+        return gyro.getPitch();
+    }
+
     public void resetModulesToAbsolute(){
         for(SwerveModule mod : mSwerveMods){
             mod.resetToAbsolute();
@@ -258,7 +261,7 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem{
 
     @Override
     public void periodic(){
-        if(false){ //m_enableSwervePeriodic
+        if(m_enableSwervePeriodic){ //m_enableSwervePeriodic
             swerveOdometry.update(getYaw(), getModulePositions());  
 
             for(SwerveModule mod : mSwerveMods){
@@ -266,6 +269,7 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem{
                 SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
                 SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
             }
+            SmartDashboard.putNumber("Robot Tilt", getTilt());
             SmartDashboard.putNumber("Robot Heading", getYaw().getDegrees());
         }
     }
