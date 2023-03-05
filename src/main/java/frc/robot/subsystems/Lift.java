@@ -24,6 +24,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     private static final int k_shelfCollectionValue = 3001;
     private static final int k_lowPoleValue = 3000;
     private static final int k_highPoleValue = 3400;
+    private static final int k_liftPreLoadPosition = 300; // FIXME
     private static final double k_MaxPower = 1.0;
     private static final int k_liftTolerance = 15; 
   }
@@ -55,7 +56,8 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     SHELF_COLLECTION,
     LOW_POLE,
     HIGH_POLE,
-    DEPOSIT_LOWER
+    DEPOSIT_LOWER, 
+    COLLECT_PRELOAD
   }
 
   public LiftPosition m_state = LiftPosition.GROUND_COLLECTION;
@@ -178,6 +180,9 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
         if(m_liftSetPoint != 0){
           m_liftSetPoint = m_liftSetPoint - 100;
         }
+        break;
+      case COLLECT_PRELOAD:
+        m_liftSetPoint = LiftConstants.k_liftPreLoadPosition;
         break;
     }
   }

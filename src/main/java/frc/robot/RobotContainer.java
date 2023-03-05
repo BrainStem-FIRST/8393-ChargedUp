@@ -136,6 +136,7 @@ public class RobotContainer {
 
     //return new SequentialCommandGroup(new AutoDepositCommand(m_collector, m_extension, 3), new exampleAuto(m_swerve));
     return new SequentialCommandGroup(new exampleAuto(m_swerve));
+    
     // An ExampleCommand will run in autonomous
     //return new InstantCommand(grabber::collectorOn);
   }

@@ -1,5 +1,9 @@
 package frc.robot.autos;
 
+import frc.robot.autoCommands.LiftCollectPreLoad;
+import frc.robot.commands.BalanceCommand;
+import frc.robot.subsystems.Extension;
+import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Swerve.SwerveConstants;
 import java.util.List;
@@ -12,11 +16,13 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
-public class exampleAuto extends SequentialCommandGroup {
+public class auto1 extends SequentialCommandGroup {
 
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
         public static final double k_maxSpeedMetersPerSecond = 3;
@@ -34,7 +40,7 @@ public class exampleAuto extends SequentialCommandGroup {
                 k_maxAngularSpeedRadiansPerSecond, k_maxAngularSpeedRadiansPerSecondSquared);
     }
     
-    public exampleAuto(Swerve s_Swerve){
+    public auto1(Swerve s_Swerve){
         TrajectoryConfig config =
             new TrajectoryConfig(
                     AutoConstants.k_maxSpeedMetersPerSecond,
@@ -44,17 +50,17 @@ public class exampleAuto extends SequentialCommandGroup {
         // An example trajectory to follow.  All units in meters.
         Trajectory exampleTrajectory =
             TrajectoryGenerator.generateTrajectory(
-                // Set the origin at (0,0) facing the +X direction
+                // Set the origin at (5,0) facing the +X direction
                 // Robot starts facing the poles
-                new Pose2d(0, 0, new Rotation2d(180)),
-                // Pass through these two interior waypoints, making an 's' curve path
+                new Pose2d(2, 0, new Rotation2d(0)),
+                
                 List.of(
-                    new Translation2d(1, 0) //Just kind of a test thing to see if another waypooint fixes auto
+                    new Translation2d(3, 0) 
                 ),
-                // End 5 meters behind ahead of where we started, rotating 180 degrees, now facing forward
-                new Pose2d(2, 0, new Rotation2d(Math.toRadians(0))),
+                
+                new Pose2d(4, 0, new Rotation2d(0)), // FIXME put the correct distance when u get it 
                 config);
-
+                
 
         var thetaController =
             new ProfiledPIDController(
@@ -74,8 +80,15 @@ public class exampleAuto extends SequentialCommandGroup {
 
 
         addCommands(
-            new InstantCommand(() -> s_Swerve.resetOdometry(exampleTrajectory.getInitialPose())),
-            swerveControllerCommand
+            
+            // collect pre load command here 
+
+            // score on low pole command here 
+
+            new InstantCommand(() -> s_Swerve.resetOdometry(exampleTrajectory.getInitialPose())), swerveControllerCommand
+            // auto balencing command 
+            
+
         );
     }
 }

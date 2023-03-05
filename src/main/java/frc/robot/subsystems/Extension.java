@@ -15,6 +15,10 @@ import frc.robot.commandGroups.HighPoleExtensionCommandGroup;
 import frc.robot.commandGroups.LowPoleExtensionCommandGroup;
 import frc.robot.commandGroups.RetractedExtensionCommandGroup;
 import frc.robot.utilities.BrainSTEMSubsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
 
@@ -231,6 +235,20 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
         updateWithPID();
       }
     }
+
+        NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+        NetworkTableEntry tx = table.getEntry("tx");
+        NetworkTableEntry ty = table.getEntry("ty");
+        NetworkTableEntry ta = table.getEntry("ta");
+        double x = tx.getDouble(0.0);
+        double y = ty.getDouble(0.0);
+        double area = ta.getDouble(0.0);
+
+        SmartDashboard.putNumber("Limelight-X", x);
+        SmartDashboard.putNumber("Limelight-Y", y);
+        SmartDashboard.putNumber("Limelight-Area", area);
+
+
   }
 
   @Override
