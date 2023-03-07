@@ -245,6 +245,10 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem{
         gyro.setYaw(0);
     }
 
+    public void setGyroRobotFacingReverse(){
+        gyro.setYaw(180);
+    }
+
     public Rotation2d getYaw() {
         return (SwerveConstants.k_invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw()) : Rotation2d.fromDegrees(gyro.getYaw());
     }
