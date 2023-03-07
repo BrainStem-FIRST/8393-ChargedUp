@@ -45,7 +45,7 @@ public class autoCenter extends SequentialCommandGroup {
     }
 
     private static final class BalanceConstants {
-        private static final double k_P = 1.0;
+        private static final double k_P = 0.1;
         private static final double k_I = 0.000;
         private static final double k_D = 0.000000;
       }
@@ -59,7 +59,7 @@ public class autoCenter extends SequentialCommandGroup {
 
         config.setReversed(true);
         // An example trajectory to follow.  All units in meters.
-        Trajectory runToChargeStationTrajectory =
+        Trajectory runOverChargeStationTrajectory =
             TrajectoryGenerator.generateTrajectory(
                 // Set the origin at (5,0) facing the +X direction
                 // Robot starts facing the poles
@@ -71,6 +71,21 @@ public class autoCenter extends SequentialCommandGroup {
                 // End 5 meters behind ahead of where we started, rotating 180 degrees, now facing forward
                 new Pose2d(1, 0, new Rotation2d(Math.toRadians(0))),
                 config);
+
+                config.setReversed(false);
+                // An example trajectory to follow.  All units in meters.
+                Trajectory runBackOnToChargeStationTrajectory =
+                    TrajectoryGenerator.generateTrajectory(
+                        // Set the origin at (5,0) facing the +X direction
+                        // Robot starts facing the poles
+                        new Pose2d(1, 0, new Rotation2d(Math.toRadians(0))),
+                        // Pass through these two interior waypoints, making an 's' curve path
+                        List.of(
+                            new Translation2d(2, 0) //Just kind of a test thing to see if another waypooint fixes auto
+                        ),
+                        // End 5 meters behind ahead of where we started, rotating 180 degrees, now facing forward
+                        new Pose2d(3, 0, new Rotation2d(Math.toRadians(0))),
+                        config);
                 
 
         var thetaController =
@@ -78,9 +93,9 @@ public class autoCenter extends SequentialCommandGroup {
                 AutoConstants.k_pThetaController * 2, 0, 0, AutoConstants.k_thetaControllerConstraints);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-        SwerveControllerCommand swerveControllerCommand =
+        SwerveControllerCommand runOverChargeStationCommand =
             new SwerveControllerCommand(
-                runToChargeStationTrajectory,
+                runOverChargeStationTrajectory,
                 s_Swerve::getPose,
                 SwerveConstants.k_swerveKinematics,
                 new PIDController(AutoConstants.k_pXController, 0, 0),
@@ -89,16 +104,27 @@ public class autoCenter extends SequentialCommandGroup {
                 s_Swerve::setModuleStates,
                 s_Swerve);
 
+        SwerveControllerCommand runBackOntoChargeStationCommand =
+                new SwerveControllerCommand(
+                    runBackOnToChargeStationTrajectory,
+                    s_Swerve::getPose,
+                    SwerveConstants.k_swerveKinematics,
+                    new PIDController(AutoConstants.k_pXController, 0, 0),
+                    new PIDController(AutoConstants.k_pYController, 0, 0),
+                    thetaController,
+                    s_Swerve::setModuleStates,
+                    s_Swerve);
+
 
         addCommands(
-            new InstantCommand(() -> s_Swerve.setGyroRobotFacingReverse()),
+            // new InstantCommand(() -> s_Swerve.setGyroRobotFacingReverse()),
             // collect pre load command here 
 
             // score on low pole command here 
 
-            new InstantCommand(() -> s_Swerve.resetOdometry(runToChargeStationTrajectory.getInitialPose())), 
-            // swerveControllerCommand, 
-            
+            new InstantCommand(() -> s_Swerve.resetOdometry(runOverChargeStationTrajectory.getInitialPose())), 
+            runOverChargeStationCommand, 
+            runBackOntoChargeStationCommand,
             new InstantCommand(() -> autoBalance(s_Swerve))
 
         );
@@ -107,10 +133,11 @@ public class autoCenter extends SequentialCommandGroup {
     private void autoBalance(Swerve s_Swerve) {
         double pitch = s_Swerve.getTilt();
         PIDController m_balancePID = new PIDController(BalanceConstants.k_P, BalanceConstants.k_I, BalanceConstants.k_D);
+        m_balancePID.setTolerance(1);
         int counter = 0;
         while (1 != 0) {
             pitch = s_Swerve.getTilt();
-            double power = MathUtil.clamp(m_balancePID.calculate(pitch, 0), -0.15, 0.15);
+            double power = MathUtil.clamp(m_balancePID.calculate(pitch, 0), -0.25, 0.25);
         
             TeleopSwerve m_teleopSwerve = new TeleopSwerve(
                 s_Swerve,
