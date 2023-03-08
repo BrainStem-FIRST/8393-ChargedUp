@@ -9,10 +9,10 @@ import frc.robot.subsystems.Lift;
 public class collectPreLoadCommand extends SequentialCommandGroup {
     
 
-    public collectPreLoadCommand(Lift lift) {
+    public collectPreLoadCommand(Lift lift, Collector collector) {
         addCommands(
-            new LiftCollectPreLoad(lift)
-            
+            new LiftCollectPreLoad(lift),
+            new CollectorCloseCommand(collector)
         );
         
     }

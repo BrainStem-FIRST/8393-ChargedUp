@@ -1,8 +1,10 @@
 package frc.robot.autos;
 
 import frc.robot.autoCommands.LiftCollectPreLoad;
+import frc.robot.autoCommands.autoCommandGroups.collectPreLoadCommand;
 import frc.robot.commands.BalanceCommand;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.Collector;
 import frc.robot.subsystems.Extension;
 import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Swerve;
@@ -49,9 +51,10 @@ public class autoCenter extends SequentialCommandGroup {
         private static final double k_P = 0.8;
         private static final double k_I = 0.000;
         private static final double k_D = 0.000000;
-      }
+    }
     
-    public autoCenter(Swerve s_Swerve){
+    public autoCenter(Swerve s_Swerve, Lift m_Lift, Collector m_collector){
+        collectPreLoadCommand m_collectPreLoadCommand = new collectPreLoadCommand(m_Lift, m_collector);
         Timer m_Timer = new Timer();
         TrajectoryConfig config =
             new TrajectoryConfig(
@@ -124,6 +127,8 @@ public class autoCenter extends SequentialCommandGroup {
 
             // score on low pole command here 
             new InstantCommand(() -> m_Timer.start()),
+            m_collectPreLoadCommand,
+            
             new InstantCommand(() -> s_Swerve.resetOdometry(runOverChargeStationTrajectory.getInitialPose())), 
             runOverChargeStationCommand, 
             runBackOntoChargeStationCommand,
@@ -190,7 +195,7 @@ public class autoCenter extends SequentialCommandGroup {
             SmartDashboard.putBoolean("Balance Power", balancing);
             SmartDashboard.putNumber("Counter", counter);
 
-            while (m_Timer.getFPGATimestamp() < 30) {
+            while (m_Timer.getFPGATimestamp() < 15) {
                 pitch = s_Swerve.getTilt();
                 double power = MathUtil.clamp(m_balancePID.calculate(pitch, 0), -0.25, 0.25);
     

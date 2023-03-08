@@ -13,17 +13,19 @@ public class CollectorCloseCommand extends CommandBase {
     private BooleanSupplier closeCollector;
 
     
-    public CollectorCloseCommand (Collector collector, BooleanSupplier collectorOn, BooleanSupplier closeCollector) {
-
+    public CollectorCloseCommand (Collector collector) {
         this.collector = collector;
-        this.collectorOn = collectorOn;
-        this.closeCollector = closeCollector;
         addRequirements(collector);
     }
 
     @Override
-    public void execute() {
+    public void initialize() {
         collector.m_collectorState = CollectorState.CLOSED;
+    }
+
+    @Override
+    public boolean isFinished() {
+        return true;
     }
 
 

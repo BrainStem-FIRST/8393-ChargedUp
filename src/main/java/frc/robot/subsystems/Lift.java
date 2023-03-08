@@ -15,8 +15,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
 
   private static final class LiftConstants {
-    private static final double k_P = 0.0005;
-    private static final double k_I = 0.000;
+    private static final double k_P = 0.001;
+    private static final double k_I = 0.0001;
     private static final double k_D = 0.000000;
 
     private static final int k_groundCollectionValue = 0;
@@ -24,7 +24,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     private static final int k_shelfCollectionValue = 3001;
     private static final int k_lowPoleValue = 3000;
     private static final int k_highPoleValue = 3400;
-    private static final int k_liftPreLoadPosition = 300; // FIXME
+    private static final int k_liftPreLoadPosition = 200;
     private static final double k_MaxPower = 1.0;
     private static final int k_liftTolerance = 15; 
   }
