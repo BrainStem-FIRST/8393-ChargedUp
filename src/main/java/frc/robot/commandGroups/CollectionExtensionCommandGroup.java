@@ -11,6 +11,7 @@ import frc.robot.subsystems.Extension;
 import frc.robot.subsystems.Extension.TelescopePosition;
 
 public class CollectionExtensionCommandGroup extends SequentialCommandGroup {
+
     
     public CollectionExtensionCommandGroup(Extension extension) {
         addCommands(

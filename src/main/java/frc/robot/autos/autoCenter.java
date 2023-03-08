@@ -7,6 +7,8 @@ import frc.robot.subsystems.Extension;
 import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Swerve.SwerveConstants;
+
+import java.time.Instant;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 
@@ -25,12 +27,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj.Timer;
 
 public class autoCenter extends SequentialCommandGroup {
 
+
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
-        public static final double k_maxSpeedMetersPerSecond = 0.3;
-        public static final double k_maxAccelerationMetersPerSecondSquared = 0.3;
+        public static final double k_maxSpeedMetersPerSecond = 0.9;
+        public static final double k_maxAccelerationMetersPerSecondSquared = 0.9;
         public static final double k_maxAngularSpeedRadiansPerSecond = Math.PI/10;
         public static final double k_maxAngularSpeedRadiansPerSecondSquared = Math.PI/10;
     
@@ -43,11 +47,12 @@ public class autoCenter extends SequentialCommandGroup {
             new TrapezoidProfile.Constraints(
                 k_maxAngularSpeedRadiansPerSecond, k_maxAngularSpeedRadiansPerSecondSquared);
     }
+    private Timer m_timer = new Timer();
 
     private static final class BalanceConstants {
-        private static final double k_P = 0.1;
+        private static final double k_P = 0.03;
         private static final double k_I = 0.000;
-        private static final double k_D = 0.000000;
+        private static final double k_D = 0.001;
       }
     
     public autoCenter(Swerve s_Swerve){
@@ -115,13 +120,18 @@ public class autoCenter extends SequentialCommandGroup {
                     s_Swerve::setModuleStates,
                     s_Swerve);
 
+        DriveOverChargeStationCommand driveOverChargeStationCommand = new DriveOverChargeStationCommand(s_Swerve);
+
+        DriveBackOntoChargeStationCommand driveBackOntoChargeStationCommand = new DriveBackOntoChargeStationCommand(s_Swerve);
+
 
         addCommands(
             // new InstantCommand(() -> s_Swerve.setGyroRobotFacingReverse()),
             // collect pre load command here 
 
             // score on low pole command here 
-
+            new InstantCommand(() -> m_timer.reset()),
+            new InstantCommand(() -> m_timer.start()),
             new InstantCommand(() -> s_Swerve.resetOdometry(runOverChargeStationTrajectory.getInitialPose())), 
             runOverChargeStationCommand, 
             runBackOntoChargeStationCommand,
@@ -133,24 +143,33 @@ public class autoCenter extends SequentialCommandGroup {
     private void autoBalance(Swerve s_Swerve) {
         double pitch = s_Swerve.getTilt();
         PIDController m_balancePID = new PIDController(BalanceConstants.k_P, BalanceConstants.k_I, BalanceConstants.k_D);
-        m_balancePID.setTolerance(1);
+        m_balancePID.setTolerance(5);
         int counter = 0;
-        while (1 != 0) {
+        while (s_Swerve.getTilt() > 10 || s_Swerve.getTilt() < -10) {
             pitch = s_Swerve.getTilt();
             double power = MathUtil.clamp(m_balancePID.calculate(pitch, 0), -0.25, 0.25);
         
             TeleopSwerve m_teleopSwerve = new TeleopSwerve(
                 s_Swerve,
-                () -> power,
+                () -> -power,
                 () -> 0,
                 () -> 0,
                 () -> false
             );
+
             m_teleopSwerve.execute();
             counter ++;
             SmartDashboard.putNumber("Auto Pitch", pitch);
             SmartDashboard.putNumber("Balance Power", power);
             SmartDashboard.putNumber("Counter", counter);
         }
+        TeleopSwerve m_teleopSwerve = new TeleopSwerve(
+                s_Swerve,
+                () -> 0,
+                () -> 0,
+                () -> 0,
+                () -> false
+            );
+            m_teleopSwerve.execute();
     }
 }
