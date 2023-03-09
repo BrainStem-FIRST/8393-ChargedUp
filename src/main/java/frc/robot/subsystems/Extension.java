@@ -102,11 +102,11 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
   }
 
   public void ratchetDisengage() {
-    m_ratchetServo.set(0.7); //0.6
+    m_ratchetServo.set(0.6);
   }
 
   public void ratchetEngage() {
-    m_ratchetServo.set(0.7); //0.6
+    m_ratchetServo.set(0.7);
   }
 
   private void setRatchetState() {
