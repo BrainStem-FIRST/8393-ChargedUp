@@ -12,10 +12,11 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class ExtensionDepositSequenceCommand extends CommandBase {
 
-    Timer m_timer = new Timer();
+    Timer z_timer = new Timer();
 
     private final Extension m_extension;
     TelescopePosition m_extensionPosition;
+    boolean isFinished = false;
 
     public ExtensionDepositSequenceCommand(Extension p_extension, TelescopePosition p_extensionPosition) {
         m_extension = p_extension;
@@ -25,8 +26,8 @@ public class ExtensionDepositSequenceCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        m_timer.reset();
-        m_timer.start();
+        z_timer.reset();
+        z_timer.start();
         switch (m_extensionPosition) {
             case RETRACTED:
                 m_extension.scheduleRetracted();
@@ -44,15 +45,22 @@ public class ExtensionDepositSequenceCommand extends CommandBase {
                 m_extension.scheduleLowPole();
                 break;
         }
+        isFinished = true;
     }
 
     @Override
     public void execute(){
-        SmartDashboard.putNumber("Lift Timer", m_timer.get());
+        SmartDashboard.putNumber("Lift Timer", z_timer.get());
     }
 
     @Override
     public boolean isFinished() {
-        return m_timer.get() > 1;
+        if(isFinished){
+            isFinished = false;
+            return true;
+        } else {
+            return false;
+        }
+        //return z_timer.get() > 1.0;
     }
 }
