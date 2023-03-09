@@ -16,14 +16,14 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
 
   private static final class LiftConstants {
     private static final double k_P = 0.001;
-    private static final double k_I = 0.0001;
+    private static final double k_I = 0.0;
     private static final double k_D = 0.000000;
 
     private static final int k_groundCollectionValue = 0;
     private static final int k_carryValue = 1;
-    private static final int k_shelfCollectionValue = 3001;
-    private static final int k_lowPoleValue = 3000;
-    private static final int k_highPoleValue = 3400;
+    private static final int k_shelfCollectionValue = 3000;
+    private static final int k_lowPoleValue = 3500;
+    private static final int k_highPoleValue = 3700;
     private static final int k_liftPreLoadPosition = 200;
     private static final double k_MaxPower = 1.0;
     private static final int k_liftTolerance = 15; 
@@ -123,7 +123,17 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
 
   public void incrementLiftHeight() {
     m_liftPID.reset();
-    // switch (m_liftSetPoint) {
+
+    if (m_state == LiftPosition.GROUND_COLLECTION) {
+      m_state = LiftPosition.SHELF_COLLECTION;
+    } else if (m_state == LiftPosition.SHELF_COLLECTION) {
+      m_state = LiftPosition.LOW_POLE;
+    } else if (m_state == LiftPosition.LOW_POLE) {
+      m_state = LiftPosition.HIGH_POLE;
+    } else {
+      m_state = LiftPosition.GROUND_COLLECTION;
+    }
+        // switch (m_liftSetPoint) {
     //   case LiftConstants.k_groundCollectionValue:
     //     m_state = LiftPosition.CARRY;
     //     break;
@@ -137,7 +147,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     //     m_state = LiftPosition.GROUND_COLLECTION;
     //     break;
     // }
-    m_state = LiftPosition.SHELF_COLLECTION;
+    // m_state = LiftPosition.SHELF_COLLECTION;
   }
 
   public void decrementLiftHeight() {
