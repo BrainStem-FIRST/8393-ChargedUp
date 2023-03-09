@@ -10,7 +10,11 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.RobotContainer.JoystickConstants;
+import frc.robot.commandGroups.DepositSequenceCommandGroup;
+import frc.robot.commands.extensionCommands.ExtensionDepositSequenceCommand;
 import frc.robot.subsystems.Lift;
+import frc.robot.subsystems.Extension.TelescopePosition;
 import frc.robot.subsystems.Lift.LiftPosition;
 import frc.robot.utilities.BrainSTEMSubsystem;
 
@@ -24,6 +28,8 @@ public class Robot extends TimedRobot {
   public static CTREConfigs ctreConfigs;
 
   private Command m_autonomousCommand;
+
+  public static boolean depositSequenceContinue = true;
 
   private RobotContainer m_robotContainer;
 
@@ -53,6 +59,7 @@ public class Robot extends TimedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
+    
     CommandScheduler.getInstance().run();
   }
 
@@ -107,6 +114,10 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    if((m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) > 0.5) && depositSequenceContinue){
+      depositSequenceContinue = false;
+      new DepositSequenceCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector, TelescopePosition.RETRACTED).schedule();
+    }
   }
 
   @Override

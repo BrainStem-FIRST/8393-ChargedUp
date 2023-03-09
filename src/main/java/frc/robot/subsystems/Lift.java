@@ -13,10 +13,9 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
-
   private static final class LiftConstants {
     private static final double k_P = 0.001;
-    private static final double k_I = 0.0;
+    private static final double k_I = 0.0001;
     private static final double k_D = 0.000000;
 
     private static final int k_groundCollectionValue = 0;
@@ -169,6 +168,10 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     m_state = LiftPosition.GROUND_COLLECTION;
   }
 
+  public void adjustLiftHeight(int ticks){
+    m_liftSetPoint += ticks;
+  }
+
   private void setLiftState() {
     switch (m_state) {
       case GROUND_COLLECTION:
@@ -188,7 +191,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
         break;
       case DEPOSIT_LOWER:
         if(m_liftSetPoint != 0){
-          m_liftSetPoint = m_liftSetPoint - 100;
+          m_liftSetPoint = m_liftSetPoint - 200;
         }
         break;
       case COLLECT_PRELOAD:
