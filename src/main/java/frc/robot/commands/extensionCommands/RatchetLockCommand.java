@@ -19,11 +19,12 @@ public class RatchetLockCommand extends CommandBase {
     @Override
     public void initialize() {
         m_startTime = Timer.getFPGATimestamp();
-        m_extension.m_ratchetState = RatchetPosition.ENGAGED;
+        // m_extension.m_ratchetState = RatchetPosition.ENGAGED;
     }
 
     @Override
     public boolean isFinished() {
-        return ((Timer.getFPGATimestamp() - m_startTime) > SERVO_RATCHET_TIME);
+        return true;
+        // return ((Timer.getFPGATimestamp() - m_startTime) > SERVO_RATCHET_TIME);
     }
 }

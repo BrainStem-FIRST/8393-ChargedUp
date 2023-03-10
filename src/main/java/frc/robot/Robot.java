@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.RobotContainer.JoystickConstants;
 import frc.robot.commandGroups.DepositSequenceCommandGroup;
+import frc.robot.commandGroups.GroundCollectionCommandGroup;
+import frc.robot.commandGroups.GroundCollectionSequenceCommandGroup;
 import frc.robot.commands.extensionCommands.ExtensionDepositSequenceCommand;
 import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Extension.TelescopePosition;
@@ -114,9 +116,10 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    if((m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) > 0.5) && depositSequenceContinue){
-      depositSequenceContinue = false;
+    if((m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) > 0.5)){
       new DepositSequenceCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector, TelescopePosition.RETRACTED).schedule();
+    } else if ((m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_leftTrigger) > 0.5)) {
+      new GroundCollectionCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift, m_robotContainer.m_collector).schedule();
     }
   }
 

@@ -5,18 +5,18 @@ import frc.robot.Robot;
 import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Lift.LiftPosition;
 
-public class LiftLowerGroundCommand extends CommandBase {
+public class LiftCarryCommand extends CommandBase {
     
     private final Lift m_lift;
 
-    public LiftLowerGroundCommand(Lift p_lift) {
+    public LiftCarryCommand(Lift p_lift) {
         m_lift = p_lift;
         addRequirements(m_lift);
     }
 
     @Override
     public void initialize() {
-        m_lift.m_state = LiftPosition.GROUND_COLLECTION;
+        m_lift.m_state = LiftPosition.CARRY;
     }
 
     @Override

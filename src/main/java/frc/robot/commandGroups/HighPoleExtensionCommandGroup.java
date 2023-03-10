@@ -13,10 +13,7 @@ public class HighPoleExtensionCommandGroup extends SequentialCommandGroup {
     public HighPoleExtensionCommandGroup(Extension extension) {
 
         addCommands(
-            new BackMotorOffRatchetCommand(extension),
-            new RatchetUnlockCommand(extension),
-            new ExtensionCommand(extension, TelescopePosition.HIGH_POLE),
-            new RatchetLockCommand(extension)
+            new ExtensionCommand(extension, TelescopePosition.HIGH_POLE)
         );
        
     }

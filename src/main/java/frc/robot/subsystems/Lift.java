@@ -13,19 +13,20 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
-  private static final class LiftConstants {
-    private static final double k_P = 0.001;
-    private static final double k_I = 0.0001;
-    private static final double k_D = 0.000000;
+  public static final class LiftConstants {
+    private static final double k_P = 0.003;
+    private static final double k_I = 0.0000;
+    private static final double k_D = 0.0000;
 
     private static final int k_groundCollectionValue = 0;
-    private static final int k_carryValue = 1;
+    private static final int k_carryValue = 500;
     private static final int k_shelfCollectionValue = 3000;
     private static final int k_lowPoleValue = 3500;
     private static final int k_highPoleValue = 3700;
     private static final int k_liftPreLoadPosition = 200;
     private static final double k_MaxPower = 1.0;
-    private static final int k_liftTolerance = 15; 
+    private static final int k_liftTolerance = 50;
+    public static final int k_depositDelta = 400;
   }
 
   private CANSparkMax m_forwardLift;
@@ -34,6 +35,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   private int m_liftSetPoint = 0;
   private boolean m_enableLiftPeriodic = false;
   PIDController m_liftPID;
+  public int depositDelta = 0;
 
   public Lift() {
     m_liftPID = new PIDController(LiftConstants.k_P, LiftConstants.k_I, LiftConstants.k_D);
@@ -184,10 +186,10 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
         m_liftSetPoint = LiftConstants.k_shelfCollectionValue;
         break;
       case LOW_POLE:
-        m_liftSetPoint = LiftConstants.k_lowPoleValue;
+        m_liftSetPoint = LiftConstants.k_lowPoleValue - depositDelta;
         break;
       case HIGH_POLE:
-        m_liftSetPoint = LiftConstants.k_highPoleValue;
+        m_liftSetPoint = LiftConstants.k_highPoleValue - depositDelta;
         break;
       case DEPOSIT_LOWER:
         if(m_liftSetPoint != 0){
@@ -208,22 +210,6 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
             -LiftConstants.k_MaxPower, LiftConstants.k_MaxPower));
     SmartDashboard.putNumber("Lift Motor Encoder", m_liftForwardEncoder.getPosition());
 
-    // if (m_liftSetPoint > m_forwardLift.get()) {
-    // if (((m_liftSetPoint - 90) < m_forwardLift.get()) && (m_forwardLift.get() <
-    // m_liftSetPoint + 90)) {
-    // m_forwardLift.set(0.001);
-    // } else if ((m_liftSetPoint - m_forwardLift.get() > 250)) {
-    // m_forwardLift.set(0.05);
-    // } else {
-    // m_forwardLift.set(MathUtil.clamp(mliftPID.calculate(mliftForwardEncoder.getPosition(),
-    // m_liftSetPoint),
-    // -LiftConstants.k_MaxPower, LiftConstants.k_MaxPower));
-    // }
-    // } else {
-    // m_forwardLift.set(MathUtil.clamp(mliftPID.calculate(mliftForwardEncoder.getPosition(),
-    // m_liftSetPoint),
-    // -LiftConstants.k_MaxPower / 10, LiftConstants.k_MaxPower / 10));
-    // }
     m_forwardLift.set(MathUtil.clamp(m_liftPID.calculate(m_liftForwardEncoder.getPosition(), m_liftSetPoint),
         -LiftConstants.k_MaxPower, LiftConstants.k_MaxPower));
   }

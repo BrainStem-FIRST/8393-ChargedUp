@@ -15,10 +15,7 @@ public class CollectionExtensionCommandGroup extends SequentialCommandGroup {
     
     public CollectionExtensionCommandGroup(Extension extension) {
         addCommands(
-            new RatchetUnlockCommand(extension),
-            new BackMotorOffRatchetCommand(extension),
-            new ExtensionCommand(extension, TelescopePosition.COLLECTION),
-            new RatchetLockCommand(extension)
+            new ExtensionCommand(extension, TelescopePosition.COLLECTION)
         );
         
     }

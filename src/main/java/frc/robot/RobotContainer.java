@@ -10,6 +10,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.autos.*;
+import frc.robot.commandGroups.CarryRetractedCommandGroup;
+import frc.robot.commandGroups.CollectCommandGroup;
+import frc.robot.commandGroups.GroundRetractedCommandGroup;
+import frc.robot.commandGroups.LowPoleApproachCommandGroup;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Collector.CollectorState;
@@ -59,7 +63,8 @@ public class RobotContainer {
     private final JoystickButton m_driver1BButton = new JoystickButton(m_driver1, JoystickConstants.k_bButton);
     private final JoystickButton m_driver1XButton = new JoystickButton(m_driver1, JoystickConstants.k_xButton);
     private final JoystickButton m_zeroGyro = new JoystickButton(m_driver1, JoystickConstants.k_startButton);
-    private final JoystickButton m_robotCentric = new JoystickButton(m_driver1, JoystickConstants.k_leftBumper);
+    public final JoystickButton m_driver1LeftBumper = new JoystickButton(m_driver1, JoystickConstants.k_leftBumper);
+    public final JoystickButton m_driver1RightBumper = new JoystickButton(m_driver1, JoystickConstants.k_rightBumper);
     private final JoystickButton m_driver1YButton = new JoystickButton(m_driver1, JoystickConstants.k_yButton);
 
   /* Driver 2 Buttons */
@@ -76,6 +81,13 @@ public class RobotContainer {
     Extension m_extension = new Extension();
     Collector m_collector = new Collector();
 
+    /* Command Groups */
+    LowPoleApproachCommandGroup m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_lift);
+    GroundRetractedCommandGroup m_groundRetracted = new GroundRetractedCommandGroup(m_extension, m_lift);
+    CarryRetractedCommandGroup m_carryRetracted = new CarryRetractedCommandGroup(m_extension, m_lift);
+    CollectCommandGroup m_collectCommandGroup = new CollectCommandGroup(m_collector);
+
+
   /*
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -87,7 +99,7 @@ public class RobotContainer {
             () -> -(m_driver1.getRawAxis(k_translationAxis) * Math.abs(m_driver1.getRawAxis(k_translationAxis))),
             () -> -(m_driver1.getRawAxis(k_strafeAxis) * Math.abs(m_driver1.getRawAxis(k_strafeAxis))),
             () -> -(m_driver1.getRawAxis(k_rotationAxis) * Math.abs(m_driver1.getRawAxis(k_rotationAxis))),
-            () -> m_robotCentric.getAsBoolean()));
+            () -> false));
 
     //mextension.setDefaultCommand(new DefaultExtensionCommand(mextension, () -> -driver1.getRawAxis(JoystickConstants.RIGHT_TRIGGER)));
 
@@ -108,13 +120,13 @@ public class RobotContainer {
   private void configureButtonBindings() {
   /* Driver Buttons */
  
-    m_driver1AButton.toggleOnTrue(new InstantCommand(() -> m_collector.turnOnCollection()));
-    m_driver1BButton.toggleOnTrue(new InstantCommand(() -> m_collector.turnOffCollection()));
-    m_driver1XButton.toggleOnTrue(new InstantCommand(() -> m_collector.turnOnDepositing()));
+    m_driver1AButton.toggleOnTrue(new InstantCommand(() -> m_carryRetracted.schedule()));
+    m_driver1BButton.toggleOnTrue(new InstantCommand(() -> m_lowPoleApproach.schedule()));
+    m_driver1LeftBumper.toggleOnTrue(new InstantCommand(() -> m_collector.m_collectorState = CollectorState.OPEN));
+    m_driver1RightBumper.toggleOnTrue(new InstantCommand(() -> m_collectCommandGroup.schedule()));
 
     m_driver2AButton.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleRetracted()));
     m_driver2AButton.toggleOnTrue(new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF));
-    m_driver2AButton.toggleOnTrue(new InstantCommand(() -> m_collector.m_collectorState = CollectorState.OFF));
     
     m_driver2BButton.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleCollection()));
     m_driver2XButton.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleLowPole()));

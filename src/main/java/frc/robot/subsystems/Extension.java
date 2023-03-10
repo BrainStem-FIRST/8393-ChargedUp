@@ -25,7 +25,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
   public static final class ExtensionConstants {
     private static final int k_extensionMotorID = 14;
     private static final int k_extensionServoID = 9;
-    private static final double k_proportional = 0.0001;
+    private static final double k_proportional = 0.000125;
     private static final double k_integral = 0;
     private static final double k_derivative = 0;
     private static final int k_retractedTelescopeValue = 0;
@@ -33,7 +33,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     private static final int k_lowPoleTelescopeValue = 150000;
     private static final int k_highPoleTelescopeValue = 245000;
     private static final int k_telescopeTolerance = 2500;
-    private static final double k_telescopeMaxPower = 0.75;
+    private static final double k_telescopeMaxPower = 1.0;
     public static final int k_backMotorOffRatchetValue = 1000; // FIXME
     public static final double k_backOffMotorSpeed = -0.01; // FIXME
   }
@@ -102,11 +102,11 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
   }
 
   public void ratchetDisengage() {
-    m_ratchetServo.set(0.6);
+    m_ratchetServo.set(0.7);
   }
 
   public void ratchetEngage() {
-    m_ratchetServo.set(0.7);
+    m_ratchetServo.set(0.6);
   }
 
   private void setRatchetState() {
@@ -229,24 +229,10 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
       SmartDashboard.putNumber("Telescope Current Position", m_telescopeMotor.getSelectedSensorPosition());
       setRatchetState();
       setTelescopeState();
-      if (m_telescopeBackOff) {
-        m_telescopeMotor.set(TalonFXControlMode.PercentOutput, -ExtensionConstants.k_telescopeMaxPower / 2);
-      } else {
-        updateWithPID();
-      }
+      updateWithPID();
     }
 
-        NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-        NetworkTableEntry tx = table.getEntry("tx");
-        NetworkTableEntry ty = table.getEntry("ty");
-        NetworkTableEntry ta = table.getEntry("ta");
-        double x = tx.getDouble(0.0);
-        double y = ty.getDouble(0.0);
-        double area = ta.getDouble(0.0);
-
-        SmartDashboard.putNumber("Limelight-X", x);
-        SmartDashboard.putNumber("Limelight-Y", y);
-        SmartDashboard.putNumber("Limelight-Area", area);
+    
 
 
   }

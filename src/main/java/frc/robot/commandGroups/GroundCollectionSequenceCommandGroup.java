@@ -4,7 +4,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.collectorCommands.CollectorOpenCommand;
 import frc.robot.commands.collectorCommands.CollectorDepositCommand;
 import frc.robot.commands.extensionCommands.ExtensionDepositSequenceCommand;
 import frc.robot.commands.liftCommands.LiftDepositLowerCommand;
@@ -17,25 +17,19 @@ import frc.robot.subsystems.Lift.LiftConstants;
 import frc.robot.subsystems.Lift.LiftPosition;
 
 
-public class DepositSequenceCommandGroup extends SequentialCommandGroup {
+public class GroundCollectionSequenceCommandGroup extends SequentialCommandGroup {
     Lift m_lift;
     DoubleSupplier m_triggerThreshold;
     Extension m_extension;
     Collector m_collector;
     TelescopePosition m_extensionPosition;
-    WaitCommand m_WaitCommand;
     
-    public DepositSequenceCommandGroup(Lift p_lift, Extension p_extension, Collector p_collector, TelescopePosition p_extensionPosition) {
+    public GroundCollectionSequenceCommandGroup(Lift p_lift, Extension p_extension, Collector p_collector) {
         this.m_lift = p_lift;
         this.m_extension = p_extension;
         this.m_collector = p_collector;
-        this.m_extensionPosition = p_extensionPosition;
         addCommands(
-            new InstantCommand(() -> m_lift.depositDelta = LiftConstants.k_depositDelta),
-            new CollectorDepositCommand(m_collector),
-            new WaitCommand(0.25),
-            new InstantCommand(() -> m_lift.depositDelta = 0),
-            new CarryRetractedCommandGroup(m_extension, m_lift)
+            new GroundCollectionCommandGroup(m_extension, m_lift, m_collector)
         );
         
     }
