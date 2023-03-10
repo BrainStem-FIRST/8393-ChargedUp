@@ -199,7 +199,7 @@ public class autoCenter extends SequentialCommandGroup {
                 pitch = s_Swerve.getTilt();
                 double power = MathUtil.clamp(m_balancePID.calculate(pitch, 0), -0.25, 0.25);
     
-                if (pitch < 8 && pitch > -8) {
+                if (pitch < 10 && pitch > -10) {
                     m_teleopSwerve = new TeleopSwerve(
                         s_Swerve, 
                         () -> 0,
