@@ -35,6 +35,14 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  public enum robotMode {
+    COLLECTING, 
+    DEPOSITING
+    }
+
+    public static robotMode s_robotMode = robotMode.COLLECTING;
+  
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -116,11 +124,13 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+
     if((m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) > 0.5)){
       new DepositSequenceCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector, TelescopePosition.RETRACTED).schedule();
     } else if ((m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_leftTrigger) > 0.5)) {
       new GroundCollectionCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift, m_robotContainer.m_collector).schedule();
     }
+
   }
 
   @Override

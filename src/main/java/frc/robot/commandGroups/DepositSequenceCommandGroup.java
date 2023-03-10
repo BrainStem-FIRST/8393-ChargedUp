@@ -33,7 +33,6 @@ public class DepositSequenceCommandGroup extends SequentialCommandGroup {
         addCommands(
             new InstantCommand(() -> m_lift.depositDelta = LiftConstants.k_depositDelta),
             new CollectorDepositCommand(m_collector),
-            new WaitCommand(0.25),
             new InstantCommand(() -> m_lift.depositDelta = 0),
             new CarryRetractedCommandGroup(m_extension, m_lift)
         );

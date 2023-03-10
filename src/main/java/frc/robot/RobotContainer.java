@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.Robot.robotMode;
 import frc.robot.autos.*;
 import frc.robot.commandGroups.CarryRetractedCommandGroup;
 import frc.robot.commandGroups.CollectCommandGroup;
@@ -121,14 +122,16 @@ public class RobotContainer {
   /* Driver Buttons */
  
     m_driver1AButton.toggleOnTrue(new InstantCommand(() -> m_carryRetracted.schedule()));
-    m_driver1BButton.toggleOnTrue(new InstantCommand(() -> m_lowPoleApproach.schedule()));
+    m_driver1XButton.toggleOnTrue(new InstantCommand(() -> m_lowPoleApproach.schedule()));
     m_driver1LeftBumper.toggleOnTrue(new InstantCommand(() -> m_collector.m_collectorState = CollectorState.OPEN));
-    m_driver1RightBumper.toggleOnTrue(new InstantCommand(() -> m_collectCommandGroup.schedule()));
+   // m_driver1RightBumper.toggleOnTrue(new InstantCommand(() -> m_collectCommandGroup.schedule()));
+    m_driver1RightBumper.toggleOnTrue(new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF));
 
-    m_driver2AButton.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleRetracted()));
-    m_driver2AButton.toggleOnTrue(new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF));
+
     
-    m_driver2BButton.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleCollection()));
+    
+    m_driver2AButton.onTrue(new InstantCommand(() -> Robot.s_robotMode = robotMode.DEPOSITING));
+    m_driver2BButton.onTrue(new InstantCommand(() -> Robot.s_robotMode = robotMode.COLLECTING));
     m_driver2XButton.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleLowPole()));
     m_driver2YButton.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleHighPole()));
 
@@ -136,6 +139,8 @@ public class RobotContainer {
     m_driver2RightBumper.toggleOnTrue(new InstantCommand(() -> m_lift.incrementLiftHeight()));
 
     m_zeroGyro.whileTrue(new InstantCommand(() -> m_swerve.zeroGyro()));
+
+    
   }
 
   /**
