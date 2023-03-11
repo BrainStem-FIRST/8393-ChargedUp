@@ -1,28 +1,27 @@
 package frc.robot.commands.liftCommands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Robot;
 import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Lift.LiftPosition;
 
-public class LiftCarryCommand extends CommandBase {
+public class LiftShelfHeightCommand extends CommandBase {
     
     private final Lift m_lift;
 
-    public LiftCarryCommand(Lift p_lift) {
+    public LiftShelfHeightCommand(Lift p_lift) {
         m_lift = p_lift;
         addRequirements(m_lift);
     }
 
     @Override
     public void initialize() {
-        m_lift.m_state = LiftPosition.CARRY;
+        m_lift.m_state = LiftPosition.SHELF_COLLECTION;
     }
 
     @Override
     public boolean isFinished() {
         return m_lift.isLiftAtCorrectPosition();
     }
+
     
 }

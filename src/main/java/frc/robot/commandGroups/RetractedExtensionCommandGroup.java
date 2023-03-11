@@ -12,9 +12,7 @@ public class RetractedExtensionCommandGroup extends SequentialCommandGroup {
     
     public RetractedExtensionCommandGroup(Extension extension) {
         addCommands(
-            new RatchetUnlockCommand(extension),
-            new ExtensionCommand(extension, TelescopePosition.RETRACTED),
-            new RatchetLockCommand(extension)
+            new ExtensionCommand(extension, TelescopePosition.RETRACTED)
         );
     }
 

@@ -23,7 +23,8 @@ public class ExtensionCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        SmartDashboard.putNumber("Telescope Position", m_extension.getTelescopeMotorPosition());
+      
+        // SmartDashboard.putNumber("Telescope Position", m_extension.getTelescopeMotorPosition());
         return m_extension.getM_telescopeState() == m_telescopePosition;
     }
 

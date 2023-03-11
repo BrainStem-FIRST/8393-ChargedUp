@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Robot.robotMode;
+import frc.robot.Robot.RobotMode;
 import frc.robot.autos.*;
 import frc.robot.commandGroups.CarryRetractedCommandGroup;
 import frc.robot.commandGroups.CollectCommandGroup;
@@ -83,10 +83,10 @@ public class RobotContainer {
     Collector m_collector = new Collector();
 
     /* Command Groups */
-    LowPoleApproachCommandGroup m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_lift);
-    GroundRetractedCommandGroup m_groundRetracted = new GroundRetractedCommandGroup(m_extension, m_lift);
-    CarryRetractedCommandGroup m_carryRetracted = new CarryRetractedCommandGroup(m_extension, m_lift);
-    CollectCommandGroup m_collectCommandGroup = new CollectCommandGroup(m_collector);
+    public LowPoleApproachCommandGroup m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_lift);
+    public GroundRetractedCommandGroup m_groundRetracted = new GroundRetractedCommandGroup(m_extension, m_lift);
+    public CarryRetractedCommandGroup m_carryRetracted = new CarryRetractedCommandGroup(m_extension, m_lift);
+    public CollectCommandGroup m_collectCommandGroup = new CollectCommandGroup(m_collector);
 
 
   /*
@@ -99,7 +99,7 @@ public class RobotContainer {
             m_swerve,
             () -> -(m_driver1.getRawAxis(k_translationAxis) * Math.abs(m_driver1.getRawAxis(k_translationAxis))),
             () -> -(m_driver1.getRawAxis(k_strafeAxis) * Math.abs(m_driver1.getRawAxis(k_strafeAxis))),
-            () -> -(m_driver1.getRawAxis(k_rotationAxis) * Math.abs(m_driver1.getRawAxis(k_rotationAxis))),
+            () -> -(m_driver1.getRawAxis(k_rotationAxis) * Math.abs(m_driver1.getRawAxis(k_rotationAxis)) * 1.2),
             () -> false));
 
     //mextension.setDefaultCommand(new DefaultExtensionCommand(mextension, () -> -driver1.getRawAxis(JoystickConstants.RIGHT_TRIGGER)));
@@ -120,20 +120,24 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
   /* Driver Buttons */
- 
-    m_driver1AButton.toggleOnTrue(new InstantCommand(() -> m_carryRetracted.schedule()));
-    m_driver1XButton.toggleOnTrue(new InstantCommand(() -> m_lowPoleApproach.schedule()));
+  if(Robot.s_robotMode == RobotMode.DEPOSITING) {
+    //m_driver1AButton.toggleOnTrue(new InstantCommand(() -> m_carryRetracted.schedule()));
+    // m_driver1XButton.toggleOnTrue(new InstantCommand(() -> m_lowPoleApproach.schedule()));
+  } else {
+    m_driver1RightBumper.whileTrue(new InstantCommand(() -> m_collectCommandGroup.schedule()));
+  }
+
     m_driver1LeftBumper.toggleOnTrue(new InstantCommand(() -> m_collector.m_collectorState = CollectorState.OPEN));
-   // m_driver1RightBumper.toggleOnTrue(new InstantCommand(() -> m_collectCommandGroup.schedule()));
-    m_driver1RightBumper.toggleOnTrue(new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF));
+    
+    //m_driver1RightBumper.toggleOnTrue(new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF));
 
 
     
     
-    m_driver2AButton.onTrue(new InstantCommand(() -> Robot.s_robotMode = robotMode.DEPOSITING));
-    m_driver2BButton.onTrue(new InstantCommand(() -> Robot.s_robotMode = robotMode.COLLECTING));
-    m_driver2XButton.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleLowPole()));
-    m_driver2YButton.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleHighPole()));
+    m_driver2AButton.onTrue(new InstantCommand(() -> Robot.s_robotMode = RobotMode.COLLECTING));
+    m_driver2BButton.onTrue(new InstantCommand(() -> Robot.s_robotMode = RobotMode.DEPOSITING));
+    //m_driver2XButton.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleLowPole()));
+    //m_driver2YButton.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleHighPole()));
 
     m_driver2LeftBumper.toggleOnTrue(new InstantCommand(() -> m_lift.decrementLiftHeight()));
     m_driver2RightBumper.toggleOnTrue(new InstantCommand(() -> m_lift.incrementLiftHeight()));

@@ -23,16 +23,17 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
 
   public static final class ExtensionConstants {
+    private static final double k_gearRatioMultiplication = 1.2;
     private static final int k_extensionMotorID = 14;
     private static final int k_extensionServoID = 9;
     private static final double k_proportional = 0.000125;
     private static final double k_integral = 0;
     private static final double k_derivative = 0;
     private static final int k_retractedTelescopeValue = 0;
-    private static final int k_collectionTelescopeValue = 80000;
-    private static final int k_lowPoleTelescopeValue = 150000;
-    private static final int k_highPoleTelescopeValue = 245000;
-    private static final int k_telescopeTolerance = 2500;
+    private static final int k_collectionTelescopeValue = (int)(80000 * k_gearRatioMultiplication);
+    private static final int k_lowPoleTelescopeValue = (int)(150000 * k_gearRatioMultiplication);
+    private static final int k_highPoleTelescopeValue = (int)(245000 * k_gearRatioMultiplication);
+    private static final int k_telescopeTolerance = (int)(2500 * k_gearRatioMultiplication);
     private static final double k_telescopeMaxPower = 1.0;
     public static final int k_backMotorOffRatchetValue = 1000; // FIXME
     public static final double k_backOffMotorSpeed = -0.01; // FIXME
