@@ -21,7 +21,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     private static final int k_groundCollectionValue = 0;
     private static final int k_carryValue = 500;
     private static final int k_shelfCollectionValue = 3700;
-    private static final int k_lowPoleValue = 3500;
+    private static final int k_lowPoleValue = 3700;
     private static final int k_highPoleValue = 3700;
     private static final int k_liftPreLoadPosition = 200;
     private static final double k_MaxPower = 1.0;

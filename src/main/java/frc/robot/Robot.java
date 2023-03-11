@@ -162,7 +162,7 @@ public class Robot extends TimedRobot {
     } 
 
     if((m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) > 0.5)) {
-      new DepositSequenceCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector, TelescopePosition.RETRACTED).schedule();
+      new DepositSequenceCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule();
     } else if ((m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_leftTrigger) > 0.5)) {
       new GroundCollectionCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift, m_robotContainer.m_collector).schedule();
     }

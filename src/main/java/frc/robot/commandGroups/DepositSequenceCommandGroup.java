@@ -25,11 +25,11 @@ public class DepositSequenceCommandGroup extends SequentialCommandGroup {
     TelescopePosition m_extensionPosition;
     WaitCommand m_WaitCommand;
     
-    public DepositSequenceCommandGroup(Lift p_lift, Extension p_extension, Collector p_collector, TelescopePosition p_extensionPosition) {
+    public DepositSequenceCommandGroup(Lift p_lift, Extension p_extension, Collector p_collector) {
         this.m_lift = p_lift;
         this.m_extension = p_extension;
         this.m_collector = p_collector;
-        this.m_extensionPosition = p_extensionPosition;
+        
         addCommands(
             new InstantCommand(() -> m_lift.depositDelta = LiftConstants.k_depositDelta),
             new CollectorDepositCommand(m_collector),

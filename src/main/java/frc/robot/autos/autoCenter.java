@@ -2,12 +2,16 @@ package frc.robot.autos;
 
 import frc.robot.autoCommands.LiftCollectPreLoad;
 import frc.robot.autoCommands.autoCommandGroups.collectPreLoadCommand;
+import frc.robot.commandGroups.DepositSequenceCommandGroup;
+import frc.robot.commandGroups.LowPoleApproachCommandGroup;
 import frc.robot.commands.BalanceCommand;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.extensionCommands.ExtensionCommand;
 import frc.robot.subsystems.Collector;
 import frc.robot.subsystems.Extension;
 import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.Extension.TelescopePosition;
 import frc.robot.subsystems.Swerve.SwerveConstants;
 import java.util.List;
 import java.util.function.DoubleSupplier;
@@ -53,9 +57,13 @@ public class autoCenter extends SequentialCommandGroup {
         private static final double k_D = 0.000000;
     }
     
-    public autoCenter(Swerve s_Swerve, Lift m_Lift, Collector m_collector){
+    public autoCenter(Swerve s_Swerve, Lift m_Lift, Collector m_collector, Extension m_extension){
         collectPreLoadCommand m_collectPreLoadCommand = new collectPreLoadCommand(m_Lift, m_collector);
+        ExtensionCommand m_extensionCarry = new ExtensionCommand(m_extension, TelescopePosition.COLLECTION);
+        LowPoleApproachCommandGroup  m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_Lift);
+        DepositSequenceCommandGroup m_depositSequenceCommandGroup = new DepositSequenceCommandGroup(m_Lift, m_extension, m_collector);
         Timer m_Timer = new Timer();
+
         TrajectoryConfig config =
             new TrajectoryConfig(
                     AutoConstants.k_maxSpeedMetersPerSecond,
@@ -128,7 +136,9 @@ public class autoCenter extends SequentialCommandGroup {
             // score on low pole command here 
             new InstantCommand(() -> m_Timer.start()),
             m_collectPreLoadCommand,
-            
+            m_extensionCarry,
+            m_lowPoleApproach,
+            m_depositSequenceCommandGroup,
             new InstantCommand(() -> s_Swerve.resetOdometry(runOverChargeStationTrajectory.getInitialPose())), 
             runOverChargeStationCommand, 
             runBackOntoChargeStationCommand,
