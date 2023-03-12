@@ -9,19 +9,19 @@ import frc.robot.commands.extensionCommands.RatchetLockCommand;
 import frc.robot.commands.extensionCommands.RatchetUnlockCommand;
 import frc.robot.commands.extensionCommands.RetractedCommand;
 import frc.robot.commands.liftCommands.LiftDepositLowerCommand;
+import frc.robot.commands.liftCommands.LiftHighPoleCommand;
 import frc.robot.commands.liftCommands.LiftLowPoleCommand;
-import frc.robot.commands.liftCommands.LiftShelfHeightCommand;
 import frc.robot.subsystems.Extension;
 import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Extension.TelescopePosition;
 import frc.robot.subsystems.Lift.LiftPosition;
 
-public class ShelfCollectionApproachCommandGroup extends SequentialCommandGroup {
+public class HighPoleApproachCommandGroup extends SequentialCommandGroup {
     
-    public ShelfCollectionApproachCommandGroup(Extension extension, Lift lift) {
+    public HighPoleApproachCommandGroup(Extension extension, Lift lift) {
         addCommands(
-            new LiftShelfHeightCommand(lift),
-            new ShelfExtensionCommandGroup(extension)
+            new LiftHighPoleCommand(lift),
+            new HighPoleExtensionCommandGroup(extension)
         );
       
     }

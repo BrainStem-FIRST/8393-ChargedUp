@@ -9,18 +9,20 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Robot.RobotMode;
 import frc.robot.autos.*;
 import frc.robot.commandGroups.CarryRetractedCommandGroup;
 import frc.robot.commandGroups.CollectCommandGroup;
+import frc.robot.commandGroups.GroundCollectionCommandGroup;
 import frc.robot.commandGroups.GroundRetractedCommandGroup;
 import frc.robot.commandGroups.LowPoleApproachCommandGroup;
+import frc.robot.commandGroups.ShelfCollectionApproachCommandGroup;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Collector.CollectorState;
 import frc.robot.subsystems.Collector.IntakeState;
 import frc.robot.subsystems.Lift.LiftPosition;
 import frc.robot.utilities.BrainSTEMSubsystem;
+import frc.robot.utilities.ToggleButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -59,18 +61,22 @@ public class RobotContainer {
     private final int k_strafeAxis = XboxController.Axis.kLeftX.value;
     private final int k_rotationAxis = XboxController.Axis.kRightX.value;
 
+  /* Toggle Buttons */
+    ToggleButton driver1X = new ToggleButton();
+    ToggleButton driver1A = new ToggleButton();
+
   /* Driver 1 Buttons */
-    private final JoystickButton m_driver1AButton = new JoystickButton(m_driver1, JoystickConstants.k_aButton);
-    private final JoystickButton m_driver1BButton = new JoystickButton(m_driver1, JoystickConstants.k_bButton);
-    private final JoystickButton m_driver1XButton = new JoystickButton(m_driver1, JoystickConstants.k_xButton);
-    private final JoystickButton m_zeroGyro = new JoystickButton(m_driver1, JoystickConstants.k_startButton);
+    public final JoystickButton m_driver1AButton = new JoystickButton(m_driver1, JoystickConstants.k_aButton);
+    public final JoystickButton m_driver1BButton = new JoystickButton(m_driver1, JoystickConstants.k_bButton);
+    public final JoystickButton m_driver1XButton = new JoystickButton(m_driver1, JoystickConstants.k_xButton);
+    public final JoystickButton m_zeroGyro = new JoystickButton(m_driver1, JoystickConstants.k_startButton);
     public final JoystickButton m_driver1LeftBumper = new JoystickButton(m_driver1, JoystickConstants.k_leftBumper);
     public final JoystickButton m_driver1RightBumper = new JoystickButton(m_driver1, JoystickConstants.k_rightBumper);
-    private final JoystickButton m_driver1YButton = new JoystickButton(m_driver1, JoystickConstants.k_yButton);
+    public final JoystickButton m_driver1YButton = new JoystickButton(m_driver1, JoystickConstants.k_yButton);
 
   /* Driver 2 Buttons */
-    private final JoystickButton m_driver2AButton = new JoystickButton(m_driver2, JoystickConstants.k_aButton);
-    private final JoystickButton m_driver2BButton = new JoystickButton(m_driver2, JoystickConstants.k_bButton);
+    public final JoystickButton m_driver2AButton = new JoystickButton(m_driver2, JoystickConstants.k_aButton);
+    public final JoystickButton m_driver2BButton = new JoystickButton(m_driver2, JoystickConstants.k_bButton);
     public final JoystickButton m_driver2YButton = new JoystickButton(m_driver2, JoystickConstants.k_yButton);
     public final JoystickButton m_driver2XButton = new JoystickButton(m_driver2, JoystickConstants.k_xButton);
     public final JoystickButton m_driver2LeftBumper = new JoystickButton(m_driver2, JoystickConstants.k_leftBumper);
@@ -87,8 +93,8 @@ public class RobotContainer {
     public GroundRetractedCommandGroup m_groundRetracted = new GroundRetractedCommandGroup(m_extension, m_lift);
     public CarryRetractedCommandGroup m_carryRetracted = new CarryRetractedCommandGroup(m_extension, m_lift);
     public CollectCommandGroup m_collectCommandGroup = new CollectCommandGroup(m_collector);
-
-
+    public GroundCollectionCommandGroup m_groundCollection = new GroundCollectionCommandGroup(m_extension, m_lift, m_collector);
+    public ShelfCollectionApproachCommandGroup m_shelfCollection = new ShelfCollectionApproachCommandGroup(m_extension, m_lift);
   /*
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -102,9 +108,6 @@ public class RobotContainer {
             () -> -(m_driver1.getRawAxis(k_rotationAxis) * Math.abs(m_driver1.getRawAxis(k_rotationAxis)) * 1.2),
             () -> false));
 
-    //mextension.setDefaultCommand(new DefaultExtensionCommand(mextension, () -> -driver1.getRawAxis(JoystickConstants.RIGHT_TRIGGER)));
-
-    
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -119,31 +122,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-  /* Driver Buttons */
-  if(Robot.s_robotMode == RobotMode.DEPOSITING) {
-    //m_driver1AButton.toggleOnTrue(new InstantCommand(() -> m_carryRetracted.schedule()));
-    // m_driver1XButton.toggleOnTrue(new InstantCommand(() -> m_lowPoleApproach.schedule()));
-  } else {
-    m_driver1RightBumper.whileTrue(new InstantCommand(() -> m_collectCommandGroup.schedule()));
-  }
-
-    m_driver1LeftBumper.toggleOnTrue(new InstantCommand(() -> m_collector.m_collectorState = CollectorState.OPEN));
-    
-    //m_driver1RightBumper.toggleOnTrue(new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF));
-
-
-    
-    
-    m_driver2AButton.onTrue(new InstantCommand(() -> Robot.s_robotMode = RobotMode.COLLECTING));
-    m_driver2BButton.onTrue(new InstantCommand(() -> Robot.s_robotMode = RobotMode.DEPOSITING));
-    //m_driver2XButton.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleLowPole()));
-    //m_driver2YButton.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleHighPole()));
-
-    m_driver2LeftBumper.toggleOnTrue(new InstantCommand(() -> m_lift.decrementLiftHeight()));
-    m_driver2RightBumper.toggleOnTrue(new InstantCommand(() -> m_lift.incrementLiftHeight()));
-
-    m_zeroGyro.whileTrue(new InstantCommand(() -> m_swerve.zeroGyro()));
-
     
   }
 

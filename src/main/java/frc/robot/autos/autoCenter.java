@@ -6,6 +6,8 @@ import frc.robot.commandGroups.DepositSequenceCommandGroup;
 import frc.robot.commandGroups.LowPoleApproachCommandGroup;
 import frc.robot.commands.BalanceCommand;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.collectorCommands.IntakeInCommand;
+import frc.robot.commands.collectorCommands.IntakeOffCommand;
 import frc.robot.commands.extensionCommands.ExtensionCommand;
 import frc.robot.subsystems.Collector;
 import frc.robot.subsystems.Extension;
@@ -62,6 +64,8 @@ public class autoCenter extends SequentialCommandGroup {
         ExtensionCommand m_extensionCarry = new ExtensionCommand(m_extension, TelescopePosition.COLLECTION);
         LowPoleApproachCommandGroup  m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_Lift);
         DepositSequenceCommandGroup m_depositSequenceCommandGroup = new DepositSequenceCommandGroup(m_Lift, m_extension, m_collector);
+        IntakeOffCommand m_intakeOff = new IntakeOffCommand(m_collector);
+        IntakeInCommand m_intakeIn = new IntakeInCommand(m_collector);
         Timer m_Timer = new Timer();
 
         TrajectoryConfig config =
@@ -76,7 +80,7 @@ public class autoCenter extends SequentialCommandGroup {
             TrajectoryGenerator.generateTrajectory(
                 // Set the origin at (5,0) facing the +X direction
                 // Robot starts facing the poles
-                new Pose2d(6, 0, new Rotation2d(Math.toRadians(0))),
+                new Pose2d(5.5, 0, new Rotation2d(Math.toRadians(0))),
                 // Pass through these two interior waypoints, making an 's' curve path
                 List.of(
                     new Translation2d(2, 0) //Just kind of a test thing to see if another waypooint fixes auto
@@ -94,10 +98,10 @@ public class autoCenter extends SequentialCommandGroup {
                         new Pose2d(1, 0, new Rotation2d(Math.toRadians(0))),
                         // Pass through these two interior waypoints, making an 's' curve path
                         List.of(
-                            new Translation2d(2, 0) //Just kind of a test thing to see if another waypooint fixes auto
+                            new Translation2d(1.5, 0) //Just kind of a test thing to see if another waypooint fixes auto
                         ),
                         // End 5 meters behind ahead of where we started, rotating 180 degrees, now facing forward
-                        new Pose2d(3.5, 0, new Rotation2d(Math.toRadians(0))),
+                        new Pose2d(2.75, 0, new Rotation2d(Math.toRadians(0))),
                         config);
                 
 
@@ -135,10 +139,12 @@ public class autoCenter extends SequentialCommandGroup {
 
             // score on low pole command here 
             new InstantCommand(() -> m_Timer.start()),
+            m_intakeIn,
             m_collectPreLoadCommand,
             m_extensionCarry,
             m_lowPoleApproach,
             m_depositSequenceCommandGroup,
+            m_intakeOff,
             new InstantCommand(() -> s_Swerve.resetOdometry(runOverChargeStationTrajectory.getInitialPose())), 
             runOverChargeStationCommand, 
             runBackOntoChargeStationCommand,
@@ -157,7 +163,7 @@ public class autoCenter extends SequentialCommandGroup {
         
             pitch = s_Swerve.getTilt();
             
-            final double initialPower = 0.25;
+            final double initialPower = 0.35;
 
             while (pitch < 10) {
                 pitch = s_Swerve.getTilt();
@@ -170,8 +176,6 @@ public class autoCenter extends SequentialCommandGroup {
                 );
                 m_teleopSwerve.execute();
             }
-
-
 
             while (pitch > 10) {
                 pitch = s_Swerve.getTilt();
