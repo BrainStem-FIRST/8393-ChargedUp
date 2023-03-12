@@ -134,39 +134,10 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     } else {
       m_state = LiftPosition.GROUND_COLLECTION;
     }
-        // switch (m_liftSetPoint) {
-    //   case LiftConstants.k_groundCollectionValue:
-    //     m_state = LiftPosition.CARRY;
-    //     break;
-    //   case LiftConstants.k_carryValue:
-    //     m_state = LiftPosition.SHELF_COLLECTION;
-    //     break;
-    //   case LiftConstants.k_shelfCollectionValue:
-    //     m_state = LiftPosition.LOW_POLE;
-    //     break;
-    //   case LiftConstants.k_lowPoleValue:
-    //     m_state = LiftPosition.GROUND_COLLECTION;
-    //     break;
-    // }
-    // m_state = LiftPosition.SHELF_COLLECTION;
   }
 
   public void decrementLiftHeight() {
     m_liftPID.reset();
-    // switch (m_liftSetPoint) {
-    //   case LiftConstants.k_groundCollectionValue:
-    //     m_state = LiftPosition.LOW_POLE;
-    //     break;
-    //   case LiftConstants.k_carryValue:
-    //     m_state = LiftPosition.GROUND_COLLECTION;
-    //     break;
-    //   case LiftConstants.k_shelfCollectionValue:
-    //     m_state = LiftPosition.CARRY;
-    //     break;
-    //   case LiftConstants.k_lowPoleValue:
-    //     m_state = LiftPosition.SHELF_COLLECTION;
-    //     break;
-    // }
     m_state = LiftPosition.GROUND_COLLECTION;
   }
 
