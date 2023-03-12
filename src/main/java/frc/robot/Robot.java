@@ -206,6 +206,7 @@ public class Robot extends TimedRobot {
       if (m_driver1_X.getState()) {
         SmartDashboard.putString("Lift Extension", "Shelf");
         m_robotContainer.m_shelfCollection.schedule();
+        new InstantCommand(() -> m_robotContainer.m_collector.m_intakeState = IntakeState.IN).schedule();
       } else if (m_driver1_A.getState()) {
         SmartDashboard.putString("Lift Extension", "Ground");
         m_robotContainer.m_groundCollection.schedule();

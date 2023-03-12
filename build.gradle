@@ -10,6 +10,13 @@ def ROBOT_MAIN_CLASS = "frc.robot.Main"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project DeployUtils.
+
+// repositories {
+//    maven {
+//         url 'https://pkgs.dev.azure.com/gabrielmcmillan/limelight_library/_packaging/limelight_library_maven/maven/v1'
+//     }
+// }
+
 deploy {
     targets {
         roborio(getTargetTypeClass('RoboRIO')) {
@@ -50,6 +57,8 @@ def includeDesktopSupport = false
 dependencies {
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
+
+    //compile(group: 'com.fearxzombie', name: 'limelight_library', version: '0.7')
 
     roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
     roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)

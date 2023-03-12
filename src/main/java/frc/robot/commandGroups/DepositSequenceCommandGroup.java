@@ -12,6 +12,8 @@ import frc.robot.commands.liftCommands.LiftCarryCommand;
 import frc.robot.subsystems.Collector;
 import frc.robot.subsystems.Extension;
 import frc.robot.subsystems.Lift;
+import frc.robot.subsystems.Collector.CollectorState;
+import frc.robot.subsystems.Collector.IntakeState;
 import frc.robot.subsystems.Extension.TelescopePosition;
 import frc.robot.subsystems.Lift.LiftConstants;
 import frc.robot.subsystems.Lift.LiftPosition;
@@ -34,7 +36,8 @@ public class DepositSequenceCommandGroup extends SequentialCommandGroup {
             new InstantCommand(() -> m_lift.depositDelta = LiftConstants.k_depositDelta),
             new CollectorDepositCommand(m_collector),
             new InstantCommand(() -> m_lift.depositDelta = 0),
-            new CarryRetractedCommandGroup(m_extension, m_lift)
+            new CarryRetractedCommandGroup(m_extension, m_lift),
+            new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF)
         );
         
     }

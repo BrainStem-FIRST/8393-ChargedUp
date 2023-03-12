@@ -221,12 +221,12 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
 
   @Override
   public void periodic() {
-    if (m_enableLiftPeriodic) {
-      SmartDashboard.putBoolean("Lift Periodic Called", true);
-      m_backLift.follow(m_forwardLift, true);
-      setLiftState();
-      updateWithPID();
-    }
+    // if (m_enableLiftPeriodic) {
+    //   SmartDashboard.putBoolean("Lift Periodic Called", true);
+    //   m_backLift.follow(m_forwardLift, true);
+    //   setLiftState();
+    //   updateWithPID();
+    // }
   }
 
   @Override
