@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.RobotContainer.JoystickConstants;
 import frc.robot.commandGroups.CarryRetractedCommandGroup;
 import frc.robot.commandGroups.DepositSequenceCommandGroup;
+import frc.robot.commandGroups.DepositSequenceHighPoleCommandGroup;
 import frc.robot.commandGroups.GroundCollectionCommandGroup;
 import frc.robot.commandGroups.GroundCollectionSequenceCommandGroup;
 import frc.robot.commandGroups.HighPoleApproachCommandGroup;
@@ -44,7 +45,15 @@ public class Robot extends TimedRobot {
     DEPOSITING
     }
 
-  public static RobotMode s_robotMode = RobotMode.COLLECTING;
+  public enum DepositLocation {
+    HIGH, 
+    LOW,
+    GROUND
+  }  
+
+  public static RobotMode s_robotMode = RobotMode.DEPOSITING; 
+
+  public static DepositLocation s_depositLocation = DepositLocation.LOW;
 
   private ToggleButton m_driver1_A = new ToggleButton();
   private ToggleButton m_driver1_X = new ToggleButton();
@@ -187,12 +196,18 @@ public class Robot extends TimedRobot {
     /* Driver Buttons */
     if(s_robotMode == RobotMode.DEPOSITING) {
       if(m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) > 0.9) {
-        new DepositSequenceCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule();
+        if (s_depositLocation == DepositLocation.HIGH) {
+          new DepositSequenceHighPoleCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule();
+        } else {
+          new DepositSequenceCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule(); 
+        }
       }
       if (m_robotContainer.m_driver1XButton.getAsBoolean()) {
+        s_depositLocation = DepositLocation.LOW;
         new LowPoleApproachCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift).schedule();
       }
       if (m_robotContainer.m_driver1YButton.getAsBoolean()) {
+        s_depositLocation = DepositLocation.HIGH;
         new HighPoleApproachCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift).schedule();
       }
       

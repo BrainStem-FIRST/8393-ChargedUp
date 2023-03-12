@@ -21,6 +21,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Swerve extends SubsystemBase implements BrainSTEMSubsystem{
@@ -207,6 +208,10 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem{
     public void disablePeriodic(){
         m_enableSwervePeriodic = false;
     }
+
+    // public Command alignToTag() {
+    //     //Pose3d tagPose = 
+    // }
 
     /* Used by SwerveControllerCommand in Auto */
     public void setModuleStates(SwerveModuleState[] desiredStates) {

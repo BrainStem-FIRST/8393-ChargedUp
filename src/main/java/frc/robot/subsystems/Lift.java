@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,16 +22,23 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     private static final int k_groundCollectionValue = 0;
     private static final int k_carryValue = 500;
     private static final int k_shelfCollectionValue = 3800;
-    private static final int k_lowPoleValue = 3700;
-    private static final int k_highPoleValue = 3700;
+    private static final int k_lowPoleValue = 3000;
+    private static final int k_highPoleValue = 3550;
+    private static final int k_highPoleTiltValue = 3200;
     private static final int k_liftPreLoadPosition = 200;
     private static final double k_MaxPower = 1.0;
     private static final int k_liftTolerance = 50;
     public static final int k_depositDelta = 400;
+
+    private static final int k_hookServoID = 8;
+    private static final double k_hookServoDownPosition = 0.93;
+    private static final double k_hookServoUpPosition = 0.5;
+    
   }
 
   private CANSparkMax m_forwardLift;
   private CANSparkMax m_backLift;
+  private Servo m_hookServo;
   private RelativeEncoder m_liftForwardEncoder;
   private int m_liftSetPoint = 0;
   private boolean m_enableLiftPeriodic = false;
@@ -42,6 +50,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     m_forwardLift = new CANSparkMax(2, MotorType.kBrushless);
     m_backLift = new CANSparkMax(3, MotorType.kBrushless);
     m_liftForwardEncoder = m_forwardLift.getEncoder();
+    m_hookServo = new Servo(LiftConstants.k_hookServoID);
   }
 
   public CommandBase exampleMethodCommand() {
@@ -57,9 +66,17 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     SHELF_COLLECTION,
     LOW_POLE,
     HIGH_POLE,
+    HIGH_POLE_TILT,
     DEPOSIT_LOWER, 
     COLLECT_PRELOAD
   }
+
+  public enum HookState {
+    UP, 
+    DOWN
+  }
+
+  public HookState m_hookState = HookState.UP;
 
   public LiftPosition m_state = LiftPosition.GROUND_COLLECTION;
 
@@ -77,6 +94,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     m_forwardLift.set(0);
     m_state = LiftPosition.GROUND_COLLECTION;
     m_liftSetPoint = 0;
+    m_hookServo.set(LiftConstants.k_hookServoUpPosition);
     enablePeriodic();
   }
 
@@ -112,6 +130,31 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     // 0));
   }
 
+  // public void cycleHookServo(){
+  //   if(m_hookServo.get() == LiftConstants.k_hookServoUpPosition) {
+  //     m_hookServo.set(0.5);
+  //     SmartDashboard.putString("Hook Servo", "0.5");
+  //   } else if (m_hookServo.get() == 0.5) {
+  //     m_hookServo.set(LiftConstants.k_hookServoDownPosition);
+  //     SmartDashboard.putString("Hook Servo", "Hook Down Position");
+  //   } else if (m_hookServo.get() == LiftConstants.k_hookServoDownPosition) {
+  //     m_hookServo.set(LiftConstants.k_hookServoUpPosition);
+  //     SmartDashboard.putString("Hook Servo", "Hook Up Position");
+  //   }
+  // }
+
+  public void lowerHooks() {
+    m_hookServo.set(LiftConstants.k_hookServoDownPosition);
+  }
+
+  public void raiseHooks() {
+    m_hookServo.set(LiftConstants.k_hookServoUpPosition);
+  }
+
+
+
+  
+
   public void liftStop() {
     m_liftPID.reset();
     m_forwardLift.set(0);
@@ -145,6 +188,19 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     m_liftSetPoint += ticks;
   }
 
+  private void setHookState() {
+    switch(m_hookState) {
+      case UP:
+      SmartDashboard.putString("HOOKS RN", "UP");
+        m_hookServo.set(LiftConstants.k_hookServoUpPosition);
+        break;
+      case DOWN:
+      SmartDashboard.putString("HOOKS RN", "DOWN");
+        m_hookServo.set(LiftConstants.k_hookServoDownPosition);
+        break;  
+    }
+  }
+
   private void setLiftState() {
     switch (m_state) {
       case GROUND_COLLECTION:
@@ -161,6 +217,9 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
         break;
       case HIGH_POLE:
         m_liftSetPoint = LiftConstants.k_highPoleValue - depositDelta;
+        break;
+      case HIGH_POLE_TILT:
+        m_liftSetPoint = LiftConstants.k_highPoleTiltValue;
         break;
       case DEPOSIT_LOWER:
         if(m_liftSetPoint != 0){
@@ -192,12 +251,14 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
 
   @Override
   public void periodic() {
-    // if (m_enableLiftPeriodic) {
-    //   SmartDashboard.putBoolean("Lift Periodic Called", true);
-    //   m_backLift.follow(m_forwardLift, true);
-    //   setLiftState();
-    //   updateWithPID();
-    // }
+    if (m_enableLiftPeriodic) {
+      SmartDashboard.putBoolean("Lift Periodic Called", true);
+      SmartDashboard.getNumber("Hook Position set", m_hookServo.get());
+      m_backLift.follow(m_forwardLift, true);
+      setLiftState();
+      setHookState();
+      updateWithPID();
+    }
   }
 
   @Override
