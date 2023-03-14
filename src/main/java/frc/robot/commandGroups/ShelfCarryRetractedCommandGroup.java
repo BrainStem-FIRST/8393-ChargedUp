@@ -18,14 +18,15 @@ import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Extension.TelescopePosition;
 import frc.robot.subsystems.Lift.LiftPosition;
 
-public class CarryRetractedCommandGroup extends SequentialCommandGroup {
+public class ShelfCarryRetractedCommandGroup extends SequentialCommandGroup {
     
-    public CarryRetractedCommandGroup(Extension extension, Lift lift) {
+    public ShelfCarryRetractedCommandGroup(Extension extension, Lift lift) {
 
         
         addCommands(
-            new LiftCarryCommand(lift),
-            new RetractedExtensionCommandGroup(extension)
+            
+            new RetractedExtensionCommandGroup(extension),
+            new LiftCarryCommand(lift)
         );
       
     }

@@ -38,9 +38,9 @@ public class DepositSequenceHighPoleCommandGroup extends SequentialCommandGroup 
         addCommands(
             new LiftHighPoleCommand(p_lift),
             new RaiseHooksCommand(p_lift),
-            new WaitCommand(0.1),
+            new WaitCommand(0.05),
             new CollectorDepositCommand(m_collector),
-            new CarryRetractedCommandGroup(m_extension, m_lift),
+            new ShelfCarryRetractedCommandGroup(m_extension, m_lift),
             new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF)
         );
         

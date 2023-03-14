@@ -21,12 +21,12 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
 
     private static final int k_groundCollectionValue = 0;
     private static final int k_carryValue = 500;
-    private static final int k_shelfCollectionValue = 3800;
+    private static final int k_shelfCollectionValue = 3775;
     private static final int k_lowPoleValue = 3000;
     private static final int k_highPoleValue = 3550;
-    private static final int k_highPoleTiltValue = 3200;
+    private static final int k_highPoleTiltValue = 3100;
     private static final int k_liftPreLoadPosition = 200;
-    private static final double k_MaxPower = 1.0;
+    private static final double k_MaxPower = 0.50;
     private static final int k_liftTolerance = 50;
     public static final int k_depositDelta = 400;
 
@@ -252,6 +252,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   @Override
   public void periodic() {
     if (m_enableLiftPeriodic) {
+      SmartDashboard.putString("Lift State", m_state.toString());
       SmartDashboard.putBoolean("Lift Periodic Called", true);
       SmartDashboard.getNumber("Hook Position set", m_hookServo.get());
       m_backLift.follow(m_forwardLift, true);

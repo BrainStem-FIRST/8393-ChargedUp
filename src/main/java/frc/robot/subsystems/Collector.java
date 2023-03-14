@@ -20,8 +20,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     private static final int k_clawDepositPosition = 509;
     private static final double k_clawMotorCurrentDrawLimit = 30;
     private static final double k_clawMotorHoldingSpeed = 0.01;
-    private static final double k_clawMotorCloseSpeed = 0.1;
-    private static final double k_clawMotorOpenSpeed = -0.075;
+    private static final double k_clawMotorCloseSpeed = 0.05;
+    private static final double k_clawMotorOpenSpeed = -0.0375;
     private static final double k_wheelMotorSpeed = 0.6; //FIXME
     private static final double k_wheelMotorCurrentDrawLimit = 40; //FIXME
     private static final double k_p = 0.0005; //FIXME
@@ -225,10 +225,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     switch (m_collectorState) {
       case OPEN:
         openCollector();
-        collectorOut();
         break;
       case CLOSED:
-      
         closeCollector();
         break;
       case OFF:

@@ -28,8 +28,9 @@ public class ToggleButton {
         previousState = this.currentState;
         this.currentState = currentState;
 
-        if (currentState && currentState != previousState)
+        if (currentState && currentState != previousState) {
             toggle = !toggle;
+        }
 
         return toggle;
     }

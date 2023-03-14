@@ -6,6 +6,7 @@ package frc.robot;
 
 import java.util.ArrayList;
 
+import edu.wpi.first.cscore.CameraServerJNI.TelemetryKind;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.JoystickSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,6 +21,7 @@ import frc.robot.commandGroups.GroundCollectionCommandGroup;
 import frc.robot.commandGroups.GroundCollectionSequenceCommandGroup;
 import frc.robot.commandGroups.HighPoleApproachCommandGroup;
 import frc.robot.commandGroups.LowPoleApproachCommandGroup;
+import frc.robot.commandGroups.ShelfCarryRetractedCommandGroup;
 import frc.robot.commandGroups.ShelfCollectionApproachCommandGroup;
 import frc.robot.commands.extensionCommands.ExtensionDepositSequenceCommand;
 import frc.robot.subsystems.Collector;
@@ -51,7 +53,7 @@ public class Robot extends TimedRobot {
     GROUND
   }  
 
-  public static RobotMode s_robotMode = RobotMode.DEPOSITING; 
+  public static RobotMode s_robotMode = RobotMode.COLLECTING;
 
   public static DepositLocation s_depositLocation = DepositLocation.LOW;
 
@@ -69,6 +71,8 @@ public class Robot extends TimedRobot {
   public static boolean depositSequenceContinue = true;
 
   private RobotContainer m_robotContainer;
+
+  private boolean hasGroundCollectionRun = false;
 
   
 
@@ -149,13 +153,16 @@ public class Robot extends TimedRobot {
   }
 
   private void setToggleButtons() {
+
+    // m_driver1_A.update(m_robotContainer.m_driver1AButton.getAsBoolean() && !);
+    // m_driver1_X.update(m_robotContainer.m_driver1XButton.getAsBoolean() && !m_robotContainer.m_driver1AButton.getAsBoolean());
+    m_driver1_A.update(m_robotContainer.m_driver1AButton.getAsBoolean());
+    m_driver1_X.update(m_robotContainer.m_driver1XButton.getAsBoolean());
     if (m_robotContainer.m_driver1AButton.getAsBoolean()) {
-      m_driver1_A.update(true);
       m_driver1_X.setState(false);
     } else if (m_robotContainer.m_driver1XButton.getAsBoolean()) {
-      m_driver1_X.update(true);
       m_driver1_A.setState(false);
-    }
+    } 
   }
 
   private void setRobotState() {
@@ -171,25 +178,8 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     setRobotState();
     setToggleButtons();
+    SmartDashboard.putBoolean("Driver 1 A Button State", m_driver1_A.getState());
 
-
-    // if(s_robotMode == RobotMode.COLLECTING) {
-
-    //   toggleCollectionButton.update(m_robotContainer.m_driver1.getRawButton(JoystickConstants.k_aButton));
-    //   //SmartDashboard.putBoolean("collection button state", toggleCollectionButton.getState());
-    //   if(toggleCollectionButton.getState()) {
-    //     new ShelfCollectionApproachCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift).schedule();
-    //     //m_robotContainer.m_lowPoleApproach.schedule();
-    //   } else {
-    //     new CarryRetractedCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift).schedule();
-    //   }
-    // } 
-
-    // if((m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) > 0.5)) {
-    //   new DepositSequenceCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule();
-    // } else if ((m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_leftTrigger) > 0.5)) {
-    //   new GroundCollectionCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift, m_robotContainer.m_collector).schedule();
-    // }
 
 
     SmartDashboard.putString("Robot Mode", s_robotMode.toString());
@@ -211,23 +201,29 @@ public class Robot extends TimedRobot {
         new HighPoleApproachCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift).schedule();
       }
       
-      //m_driver1AButton.toggleOnTrue(new InstantCommand(() -> m_carryRetracted.schedule()));
-      // m_driver1XButton.toggleOnTrue(new InstantCommand(() -> m_lowPoleApproach.schedule()));
+      
     } else {
-
+      m_robotContainer.m_collector.m_collectorState = CollectorState.CLOSED;
       /* Collector */
+      if(!m_driver1_A.getState()) {
+        hasGroundCollectionRun = false;
+      }
 
       /* Lift and Extension States */
       if (m_driver1_X.getState()) {
         SmartDashboard.putString("Lift Extension", "Shelf");
-        m_robotContainer.m_shelfCollection.schedule();
-        new InstantCommand(() -> m_robotContainer.m_collector.m_intakeState = IntakeState.IN).schedule();
-      } else if (m_driver1_A.getState()) {
+        m_robotContainer.m_shelfCollection.schedule();        //new InstantCommand(() -> m_robotContainer.m_collector.m_intakeState = IntakeState.IN).schedule();
+      } else if (m_driver1_A.getState() && !hasGroundCollectionRun) {
         SmartDashboard.putString("Lift Extension", "Ground");
         m_robotContainer.m_groundCollection.schedule();
-      } else {
+        hasGroundCollectionRun = true;
+      } else if ((!m_driver1_A.getState() && !m_driver1_X.getState())) {
         SmartDashboard.putString("Lift Extension", "Carry");
-        m_robotContainer.m_carryRetracted.schedule();
+        if(m_robotContainer.m_lift.m_state == LiftPosition.SHELF_COLLECTION) {
+          new ShelfCarryRetractedCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift).schedule();
+        } else {
+          m_robotContainer.m_carryRetracted.schedule();
+        }
       }
 
       /* Intake Control */
@@ -241,15 +237,7 @@ public class Robot extends TimedRobot {
 
     m_robotContainer.m_driver1LeftBumper.toggleOnTrue(new InstantCommand(() -> m_robotContainer.m_collector.m_collectorState = CollectorState.OPEN));
     
-    //m_driver1RightBumper.toggleOnTrue(new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF));
-
-
     
-    
-    
-    //m_driver2XButton.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleLowPole()));
-    //m_driver2YButton.toggleOnTrue(new InstantCommand(() -> m_extension.scheduleHighPole()));
-
 
     m_robotContainer.m_zeroGyro.whileTrue(new InstantCommand(() -> m_robotContainer.m_swerve.zeroGyro()));
 

@@ -21,15 +21,17 @@ import frc.robot.subsystems.Extension.TelescopePosition;
 import frc.robot.subsystems.Lift.LiftPosition;
 
 public class GroundCollectionCommandGroup extends SequentialCommandGroup {
-    
-    public GroundCollectionCommandGroup(Extension extension, Lift lift, Collector collector) {
-        addCommands(
-            new LiftCarryCommand(lift),
-            new CollectionExtensionCommandGroup(extension),
-            new LiftGroundCommand(lift),
-            new CollectorOpenCommand(collector),
-            new InstantCommand(() -> collector.m_intakeState = IntakeState.IN)
-        );
+    private Lift m_lift;
+    public GroundCollectionCommandGroup(Extension extension, Lift p_lift, Collector collector) {
+        m_lift = p_lift;
+            addCommands(
+                new LiftCarryCommand(p_lift),
+                new CollectionExtensionCommandGroup(extension),
+                new LiftGroundCommand(p_lift),
+                new CollectorOpenCommand(collector),
+                new InstantCommand(() -> collector.m_intakeState = IntakeState.IN)
+            );
+        
       
     }
 
