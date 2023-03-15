@@ -27,6 +27,7 @@ import frc.robot.commands.extensionCommands.ExtensionDepositSequenceCommand;
 import frc.robot.subsystems.Collector;
 import frc.robot.subsystems.Extension;
 import frc.robot.subsystems.Lift;
+import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Collector.CollectorState;
 import frc.robot.subsystems.Collector.IntakeState;
 import frc.robot.subsystems.Extension.TelescopePosition;
@@ -59,6 +60,7 @@ public class Robot extends TimedRobot {
 
   private ToggleButton m_driver1_A = new ToggleButton();
   private ToggleButton m_driver1_X = new ToggleButton();
+  private ToggleButton m_driver1_BackButton = new ToggleButton();
 
   private ToggleButton m_driver2_A = new ToggleButton();
   private ToggleButton m_driver2_B = new ToggleButton();
@@ -73,6 +75,7 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
 
   private boolean hasGroundCollectionRun = false;
+  public ArrayList<BrainSTEMSubsystem> brainSTEMSubsystemsWithoutSwerve;
 
   
 
@@ -86,6 +89,8 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    brainSTEMSubsystemsWithoutSwerve = m_robotContainer.getBrainSTEMSubsystems();
+    brainSTEMSubsystemsWithoutSwerve.remove(m_robotContainer.m_swerve);
     
   }
 
@@ -138,6 +143,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -167,8 +173,13 @@ public class Robot extends TimedRobot {
 
   private void setRobotState() {
     if (m_robotContainer.m_driver2AButton.getAsBoolean()) {
+      m_driver1_X.setState(false);
+      m_driver1_A.setState(false);
       m_robotContainer.m_collector.m_collectorState = CollectorState.CLOSED;
+      s_robotMode = RobotMode.COLLECTING;
     } else if (m_robotContainer.m_driver2BButton.getAsBoolean()) {
+      m_driver1_X.setState(false);
+      m_driver1_A.setState(false);
       s_robotMode = RobotMode.DEPOSITING;
     }
   }
@@ -176,13 +187,26 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+
+    m_driver1_BackButton.update(m_robotContainer.m_driver1.getRawButton(JoystickConstants.k_backButton));
     setRobotState();
     setToggleButtons();
+    if(m_driver1_BackButton.getState()) {
+      for(BrainSTEMSubsystem i_subsystem : brainSTEMSubsystemsWithoutSwerve){
+        i_subsystem.disablePeriodic();
+      }
+    } else {
+      for(BrainSTEMSubsystem i_subsystem : brainSTEMSubsystemsWithoutSwerve){
+        i_subsystem.enablePeriodic();
+      }
+    }
+
     SmartDashboard.putBoolean("Driver 1 A Button State", m_driver1_A.getState());
 
 
 
     SmartDashboard.putString("Robot Mode", s_robotMode.toString());
+
     /* Driver Buttons */
     if(s_robotMode == RobotMode.DEPOSITING) {
       if(m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) > 0.9) {
@@ -192,14 +216,14 @@ public class Robot extends TimedRobot {
           new DepositSequenceCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule(); 
         }
       }
-      if (m_robotContainer.m_driver1XButton.getAsBoolean()) {
+      if (m_robotContainer.m_driver1XButton.getAsBoolean() && (m_robotContainer.m_lift.m_state != LiftPosition.HIGH_POLE_TILT) && (m_robotContainer.m_lift.m_state != LiftPosition.HIGH_POLE)) { // && (m_robotContainer.m_lift.m_state != LiftPosition.HIGH_POLE_TILT) && (m_robotContainer.m_lift.m_state != LiftPosition.HIGH_POLE)
         s_depositLocation = DepositLocation.LOW;
-        new LowPoleApproachCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift).schedule();
+        new LowPoleApproachCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift, m_robotContainer.m_collector).schedule();
       }
-      if (m_robotContainer.m_driver1YButton.getAsBoolean()) {
+      if (m_robotContainer.m_driver1YButton.getAsBoolean() && (m_robotContainer.m_lift.m_state != LiftPosition.LOW_POLE)) { //&& (m_robotContainer.m_lift.m_state != LiftPosition.LOW_POLE)
         s_depositLocation = DepositLocation.HIGH;
-        new HighPoleApproachCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift).schedule();
-      }
+        new HighPoleApproachCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift, m_robotContainer.m_collector).schedule();
+      } 
       
       
     } else {

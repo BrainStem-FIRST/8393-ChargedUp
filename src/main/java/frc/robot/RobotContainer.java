@@ -54,7 +54,7 @@ public class RobotContainer {
   /* Controllers */
     public final Joystick m_driver1 = new Joystick(0);
     private final Joystick m_driver2 = new Joystick(1);
-    public static final double k_stickDeadband = 0.1;
+    public static final double k_stickDeadband = 0.05;
   
   /* Drive Controls */
     final int k_translationAxis = XboxController.Axis.kLeftY.value;
@@ -89,7 +89,7 @@ public class RobotContainer {
     Collector m_collector = new Collector();
 
     /* Command Groups */
-    public LowPoleApproachCommandGroup m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_lift);
+    public LowPoleApproachCommandGroup m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_lift, m_collector);
     public GroundRetractedCommandGroup m_groundRetracted = new GroundRetractedCommandGroup(m_extension, m_lift);
     public CarryRetractedCommandGroup m_carryRetracted = new CarryRetractedCommandGroup(m_extension, m_lift);
     public CollectCommandGroup m_collectCommandGroup = new CollectCommandGroup(m_collector);
@@ -132,12 +132,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-
-    //return new SequentialCommandGroup(new AutoDepositCommand(m_collector, m_extension, 3), new exampleAuto(m_swerve));
-    return new SequentialCommandGroup(new autoSide(m_swerve, m_lift, m_collector, m_extension));
-    
-    // An ExampleCommand will run in autonomous
-    //return new InstantCommand(grabber::collectorOn);
+    //return new SequentialCommandGroup(new autoSide(m_swerve, m_lift, m_collector, m_extension));
+    return new SequentialCommandGroup(new autoCenter(m_swerve, m_lift, m_collector, m_extension));
   }
 
   public ArrayList<BrainSTEMSubsystem> getBrainSTEMSubsystems(){

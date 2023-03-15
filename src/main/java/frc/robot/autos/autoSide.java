@@ -62,7 +62,7 @@ public class autoSide extends SequentialCommandGroup {
     public autoSide(Swerve s_Swerve, Lift m_Lift, Collector m_collector, Extension m_extension){
         collectPreLoadCommand m_collectPreLoadCommand = new collectPreLoadCommand(m_Lift, m_collector);
         ExtensionCommand m_extensionCarry = new ExtensionCommand(m_extension, TelescopePosition.COLLECTION);
-        LowPoleApproachCommandGroup  m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_Lift);
+        LowPoleApproachCommandGroup  m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_Lift, m_collector);
         DepositSequenceCommandGroup m_depositSequenceCommandGroup = new DepositSequenceCommandGroup(m_Lift, m_extension, m_collector);
         IntakeOffCommand m_intakeOff = new IntakeOffCommand(m_collector);
         IntakeInCommand m_intakeIn = new IntakeInCommand(m_collector);
@@ -139,12 +139,12 @@ public class autoSide extends SequentialCommandGroup {
 
             // score on low pole command here 
             new InstantCommand(() -> m_Timer.start()),
-            // m_intakeIn,
-            // m_collectPreLoadCommand,
-            // m_extensionCarry,
-            // m_lowPoleApproach,
-            // m_depositSequenceCommandGroup,
-            // m_intakeOff,
+            m_intakeIn,
+            m_collectPreLoadCommand,
+            m_extensionCarry,
+            m_lowPoleApproach,
+            m_depositSequenceCommandGroup,
+            m_intakeOff,
             new InstantCommand(() -> s_Swerve.resetOdometry(runOverChargeStationTrajectory.getInitialPose())), 
             runOverChargeStationCommand
             // runBackOntoChargeStationCommand,

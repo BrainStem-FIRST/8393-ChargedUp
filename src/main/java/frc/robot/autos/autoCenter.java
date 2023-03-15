@@ -62,7 +62,7 @@ public class autoCenter extends SequentialCommandGroup {
     public autoCenter(Swerve s_Swerve, Lift m_Lift, Collector m_collector, Extension m_extension){
         collectPreLoadCommand m_collectPreLoadCommand = new collectPreLoadCommand(m_Lift, m_collector);
         ExtensionCommand m_extensionCarry = new ExtensionCommand(m_extension, TelescopePosition.COLLECTION);
-        LowPoleApproachCommandGroup  m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_Lift);
+        LowPoleApproachCommandGroup  m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_Lift, m_collector);
         DepositSequenceCommandGroup m_depositSequenceCommandGroup = new DepositSequenceCommandGroup(m_Lift, m_extension, m_collector);
         IntakeOffCommand m_intakeOff = new IntakeOffCommand(m_collector);
         IntakeInCommand m_intakeIn = new IntakeInCommand(m_collector);
@@ -89,20 +89,20 @@ public class autoCenter extends SequentialCommandGroup {
                 new Pose2d(1, 0, new Rotation2d(Math.toRadians(0))),
                 config);
 
-                config.setReversed(false);
+        config.setReversed(false);
                 // An example trajectory to follow.  All units in meters.
-                Trajectory runBackOnToChargeStationTrajectory =
-                    TrajectoryGenerator.generateTrajectory(
-                        // Set the origin at (5,0) facing the +X direction
-                        // Robot starts facing the poles
-                        new Pose2d(1, 0, new Rotation2d(Math.toRadians(0))),
-                        // Pass through these two interior waypoints, making an 's' curve path
-                        List.of(
-                            new Translation2d(2, 0) //Just kind of a test thing to see if another waypooint fixes auto
-                        ),
-                        // End 5 meters behind ahead of where we started, rotating 180 degrees, now facing forward
-                        new Pose2d(3.6, 0, new Rotation2d(Math.toRadians(0))),
-                        config);
+        Trajectory runBackOnToChargeStationTrajectory =
+            TrajectoryGenerator.generateTrajectory(
+                // Set the origin at (5,0) facing the +X direction
+                // Robot starts facing the poles
+                new Pose2d(1, 0, new Rotation2d(Math.toRadians(0))),
+                // Pass through these two interior waypoints, making an 's' curve path
+                List.of(
+                    new Translation2d(2, 0) //Just kind of a test thing to see if another waypooint fixes auto
+                ),
+                // End 5 meters behind ahead of where we started, rotating 180 degrees, now facing forward
+                new Pose2d(3.6, 0, new Rotation2d(Math.toRadians(0))),
+                config);
                 
 
         var thetaController =
@@ -139,14 +139,14 @@ public class autoCenter extends SequentialCommandGroup {
 
             // score on low pole command here 
             new InstantCommand(() -> m_Timer.start()),
-            // m_intakeIn,
-            // m_collectPreLoadCommand,
-            // m_extensionCarry,
-            // m_lowPoleApproach,
-            // m_depositSequenceCommandGroup,
-            // m_intakeOff,
+            m_intakeIn,
+            m_collectPreLoadCommand,
+            m_extensionCarry,
+            m_lowPoleApproach,
+            m_depositSequenceCommandGroup,
+            m_intakeOff,
             new InstantCommand(() -> s_Swerve.resetOdometry(runOverChargeStationTrajectory.getInitialPose())), 
-            runOverChargeStationCommand, 
+            runOverChargeStationCommand,
             runBackOntoChargeStationCommand,
             new InstantCommand(() -> autoBalance(s_Swerve, m_Timer))
 

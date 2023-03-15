@@ -30,7 +30,7 @@ public class CollectorCloseCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if (m_timer.get() > 0.3) {
+        if (m_timer.get() > 0.75) {
             return true;
         } else {
             return false;

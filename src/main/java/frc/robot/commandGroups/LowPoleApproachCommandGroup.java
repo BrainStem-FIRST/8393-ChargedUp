@@ -10,17 +10,21 @@ import frc.robot.commands.extensionCommands.RatchetUnlockCommand;
 import frc.robot.commands.extensionCommands.RetractedCommand;
 import frc.robot.commands.liftCommands.LiftDepositLowerCommand;
 import frc.robot.commands.liftCommands.LiftLowPoleCommand;
+import frc.robot.subsystems.Collector;
 import frc.robot.subsystems.Extension;
 import frc.robot.subsystems.Lift;
+import frc.robot.subsystems.Collector.CollectorConstants;
 import frc.robot.subsystems.Extension.TelescopePosition;
 import frc.robot.subsystems.Lift.LiftPosition;
 
 public class LowPoleApproachCommandGroup extends SequentialCommandGroup {
     
-    public LowPoleApproachCommandGroup(Extension extension, Lift lift) {
+    public LowPoleApproachCommandGroup(Extension extension, Lift lift, Collector collector) {
         addCommands(
+            new InstantCommand(()-> collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorCloseSpeed),
             new LiftLowPoleCommand(lift),
-            new LowPoleExtensionCommandGroup(extension)
+            new LowPoleExtensionCommandGroup(extension),
+            new InstantCommand(()-> collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed)
         );
       
     }

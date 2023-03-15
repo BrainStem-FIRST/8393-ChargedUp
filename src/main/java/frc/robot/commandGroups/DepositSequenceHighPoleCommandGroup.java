@@ -6,6 +6,7 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.collectorCommands.CollectorCloseCommand;
 import frc.robot.commands.collectorCommands.CollectorDepositCommand;
 import frc.robot.commands.extensionCommands.ExtensionDepositSequenceCommand;
 import frc.robot.commands.liftCommands.LiftDepositLowerCommand;
@@ -15,6 +16,7 @@ import frc.robot.commands.liftCommands.LiftCarryCommand;
 import frc.robot.subsystems.Collector;
 import frc.robot.subsystems.Extension;
 import frc.robot.subsystems.Lift;
+import frc.robot.subsystems.Collector.CollectorConstants;
 import frc.robot.subsystems.Collector.CollectorState;
 import frc.robot.subsystems.Collector.IntakeState;
 import frc.robot.subsystems.Extension.TelescopePosition;
@@ -36,12 +38,15 @@ public class DepositSequenceHighPoleCommandGroup extends SequentialCommandGroup 
         this.m_collector = p_collector;
         
         addCommands(
+            new CollectorDepositCommand(m_collector),
+            new RetractedExtensionCommandGroup(m_extension),
             new LiftHighPoleCommand(p_lift),
+            new WaitCommand(0.05),
             new RaiseHooksCommand(p_lift),
             new WaitCommand(0.05),
-            new CollectorDepositCommand(m_collector),
-            new ShelfCarryRetractedCommandGroup(m_extension, m_lift),
-            new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF)
+            new LiftCarryCommand(m_lift),
+            new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF),
+            new InstantCommand(() -> m_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed)
         );
         
     }

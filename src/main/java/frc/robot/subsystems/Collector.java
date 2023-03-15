@@ -14,19 +14,19 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   
-  private static final class CollectorConstants {
-    private static final int k_clawMotorID = 19;
-    private static final int k_wheelMotorID = 22;
-    private static final int k_clawDepositPosition = 509;
-    private static final double k_clawMotorCurrentDrawLimit = 30;
-    private static final double k_clawMotorHoldingSpeed = 0.01;
-    private static final double k_clawMotorCloseSpeed = 0.05;
-    private static final double k_clawMotorOpenSpeed = -0.0375;
-    private static final double k_wheelMotorSpeed = 0.6; //FIXME
-    private static final double k_wheelMotorCurrentDrawLimit = 40; //FIXME
-    private static final double k_p = 0.0005; //FIXME
-    private static final double k_i = 0; //FIXME
-    private static final double k_d = 0; //FIXME
+  public static final class CollectorConstants {
+    public static final int k_clawMotorID = 19;
+    public static final int k_wheelMotorID = 22;
+    public static final int k_clawDepositPosition = 509;
+    public static final double k_clawMotorCurrentDrawLimit = 30;
+    public static final double k_clawMotorHoldingSpeed = 0.05;
+    public static final double k_clawMotorCloseSpeed = 0.1;
+    public static final double k_clawMotorOpenSpeed = -0.1;
+    public static final double k_wheelMotorSpeed = 0.6; //FIXME
+    public static final double k_wheelMotorCurrentDrawLimit = 40; //FIXME
+    public static final double k_p = 0.0005; //FIXME
+    public static final double k_i = 0; //FIXME
+    public static final double k_d = 0; //FIXME
   }
 
   public enum CollectorState {
@@ -54,6 +54,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   private boolean m_collectorPeriodicEnabled = false;
   private Timer m_timer = new Timer();
   PIDController m_collectorPID;
+
+  public double m_adjustableClawMotorPower = CollectorConstants.k_clawMotorCloseSpeed;
 
   //double clawMotorSetPoint = CollectorConstants.clawOpenPosition;
   public Collector() {
@@ -158,11 +160,12 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   }
 
   private void closeCollector() {
-    if (m_clawMotor.getOutputCurrent() < CollectorConstants.k_clawMotorCurrentDrawLimit) {
-      m_clawMotor.set(CollectorConstants.k_clawMotorCloseSpeed);
-    } else {
-      m_clawMotor.set(CollectorConstants.k_clawMotorHoldingSpeed);
-    }
+    // if (m_clawMotor.getOutputCurrent() < CollectorConstants.k_clawMotorCurrentDrawLimit) {
+    //   m_clawMotor.set(CollectorConstants.k_clawMotorCloseSpeed);
+    // } else {
+    //   m_clawMotor.set(CollectorConstants.k_clawMotorHoldingSpeed);
+    // }
+    m_clawMotor.set(m_adjustableClawMotorPower);
   }
 
   public void toggleClawButton() {

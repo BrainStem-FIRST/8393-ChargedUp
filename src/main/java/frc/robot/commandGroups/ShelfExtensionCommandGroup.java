@@ -13,7 +13,7 @@ public class ShelfExtensionCommandGroup extends SequentialCommandGroup {
     
     public ShelfExtensionCommandGroup(Extension extension) {
         addCommands(
-            new ExtensionCommand(extension, TelescopePosition.LOW_POLE)
+            new ExtensionCommand(extension, TelescopePosition.COLLECTION)
         );
       
     }
