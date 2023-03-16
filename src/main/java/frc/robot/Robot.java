@@ -285,8 +285,10 @@ public class Robot extends TimedRobot {
 
       /* Intake Control */
       if (m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) > 0.5) {
+        m_robotContainer.m_collector.m_adjustableWheelMotorPower = 0.3;
         m_robotContainer.m_collector.m_intakeState = IntakeState.IN;
       } else {
+        m_robotContainer.m_collector.m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed;
         m_robotContainer.m_collector.m_intakeState = IntakeState.OFF;
       }
 

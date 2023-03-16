@@ -34,6 +34,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.constraint.MaxVelocityConstraint;
 import edu.wpi.first.math.trajectory.constraint.RectangularRegionConstraint;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -76,9 +77,16 @@ public class autoCenter extends SequentialCommandGroup {
         IntakeInCommand m_intakeIn = new IntakeInCommand(m_collector);
         Timer m_Timer = new Timer();
 
-        //new RectangularRegionConstraint(null, null, null)
+        RectangularRegionConstraint drivetrainRestraint = 
+            new RectangularRegionConstraint(new Translation2d(3.814, 1.462), new Translation2d(12.75, 3.945), new MaxVelocityConstraint(AutoConstants.k_maxSpeedMetersPerSecond / 5));
 
         TrajectoryConfig config =
+            new TrajectoryConfig(
+                    AutoConstants.k_maxSpeedMetersPerSecond,
+                    AutoConstants.k_maxAccelerationMetersPerSecondSquared)
+                .setKinematics(SwerveConstants.k_swerveKinematics).addConstraint(drivetrainRestraint);
+
+        TrajectoryConfig runBackOntoChargeStationConfig =
             new TrajectoryConfig(
                     AutoConstants.k_maxSpeedMetersPerSecond,
                     AutoConstants.k_maxAccelerationMetersPerSecondSquared)
@@ -112,7 +120,7 @@ public class autoCenter extends SequentialCommandGroup {
                 ),
                 // End 5 meters behind ahead of where we started, rotating 180 degrees, now facing forward
                 new Pose2d(3.7, 0, new Rotation2d(Math.toRadians(0))),
-                config);
+                runBackOntoChargeStationConfig);
                 
 
         var thetaController =
