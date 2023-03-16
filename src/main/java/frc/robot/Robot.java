@@ -75,6 +75,8 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
 
   private boolean hasGroundCollectionRun = false;
+
+  private boolean hasDepositingRun = false;
   public ArrayList<BrainSTEMSubsystem> brainSTEMSubsystemsWithoutSwerve;
 
   
@@ -195,6 +197,9 @@ public class Robot extends TimedRobot {
       for(BrainSTEMSubsystem i_subsystem : brainSTEMSubsystemsWithoutSwerve){
         i_subsystem.disablePeriodic();
       }
+      m_robotContainer.m_lift.turnOffLiftMotors();
+      m_robotContainer.m_extension.turnOffExtensionMotor();
+      m_robotContainer.m_collector.killCollectorMotors();
     } else {
       for(BrainSTEMSubsystem i_subsystem : brainSTEMSubsystemsWithoutSwerve){
         i_subsystem.enablePeriodic();
@@ -203,13 +208,17 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putBoolean("Driver 1 A Button State", m_driver1_A.getState());
 
-
-
     SmartDashboard.putString("Robot Mode", s_robotMode.toString());
 
     /* Driver Buttons */
+
+    if(m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) < 0.7) {
+      hasDepositingRun = false;
+    }
+
     if(s_robotMode == RobotMode.DEPOSITING) {
-      if(m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) > 0.9) {
+      if(m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) > 0.7 && !hasDepositingRun) {
+        hasDepositingRun = true;
         if (s_depositLocation == DepositLocation.HIGH) {
           new DepositSequenceHighPoleCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule();
         } else {
@@ -266,6 +275,8 @@ public class Robot extends TimedRobot {
     m_robotContainer.m_zeroGyro.whileTrue(new InstantCommand(() -> m_robotContainer.m_swerve.zeroGyro()));
 
   }
+
+  //code bombs are superior to any other kind of bomb
 
   @Override
   public void testInit() {

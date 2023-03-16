@@ -5,6 +5,7 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Collector;
 import frc.robot.subsystems.Collector.CollectorState;
+import frc.robot.subsystems.Collector.IntakeState;
 import edu.wpi.first.wpilibj.Timer;
 
 public class CollectorDepositCommand extends CommandBase {
@@ -22,6 +23,7 @@ public class CollectorDepositCommand extends CommandBase {
     public void initialize(){
         m_timer.reset();
         m_collector.m_collectorState = CollectorState.OPEN;
+        m_collector.m_intakeState = IntakeState.OUT;
         m_timer.start();
     }
 

@@ -15,24 +15,24 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   public static final class LiftConstants {
-    private static final double k_P = 0.003;
-    private static final double k_I = 0.0000;
-    private static final double k_D = 0.0000;
+    public static final double k_P = 0.003;
+    public static final double k_I = 0.0000;
+    public static final double k_D = 0.0000;
 
-    private static final int k_groundCollectionValue = 0;
-    private static final int k_carryValue = 500;
-    private static final int k_shelfCollectionValue = 3775;
-    private static final int k_lowPoleValue = 3775;
-    private static final int k_highPoleValue = 3615;
-    private static final int k_highPoleTiltValue = 2780;
-    private static final int k_liftPreLoadPosition = 200;
-    private static final double k_MaxPower = 1.0;
-    private static final int k_liftTolerance = 20;
+    public static final int k_groundCollectionValue = 0;
+    public static final int k_carryValue = 500;
+    public static final int k_shelfCollectionValue = 3775;
+    public static final int k_lowPoleValue = 3775;
+    public static final int k_highPoleValue = 3560;
+    public static final int k_highPoleTiltValue = 2900;
+    public static final int k_liftPreLoadPosition = 200;
+    public static final double k_MaxPower = 1.0;
+    public static final int k_liftTolerance = 20;
     public static final int k_depositDelta = 400;
 
-    private static final int k_hookServoID = 8;
-    private static final double k_hookServoDownPosition = 0.93;
-    private static final double k_hookServoUpPosition = 0.5;
+    public static final int k_hookServoID = 8;
+    public static final double k_hookServoDownPosition = 0.99;
+    public static final double k_hookServoUpPosition = 0.5;
     
   }
 
@@ -45,6 +45,8 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   private boolean m_enableLiftPeriodic = false;
   PIDController m_liftPID;
   public int depositDelta = 0;
+
+  public double m_adjustableLiftSpeed = LiftConstants.k_MaxPower;
 
   public Lift() {
     m_liftPID = new PIDController(LiftConstants.k_P, LiftConstants.k_I, LiftConstants.k_D);
@@ -121,6 +123,11 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     m_forwardLift.setIdleMode(IdleMode.kBrake);
     m_backLift.setIdleMode(IdleMode.kBrake);
     // mforwardLift.set(0.09);
+  }
+
+  public void turnOffLiftMotors() {
+    m_forwardLift.set(0);
+    m_backLift.set(0);
   }
 
   public void liftUpIncs(double amount) {
@@ -241,11 +248,11 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     SmartDashboard.putNumber("Lift Setpoint", m_liftSetPoint);
     SmartDashboard.putNumber("Lift PID Output",
         MathUtil.clamp(m_liftPID.calculate(m_liftBackEncoder.getPosition(), m_liftSetPoint),
-            -LiftConstants.k_MaxPower, LiftConstants.k_MaxPower));
+            -m_adjustableLiftSpeed, m_adjustableLiftSpeed));
     SmartDashboard.putNumber("Lift Motor Encoder", m_liftBackEncoder.getPosition());
 
     m_forwardLift.set(MathUtil.clamp(m_liftPID.calculate(m_liftBackEncoder.getPosition(), m_liftSetPoint),
-        -LiftConstants.k_MaxPower, LiftConstants.k_MaxPower));
+        -m_adjustableLiftSpeed, m_adjustableLiftSpeed));
   }
 
   public boolean isLiftAtCorrectPosition(){

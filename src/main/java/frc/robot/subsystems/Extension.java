@@ -26,7 +26,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     private static final double k_gearRatioMultiplication = 1.2;
     private static final int k_extensionMotorID = 14;
     private static final int k_extensionServoID = 9;
-    private static final double k_proportional = 0.00008;
+    private static final double k_proportional = 0.00006; //0.00008
     private static final double k_integral = 0;
     private static final double k_derivative = 0;
     private static final int k_retractedTelescopeValue = 5000; //20000
@@ -34,7 +34,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     private static final int k_lowPoleTelescopeValue = (int)(165000 * k_gearRatioMultiplication);
     private static final int k_highPoleTelescopeValue = (int)(245000 * k_gearRatioMultiplication);
     private static final int k_telescopeTolerance = (int)(2500 * k_gearRatioMultiplication);
-    private static final double k_telescopeMaxPower = 1.00;
+    private static final double k_telescopeMaxPower = 0.75;
     public static final int k_backMotorOffRatchetValue = 1000; // FIXME
     public static final double k_backOffMotorSpeed = -0.01; // FIXME
   }
@@ -100,6 +100,10 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
 
   public void resetEncoder() {
     m_telescopeMotor.setSelectedSensorPosition(0);
+  }
+
+  public void turnOffExtensionMotor() {
+    m_telescopeMotor.set(ControlMode.PercentOutput, 0);
   }
 
   public void ratchetDisengage() {

@@ -144,11 +144,11 @@ public class autoCenter extends SequentialCommandGroup {
             m_extensionCarry,
             m_lowPoleApproach,
             m_depositSequenceCommandGroup,
-            m_intakeOff,
-            new InstantCommand(() -> s_Swerve.resetOdometry(runOverChargeStationTrajectory.getInitialPose())), 
-            runOverChargeStationCommand,
-            runBackOntoChargeStationCommand,
-            new InstantCommand(() -> autoBalance(s_Swerve, m_Timer))
+            m_intakeOff
+            // new InstantCommand(() -> s_Swerve.resetOdometry(runOverChargeStationTrajectory.getInitialPose())), 
+            // runOverChargeStationCommand,
+            // runBackOntoChargeStationCommand,
+            // new InstantCommand(() -> autoBalance(s_Swerve, m_Timer))
 
         );
     }

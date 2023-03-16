@@ -19,7 +19,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     public static final int k_wheelMotorID = 22;
     public static final int k_clawDepositPosition = 509;
     public static final double k_clawMotorCurrentDrawLimit = 30;
-    public static final double k_clawMotorHoldingSpeed = 0.05;
+    public static final double k_clawMotorHoldingSpeed = 0.02;
     public static final double k_clawMotorCloseSpeed = 0.1;
     public static final double k_clawMotorOpenSpeed = -0.1;
     public static final double k_wheelMotorSpeed = 0.6; //FIXME
@@ -55,7 +55,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   private Timer m_timer = new Timer();
   PIDController m_collectorPID;
 
-  public double m_adjustableClawMotorPower = CollectorConstants.k_clawMotorCloseSpeed;
+  public double m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed;
 
   //double clawMotorSetPoint = CollectorConstants.clawOpenPosition;
   public Collector() {
@@ -100,6 +100,11 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
         () -> {
 
         });
+  }
+
+  public void killCollectorMotors() {
+    m_clawMotor.set(0);
+    m_wheelMotor.set(0);
   }
 
   public void turnOnCollection() {

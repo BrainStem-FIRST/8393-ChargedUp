@@ -20,6 +20,7 @@ import frc.robot.subsystems.Extension;
 import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Collector.CollectorConstants;
 import frc.robot.subsystems.Extension.TelescopePosition;
+import frc.robot.subsystems.Lift.LiftConstants;
 import frc.robot.subsystems.Lift.LiftPosition;
 
 public class HighPoleApproachCommandGroup extends SequentialCommandGroup {
@@ -29,10 +30,12 @@ public class HighPoleApproachCommandGroup extends SequentialCommandGroup {
             new InstantCommand(()-> collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorCloseSpeed),
             new LiftHighPoleCommand(lift),
             new LowerHooksCommand(lift),
-            new WaitCommand(1),
-            new HighPoleTiltCommand(lift),
+            new WaitCommand(0.075),
             new HighPoleExtensionCommandGroup(extension),
-            new InstantCommand(()-> collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed)
+            new InstantCommand(() -> lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower/2),
+            new HighPoleTiltCommand(lift),
+            new InstantCommand(()-> collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed),
+            new InstantCommand(() -> lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower)
         );
       
     }
