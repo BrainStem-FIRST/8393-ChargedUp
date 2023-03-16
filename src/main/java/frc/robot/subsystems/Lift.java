@@ -24,7 +24,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     public static final int k_shelfCollectionValue = 3775;
     public static final int k_lowPoleValue = 3775;
     public static final int k_highPoleValue = 3560;
-    public static final int k_highPoleTiltValue = 2900;
+    public static final int k_highPoleTiltValue = 2800;
     public static final int k_liftPreLoadPosition = 200;
     public static final double k_MaxPower = 1.0;
     public static final int k_liftTolerance = 20;
@@ -100,6 +100,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     m_forwardLift.set(0);
     m_state = LiftPosition.GROUND_COLLECTION;
     m_liftSetPoint = 0;
+    m_hookState = HookState.UP;
     m_hookServo.set(LiftConstants.k_hookServoUpPosition);
     enablePeriodic();
   }

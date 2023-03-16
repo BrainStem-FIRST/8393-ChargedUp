@@ -31,6 +31,7 @@ import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Collector.CollectorState;
 import frc.robot.subsystems.Collector.IntakeState;
 import frc.robot.subsystems.Extension.TelescopePosition;
+import frc.robot.subsystems.Lift.HookState;
 import frc.robot.subsystems.Lift.LiftPosition;
 import frc.robot.utilities.BrainSTEMSubsystem;
 import frc.robot.utilities.ToggleButton;
@@ -189,6 +190,14 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    //CODE TO TEST OUT HOOK UP AND DOWN POSITIONS
+    // if(m_robotContainer.m_driver2YButton.getAsBoolean()) {
+    //   new InstantCommand(() -> m_robotContainer.m_lift.m_hookState = HookState.DOWN).schedule();
+    // }
+
+    // if(m_robotContainer.m_driver2XButton.getAsBoolean()) {
+    //   new InstantCommand(() -> m_robotContainer.m_lift.m_hookState = HookState.UP).schedule();
+    // }
 
     m_driver1_BackButton.update(m_robotContainer.m_driver1.getRawButton(JoystickConstants.k_backButton));
     setRobotState();
@@ -265,6 +274,7 @@ public class Robot extends TimedRobot {
       } else {
         m_robotContainer.m_collector.m_intakeState = IntakeState.OFF;
       }
+
 
     }
 

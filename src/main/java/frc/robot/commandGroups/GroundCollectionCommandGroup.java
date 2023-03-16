@@ -18,6 +18,7 @@ import frc.robot.subsystems.Extension;
 import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Collector.IntakeState;
 import frc.robot.subsystems.Extension.TelescopePosition;
+import frc.robot.subsystems.Lift.LiftConstants;
 import frc.robot.subsystems.Lift.LiftPosition;
 
 public class GroundCollectionCommandGroup extends SequentialCommandGroup {
@@ -27,7 +28,9 @@ public class GroundCollectionCommandGroup extends SequentialCommandGroup {
             addCommands(
                 new LiftCarryCommand(p_lift),
                 new CollectionExtensionCommandGroup(extension),
+                new InstantCommand(() -> m_lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower/2),
                 new LiftGroundCommand(p_lift),
+                new InstantCommand(() -> m_lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower),
                 new CollectorOpenCommand(collector),
                 new InstantCommand(() -> collector.m_intakeState = IntakeState.IN)
             );

@@ -55,7 +55,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   private Timer m_timer = new Timer();
   PIDController m_collectorPID;
 
-  public double m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed;
+  public double m_adjustableClawMotorPower = CollectorConstants.k_clawMotorCloseSpeed;
 
   //double clawMotorSetPoint = CollectorConstants.clawOpenPosition;
   public Collector() {
