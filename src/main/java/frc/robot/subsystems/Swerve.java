@@ -149,6 +149,11 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem{
     public Pigeon2 gyro;
     public boolean m_enableSwervePeriodic = false;
 
+    public NeutralMode m_adjustableDriveNeutralMode = SwerveConstants.k_driveNeutralMode;
+    public NeutralMode m_adjustableAngleNeutralMode = SwerveConstants.k_angleNeutralMode;
+
+    
+
     public Swerve() {
         gyro = new Pigeon2(SwerveConstants.k_pigeonID, "CANivore_dt");
         gyro.configFactoryDefault();
@@ -189,13 +194,12 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem{
         for(SwerveModule mod : mSwerveMods){
             mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
         }
-    }   
+    } 
     
     @Override
     public void initialize(){
-        for(SwerveModule swerveModule : mSwerveMods){
-            swerveModule.initialize();
-        }
+        m_adjustableDriveNeutralMode = SwerveConstants.k_driveNeutralMode;
+        m_adjustableAngleNeutralMode = SwerveConstants.k_angleNeutralMode;
         enablePeriodic();
     }
 
@@ -271,7 +275,10 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem{
     @Override
     public void periodic(){
         if(m_enableSwervePeriodic){ //m_enableSwervePeriodic
-            swerveOdometry.update(getYaw(), getModulePositions());  
+            swerveOdometry.update(getYaw(), getModulePositions());
+            for(SwerveModule mod : mSwerveMods){
+                mod.setModuleNeutralMode(m_adjustableDriveNeutralMode, m_adjustableAngleNeutralMode);
+            }
 
             for(SwerveModule mod : mSwerveMods){
                 SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());

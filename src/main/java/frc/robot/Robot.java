@@ -6,6 +6,8 @@ package frc.robot;
 
 import java.util.ArrayList;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import edu.wpi.first.cscore.CameraServerJNI.TelemetryKind;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.JoystickSim;
@@ -14,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.RobotContainer.JoystickConstants;
+import frc.robot.autos.AutoCenter;
 import frc.robot.commandGroups.CarryRetractedCommandGroup;
 import frc.robot.commandGroups.DepositSequenceCommandGroup;
 import frc.robot.commandGroups.DepositSequenceHighPoleCommandGroup;
@@ -143,11 +146,16 @@ public class Robot extends TimedRobot {
     for(BrainSTEMSubsystem isubsystem: brainSTEMSubsystems){
       isubsystem.initialize();
     }
+    AutoCenter.sideAuto = true;
   }
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    if((m_robotContainer.m_swerve.getTilt() > 5) || (m_robotContainer.m_swerve.getTilt() < -5)) {
+      AutoCenter.sideAuto = false;
+    }
+  }
 
   @Override
   public void teleopInit() {
@@ -206,6 +214,14 @@ public class Robot extends TimedRobot {
     // if(m_robotContainer.m_driver2XButton.getAsBoolean()) {
     //   new InstantCommand(() -> m_robotContainer.m_lift.m_hookState = HookState.UP).schedule();
     // }
+
+    if(m_robotContainer.m_driver2YButton.getAsBoolean()) {
+      m_robotContainer.m_swerve.m_adjustableDriveNeutralMode = NeutralMode.Brake;
+      m_robotContainer.m_swerve.m_adjustableAngleNeutralMode = NeutralMode.Brake;
+    } else if (m_robotContainer.m_driver2XButton.getAsBoolean()) {
+      m_robotContainer.m_swerve.m_adjustableDriveNeutralMode = NeutralMode.Coast;
+      m_robotContainer.m_swerve.m_adjustableAngleNeutralMode = NeutralMode.Coast;
+    }
 
     m_driver1_BackButton.update(m_robotContainer.m_driver1.getRawButton(JoystickConstants.k_backButton));
     setRobotState();
