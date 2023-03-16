@@ -28,6 +28,7 @@ import frc.robot.subsystems.Collector;
 import frc.robot.subsystems.Extension;
 import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.Collector.CollectorConstants;
 import frc.robot.subsystems.Collector.CollectorState;
 import frc.robot.subsystems.Collector.IntakeState;
 import frc.robot.subsystems.Extension.TelescopePosition;
@@ -76,6 +77,10 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
 
   private boolean hasGroundCollectionRun = false;
+
+  public static boolean hasShelfCarryRetractedRun = false;
+
+  public boolean hasCarryRetractedRun = false;
 
   private boolean hasDepositingRun = false;
   public ArrayList<BrainSTEMSubsystem> brainSTEMSubsystemsWithoutSwerve;
@@ -178,6 +183,7 @@ public class Robot extends TimedRobot {
     if (m_robotContainer.m_driver2AButton.getAsBoolean()) {
       m_driver1_X.setState(false);
       m_driver1_A.setState(false);
+      new InstantCommand(() -> m_robotContainer.m_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed).schedule();
       m_robotContainer.m_collector.m_collectorState = CollectorState.CLOSED;
       s_robotMode = RobotMode.COLLECTING;
     } else if (m_robotContainer.m_driver2BButton.getAsBoolean()) {
@@ -251,6 +257,11 @@ public class Robot extends TimedRobot {
         hasGroundCollectionRun = false;
       }
 
+      if(m_driver1_A.getState() || m_driver1_X.getState()) {
+        hasShelfCarryRetractedRun = false;
+        hasCarryRetractedRun = false;
+      }
+
       /* Lift and Extension States */
       if (m_driver1_X.getState()) {
         SmartDashboard.putString("Lift Extension", "Shelf");
@@ -261,9 +272,11 @@ public class Robot extends TimedRobot {
         hasGroundCollectionRun = true;
       } else if ((!m_driver1_A.getState() && !m_driver1_X.getState())) {
         SmartDashboard.putString("Lift Extension", "Carry");
-        if(m_robotContainer.m_lift.m_state == LiftPosition.SHELF_COLLECTION) {
-          new ShelfCarryRetractedCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift).schedule();
-        } else {
+        if(m_robotContainer.m_lift.m_state == LiftPosition.SHELF_COLLECTION && !hasShelfCarryRetractedRun) {
+          hasShelfCarryRetractedRun = true;
+          new ShelfCarryRetractedCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift, m_robotContainer.m_collector).schedule();
+        } else if (!hasCarryRetractedRun){
+          hasCarryRetractedRun = true;
           m_robotContainer.m_carryRetracted.schedule();
         }
       }

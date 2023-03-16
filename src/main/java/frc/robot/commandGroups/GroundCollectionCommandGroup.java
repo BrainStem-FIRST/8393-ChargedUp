@@ -1,5 +1,7 @@
 package frc.robot.commandGroups;
 
+import java.time.Instant;
+
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -16,6 +18,7 @@ import frc.robot.commands.liftCommands.LiftCarryCommand;
 import frc.robot.subsystems.Collector;
 import frc.robot.subsystems.Extension;
 import frc.robot.subsystems.Lift;
+import frc.robot.subsystems.Collector.CollectorConstants;
 import frc.robot.subsystems.Collector.IntakeState;
 import frc.robot.subsystems.Extension.TelescopePosition;
 import frc.robot.subsystems.Lift.LiftConstants;
@@ -26,6 +29,7 @@ public class GroundCollectionCommandGroup extends SequentialCommandGroup {
     public GroundCollectionCommandGroup(Extension extension, Lift p_lift, Collector collector) {
         m_lift = p_lift;
             addCommands(
+                new InstantCommand(() -> collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorCloseSpeed),
                 new LiftCarryCommand(p_lift),
                 new CollectionExtensionCommandGroup(extension),
                 new InstantCommand(() -> m_lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower/2),

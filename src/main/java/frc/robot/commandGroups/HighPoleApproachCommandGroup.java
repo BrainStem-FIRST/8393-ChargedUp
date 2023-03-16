@@ -34,7 +34,6 @@ public class HighPoleApproachCommandGroup extends SequentialCommandGroup {
             new HighPoleExtensionCommandGroup(extension),
             new InstantCommand(() -> lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower/2),
             new HighPoleTiltCommand(lift),
-            new InstantCommand(()-> collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed),
             new InstantCommand(() -> lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower)
         );
       

@@ -23,8 +23,7 @@ public class LowPoleApproachCommandGroup extends SequentialCommandGroup {
         addCommands(
             new InstantCommand(()-> collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorCloseSpeed),
             new LiftLowPoleCommand(lift),
-            new LowPoleExtensionCommandGroup(extension),
-            new InstantCommand(()-> collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed)
+            new LowPoleExtensionCommandGroup(extension)
         );
       
     }

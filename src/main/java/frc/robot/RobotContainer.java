@@ -91,7 +91,7 @@ public class RobotContainer {
     /* Command Groups */
     public LowPoleApproachCommandGroup m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_lift, m_collector);
     public GroundRetractedCommandGroup m_groundRetracted = new GroundRetractedCommandGroup(m_extension, m_lift);
-    public CarryRetractedCommandGroup m_carryRetracted = new CarryRetractedCommandGroup(m_extension, m_lift);
+    public CarryRetractedCommandGroup m_carryRetracted = new CarryRetractedCommandGroup(m_extension, m_lift, m_collector);
     public CollectCommandGroup m_collectCommandGroup = new CollectCommandGroup(m_collector);
     public GroundCollectionCommandGroup m_groundCollection = new GroundCollectionCommandGroup(m_extension, m_lift, m_collector);
     public ShelfCollectionApproachCommandGroup m_shelfCollection = new ShelfCollectionApproachCommandGroup(m_extension, m_lift);
@@ -132,8 +132,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    //return new SequentialCommandGroup(new autoSide(m_swerve, m_lift, m_collector, m_extension));
-    return new SequentialCommandGroup(new autoCenter(m_swerve, m_lift, m_collector, m_extension));
+    //return new autoSide(m_swerve, m_lift, m_collector, m_extension);
+    return new autoCenter(m_swerve, m_lift, m_collector, m_extension);
   }
 
   public ArrayList<BrainSTEMSubsystem> getBrainSTEMSubsystems(){
