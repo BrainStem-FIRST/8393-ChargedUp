@@ -25,7 +25,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     public static final int k_lowPoleValue = 3775;
     public static final int k_highPoleValue = 3560;
     public static final int k_highPoleTiltValue = 2800;
-    public static final int k_liftPreLoadPosition = 200;
+    public static final int k_liftPreLoadPosition = 300;
     public static final double k_MaxPower = 1.0;
     public static final int k_liftTolerance = 20;
     public static final int k_depositDelta = 400;

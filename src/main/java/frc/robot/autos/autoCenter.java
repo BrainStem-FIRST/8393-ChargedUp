@@ -6,6 +6,7 @@ import frc.robot.commandGroups.DepositSequenceCommandGroup;
 import frc.robot.commandGroups.LowPoleApproachCommandGroup;
 import frc.robot.commands.BalanceCommand;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.collectorCommands.CollectorCloseCommand;
 import frc.robot.commands.collectorCommands.IntakeInCommand;
 import frc.robot.commands.collectorCommands.IntakeOffCommand;
 import frc.robot.commands.extensionCommands.ExtensionCommand;
@@ -15,7 +16,9 @@ import frc.robot.subsystems.Extension;
 import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Collector.CollectorConstants;
+import frc.robot.subsystems.Collector.CollectorState;
 import frc.robot.subsystems.Extension.TelescopePosition;
+import frc.robot.subsystems.Lift.LiftConstants;
 import frc.robot.subsystems.Lift.LiftPosition;
 import frc.robot.subsystems.Swerve.SwerveConstants;
 import java.util.List;
@@ -42,7 +45,7 @@ import edu.wpi.first.wpilibj.Timer;
 public class autoCenter extends SequentialCommandGroup {
 
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
-        public static final double k_maxSpeedMetersPerSecond = 3.0;
+        public static final double k_maxSpeedMetersPerSecond = 1.8;
         public static final double k_maxAccelerationMetersPerSecondSquared = 1.2;
         public static final double k_maxAngularSpeedRadiansPerSecond = Math.PI/10;
         public static final double k_maxAngularSpeedRadiansPerSecondSquared = Math.PI/10;
@@ -105,7 +108,7 @@ public class autoCenter extends SequentialCommandGroup {
                     new Translation2d(2, 0) //Just kind of a test thing to see if another waypooint fixes auto
                 ),
                 // End 5 meters behind ahead of where we started, rotating 180 degrees, now facing forward
-                new Pose2d(3.8, 0, new Rotation2d(Math.toRadians(0))),
+                new Pose2d(3.7, 0, new Rotation2d(Math.toRadians(0))),
                 config);
                 
 
@@ -150,10 +153,15 @@ public class autoCenter extends SequentialCommandGroup {
             m_lowPoleApproach,
             m_depositSequenceCommandGroup,
             m_intakeOff,
+            new InstantCommand(() -> m_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorCloseSpeed * 1.2),
+            new InstantCommand(() -> m_collector.m_collectorState = CollectorState.CLOSED),
             new InstantCommand(() -> s_Swerve.resetOdometry(runOverChargeStationTrajectory.getInitialPose())), 
             runOverChargeStationCommand,
-            runBackOntoChargeStationCommand,
+            new InstantCommand(() -> m_lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower / 2),
             new InstantCommand(() -> m_lift.m_state = LiftPosition.GROUND_COLLECTION),
+            runBackOntoChargeStationCommand,
+            new InstantCommand(() -> m_lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower),
+            new InstantCommand(() -> m_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed),
             new InstantCommand(() -> autoBalance(s_Swerve, m_Timer))
         );
     }
@@ -224,26 +232,26 @@ public class autoCenter extends SequentialCommandGroup {
 
 
             int x = 0;
-            // while (pitch > 2 && x < 100000) {
-            //     pitch = s_Swerve.getTilt();
-            //     double power = MathUtil.clamp(m_balancePID.calculate(pitch, 0), -0.25, 0.25);
+            while (pitch > 8 && x < 250000) {
+                pitch = s_Swerve.getTilt();
+                double power = MathUtil.clamp(m_balancePID.calculate(pitch, 0), -0.25, 0.25);
     
-            //     m_teleopSwerve = new TeleopSwerve(
-            //     s_Swerve, 
-            //         () -> -power * 0.78,
-            //         () -> 0,
-            //         () -> 0,
-            //         () -> false
-            //     );
+                m_teleopSwerve = new TeleopSwerve(
+                s_Swerve, 
+                    () -> -power * 0.73,
+                    () -> 0,
+                    () -> 0,
+                    () -> false
+                );
     
-            //     x ++;
-            //     m_teleopSwerve.execute();
-            //     counter ++;
-            //     SmartDashboard.putNumber("Auto Pitch", pitch);
-            //     SmartDashboard.putNumber("Balance Power", power);
-            //     SmartDashboard.putNumber("Counter", counter);
-            //     SmartDashboard.putNumber("Timer", m_Timer.getFPGATimestamp());
-            // }
+                x ++;
+                m_teleopSwerve.execute();
+                counter ++;
+                SmartDashboard.putNumber("Auto Pitch", pitch);
+                SmartDashboard.putNumber("Balance Power", power);
+                SmartDashboard.putNumber("Counter", counter);
+                SmartDashboard.putNumber("Timer", m_Timer.getFPGATimestamp());
+            }
 
             m_teleopSwerve = new TeleopSwerve(
                 s_Swerve, 

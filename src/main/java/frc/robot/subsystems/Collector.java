@@ -20,9 +20,9 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     public static final int k_clawDepositPosition = 509;
     public static final double k_clawMotorCurrentDrawLimit = 30;
     public static final double k_clawMotorHoldingSpeed = 0.03;
-    public static final double k_clawMotorCloseSpeed = 0.07;
-    public static final double k_clawMotorOpenSpeed = -0.07;
-    public static final double k_wheelMotorSpeed = 0.6; //FIXME
+    public static final double k_clawMotorCloseSpeed = 0.08;
+    public static final double k_clawMotorOpenSpeed = -0.03;
+    public static final double k_wheelMotorSpeed = 0.3; //FIXME
     public static final double k_wheelMotorCurrentDrawLimit = 40; //FIXME
     public static final double k_p = 0.0005; //FIXME
     public static final double k_i = 0; //FIXME
@@ -252,6 +252,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
       SmartDashboard.putNumber("Collector Claw Motor Current Draw", m_clawMotor.getOutputCurrent());
       SmartDashboard.putString("Intake State", m_intakeState.toString());
       SmartDashboard.putNumber("Collector Claw Encoder Position", m_clawMotorEncoder.getPosition());
+      SmartDashboard.putNumber("Claw Speed", m_clawMotor.get());
     }
   }
 

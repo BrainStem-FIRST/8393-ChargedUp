@@ -164,6 +164,8 @@ public class Robot extends TimedRobot {
     for(BrainSTEMSubsystem isubsystem: brainSTEMSubsystems){
       isubsystem.initialize();
     }
+
+    m_robotContainer.m_lift.m_state = LiftPosition.CARRY;
   }
 
   private void setToggleButtons() {
