@@ -6,10 +6,10 @@ import frc.robot.commands.collectorCommands.CollectorCloseCommand;
 import frc.robot.subsystems.Collector;
 import frc.robot.subsystems.Lift;
 
-public class collectPreLoadCommand extends SequentialCommandGroup {
+public class CollectPreLoadCommand extends SequentialCommandGroup {
     
 
-    public collectPreLoadCommand(Lift lift, Collector collector) {
+    public CollectPreLoadCommand(Lift lift, Collector collector) {
         addCommands(
             new LiftCollectPreLoad(lift),
             new CollectorCloseCommand(collector)
