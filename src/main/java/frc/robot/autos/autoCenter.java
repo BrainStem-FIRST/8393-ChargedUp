@@ -34,6 +34,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.constraint.RectangularRegionConstraint;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -74,6 +75,8 @@ public class autoCenter extends SequentialCommandGroup {
         IntakeOffCommand m_intakeOff = new IntakeOffCommand(m_collector);
         IntakeInCommand m_intakeIn = new IntakeInCommand(m_collector);
         Timer m_Timer = new Timer();
+
+        //new RectangularRegionConstraint(null, null, null)
 
         TrajectoryConfig config =
             new TrajectoryConfig(
@@ -150,6 +153,7 @@ public class autoCenter extends SequentialCommandGroup {
             m_intakeIn,
             m_collectPreLoadCommand,
             m_extensionCarry,
+            new InstantCommand(() -> m_collector.m_adjustableWheelMotorPower = 0),
             m_lowPoleApproach,
             m_depositSequenceCommandGroup,
             m_intakeOff,
@@ -161,6 +165,7 @@ public class autoCenter extends SequentialCommandGroup {
             new InstantCommand(() -> m_lift.m_state = LiftPosition.GROUND_COLLECTION),
             runBackOntoChargeStationCommand,
             new InstantCommand(() -> m_lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower),
+            new InstantCommand(() -> m_collector.m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed),
             new InstantCommand(() -> m_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed),
             new InstantCommand(() -> autoBalance(s_Swerve, m_Timer))
         );

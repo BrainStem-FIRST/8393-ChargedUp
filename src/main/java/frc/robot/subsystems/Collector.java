@@ -19,10 +19,10 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     public static final int k_wheelMotorID = 22;
     public static final int k_clawDepositPosition = 509;
     public static final double k_clawMotorCurrentDrawLimit = 30;
-    public static final double k_clawMotorHoldingSpeed = 0.03;
-    public static final double k_clawMotorCloseSpeed = 0.08;
+    public static final double k_clawMotorHoldingSpeed = 0.1;
+    public static final double k_clawMotorCloseSpeed = 0.1;
     public static final double k_clawMotorOpenSpeed = -0.03;
-    public static final double k_wheelMotorSpeed = 0.3; //FIXME
+    public static final double k_wheelMotorSpeed = 0.2; //FIXME
     public static final double k_wheelMotorCurrentDrawLimit = 40; //FIXME
     public static final double k_p = 0.0005; //FIXME
     public static final double k_i = 0; //FIXME
@@ -57,6 +57,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
 
   public double m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed;
 
+  public double m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed;
+
   //double clawMotorSetPoint = CollectorConstants.clawOpenPosition;
   public Collector() {
     m_clawMotor = new CANSparkMax(CollectorConstants.k_clawMotorID, MotorType.kBrushless);
@@ -73,6 +75,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     m_clawMotor.setIdleMode(IdleMode.kBrake);
     m_clawMotor.set(0);
     m_wheelMotor.setIdleMode(IdleMode.kBrake);
+    m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed;
     m_wheelMotor.set(0);
     m_clawButtonPressed = false;
     m_intakeButtonPressed = false;
@@ -131,11 +134,11 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     //   m_collectorState = CollectorState.CLOSED;
     // }
     m_timer.reset();
-    m_wheelMotor.set(CollectorConstants.k_wheelMotorSpeed);
+    m_wheelMotor.set(m_adjustableWheelMotorPower);
   }
 
   private void collectorOut() {
-    m_wheelMotor.set(-CollectorConstants.k_wheelMotorSpeed);
+    m_wheelMotor.set(-m_adjustableWheelMotorPower);
   }
 
   private void collectorOff() {
