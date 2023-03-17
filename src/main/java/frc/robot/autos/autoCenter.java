@@ -50,7 +50,7 @@ public class AutoCenter extends SequentialCommandGroup {
 
     public static final class AutoConstants { // TODO: The below constants are used in the example auto, and must be
                                               // tuned to specific robot
-        public static final double k_maxSpeedMetersPerSecond = 1.4;
+        public static final double k_maxSpeedMetersPerSecond = 1.6;
         public static final double k_maxAccelerationMetersPerSecondSquared = 0.9;
         public static final double k_maxAngularSpeedRadiansPerSecond = Math.PI / 10;
         public static final double k_maxAngularSpeedRadiansPerSecondSquared = Math.PI / 10;
@@ -122,7 +122,7 @@ public class AutoCenter extends SequentialCommandGroup {
                 ),
                 // End 5 meters behind ahead of where we started, rotating 180 degrees, now
                 // facing forward
-                new Pose2d(3.7, 0, new Rotation2d(Math.toRadians(0))),
+                new Pose2d(3.6, 0, new Rotation2d(Math.toRadians(0))),
                 runBackOntoChargeStationConfig);
 
         var thetaController = new ProfiledPIDController(
@@ -166,7 +166,7 @@ public class AutoCenter extends SequentialCommandGroup {
                 m_depositSequenceCommandGroup,
                 m_intakeOff,
                 new InstantCommand(
-                        () -> m_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorCloseSpeed * 1.2),
+                        () -> m_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorCloseSpeed * 3),
                 new InstantCommand(() -> m_collector.m_collectorState = CollectorState.CLOSED),
                 new InstantCommand(() -> s_Swerve.resetOdometry(runOverChargeStationTrajectory.getInitialPose())),
                 runOverChargeStationCommand,
