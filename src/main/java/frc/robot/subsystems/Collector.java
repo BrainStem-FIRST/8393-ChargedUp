@@ -59,6 +59,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
 
   public double m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed;
 
+  public double m_adjustableClawMotorOpenPower = CollectorConstants.k_clawMotorOpenSpeed;
+
   //double clawMotorSetPoint = CollectorConstants.clawOpenPosition;
   public Collector() {
     m_clawMotor = new CANSparkMax(CollectorConstants.k_clawMotorID, MotorType.kBrushless);
@@ -76,6 +78,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     m_clawMotor.set(0);
     m_wheelMotor.setIdleMode(IdleMode.kBrake);
     m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed;
+    m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed;
+    m_adjustableClawMotorOpenPower = CollectorConstants.k_clawMotorOpenSpeed;
     m_wheelMotor.set(0);
     m_clawButtonPressed = false;
     m_intakeButtonPressed = false;
@@ -161,7 +165,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
 
   private void openCollector() {
     if (m_clawMotor.getOutputCurrent() < CollectorConstants.k_clawMotorCurrentDrawLimit) {
-      m_clawMotor.set(CollectorConstants.k_clawMotorOpenSpeed);
+      m_clawMotor.set(m_adjustableClawMotorOpenPower);
     } else {
       m_clawMotor.set(CollectorConstants.k_clawMotorHoldingSpeed);
     }

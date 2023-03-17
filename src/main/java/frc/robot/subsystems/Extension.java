@@ -83,8 +83,13 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
 
   @Override
   public void initialize() {
+    m_telescopeMotor.set(ControlMode.PercentOutput, 0);
+    m_telescopeBackOff = false;
+    m_telescopeSetPoint = 0;
+    m_unlockPosition = 0;
     resetEncoder();
     m_telescopeState = TelescopePosition.RETRACTED;
+    m_ratchetState = RatchetPosition.ENGAGED;
     enablePeriodic();
   }
 

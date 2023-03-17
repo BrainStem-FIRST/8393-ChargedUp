@@ -38,6 +38,7 @@ public class DepositSequenceHighPoleCommandGroup extends SequentialCommandGroup 
         this.m_collector = p_collector;
         
         addCommands(
+            new InstantCommand(() -> m_collector.m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed * 1.5),
             new InstantCommand(() -> m_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorCloseSpeed),
             new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OUT),
             new WaitCommand(0.1),
@@ -53,6 +54,7 @@ public class DepositSequenceHighPoleCommandGroup extends SequentialCommandGroup 
             new WaitCommand(0.05),
             new LiftCarryCommand(m_lift),
             new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF),
+            new InstantCommand(() -> m_collector.m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed),
             new InstantCommand(() -> m_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed)
         );
         

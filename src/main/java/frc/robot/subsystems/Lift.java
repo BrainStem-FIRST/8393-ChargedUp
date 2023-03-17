@@ -99,6 +99,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     m_liftBackEncoder.setPositionConversionFactor(42);
     m_forwardLift.set(0);
     m_state = LiftPosition.GROUND_COLLECTION;
+    m_adjustableLiftSpeed = LiftConstants.k_MaxPower;
     m_liftSetPoint = 0;
     m_hookState = HookState.UP;
     m_hookServo.set(LiftConstants.k_hookServoUpPosition);
