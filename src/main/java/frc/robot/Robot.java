@@ -207,13 +207,13 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     //CODE TO TEST OUT HOOK UP AND DOWN POSITIONS
-    // if(m_robotContainer.m_driver2YButton.getAsBoolean()) {
-    //   new InstantCommand(() -> m_robotContainer.m_lift.m_hookState = HookState.DOWN).schedule();
-    // }
+    if(m_robotContainer.m_driver2YButton.getAsBoolean()) {
+      new InstantCommand(() -> m_robotContainer.m_lift.m_hookState = HookState.DOWN).schedule();
+    }
 
-    // if(m_robotContainer.m_driver2XButton.getAsBoolean()) {
-    //   new InstantCommand(() -> m_robotContainer.m_lift.m_hookState = HookState.UP).schedule();
-    // }
+    if(m_robotContainer.m_driver2XButton.getAsBoolean()) {
+      new InstantCommand(() -> m_robotContainer.m_lift.m_hookState = HookState.UP).schedule();
+    }
 
     //CODE TO SET COAST OR BRAKE MODE ON DRIVETRAIN
     // if(m_robotContainer.m_driver2YButton.getAsBoolean()) {
