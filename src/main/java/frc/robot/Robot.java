@@ -215,13 +215,14 @@ public class Robot extends TimedRobot {
     //   new InstantCommand(() -> m_robotContainer.m_lift.m_hookState = HookState.UP).schedule();
     // }
 
-    if(m_robotContainer.m_driver2YButton.getAsBoolean()) {
-      m_robotContainer.m_swerve.m_adjustableDriveNeutralMode = NeutralMode.Brake;
-      m_robotContainer.m_swerve.m_adjustableAngleNeutralMode = NeutralMode.Brake;
-    } else if (m_robotContainer.m_driver2XButton.getAsBoolean()) {
-      m_robotContainer.m_swerve.m_adjustableDriveNeutralMode = NeutralMode.Coast;
-      m_robotContainer.m_swerve.m_adjustableAngleNeutralMode = NeutralMode.Coast;
-    }
+    //CODE TO SET COAST OR BRAKE MODE ON DRIVETRAIN
+    // if(m_robotContainer.m_driver2YButton.getAsBoolean()) {
+    //   m_robotContainer.m_swerve.m_adjustableDriveNeutralMode = NeutralMode.Brake;
+    //   m_robotContainer.m_swerve.m_adjustableAngleNeutralMode = NeutralMode.Brake;
+    // } else if (m_robotContainer.m_driver2XButton.getAsBoolean()) {
+    //   m_robotContainer.m_swerve.m_adjustableDriveNeutralMode = NeutralMode.Coast;
+    //   m_robotContainer.m_swerve.m_adjustableAngleNeutralMode = NeutralMode.Coast;
+    // }
 
     m_driver1_BackButton.update(m_robotContainer.m_driver1.getRawButton(JoystickConstants.k_backButton));
     setRobotState();
