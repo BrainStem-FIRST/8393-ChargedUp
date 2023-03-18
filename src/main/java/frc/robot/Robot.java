@@ -66,6 +66,7 @@ public class Robot extends TimedRobot {
   private ToggleButton m_driver1_A = new ToggleButton();
   private ToggleButton m_driver1_X = new ToggleButton();
   private ToggleButton m_driver1_BackButton = new ToggleButton();
+  private ToggleButton m_driver1_B = new ToggleButton();
 
   private ToggleButton m_driver2_A = new ToggleButton();
   private ToggleButton m_driver2_B = new ToggleButton();
