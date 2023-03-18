@@ -133,7 +133,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     //return new autoSide(m_swerve, m_lift, m_collector, m_extension);
-    return new zutoCenter(m_swerve, m_lift, m_collector, m_extension);
+    return new AutoCenter(m_swerve, m_lift, m_collector, m_extension);
   }
 
   public ArrayList<BrainSTEMSubsystem> getBrainSTEMSubsystems(){

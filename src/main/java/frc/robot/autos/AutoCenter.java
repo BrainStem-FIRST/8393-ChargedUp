@@ -44,7 +44,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj.Timer;
 
-public class zutoCenter extends SequentialCommandGroup {
+public class AutoCenter extends SequentialCommandGroup {
 
     public static boolean sideAuto = true;
 
@@ -70,7 +70,7 @@ public class zutoCenter extends SequentialCommandGroup {
         private static final double k_D = 0.0;
     }
 
-    public zutoCenter(Swerve s_Swerve, Lift m_lift, Collector m_collector, Extension m_extension) {
+    public AutoCenter(Swerve s_Swerve, Lift m_lift, Collector m_collector, Extension m_extension) {
         CollectPreLoadCommand m_collectPreLoadCommand = new CollectPreLoadCommand(m_lift, m_collector);
         ExtensionCommand m_extensionCarry = new ExtensionCommand(m_extension, TelescopePosition.COLLECTION);
         LowPoleApproachCommandGroup m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_lift,

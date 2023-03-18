@@ -35,7 +35,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj.Timer;
 
-public class zutoSide extends SequentialCommandGroup {
+public class AutoSide extends SequentialCommandGroup {
 
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
         public static final double k_maxSpeedMetersPerSecond = 1.3;
@@ -59,7 +59,7 @@ public class zutoSide extends SequentialCommandGroup {
         private static final double k_D = 0.0;
     }
     
-    public zutoSide(Swerve s_Swerve, Lift m_Lift, Collector m_collector, Extension m_extension){
+    public AutoSide(Swerve s_Swerve, Lift m_Lift, Collector m_collector, Extension m_extension){
         CollectPreLoadCommand m_collectPreLoadCommand = new CollectPreLoadCommand(m_Lift, m_collector);
         ExtensionCommand m_extensionCarry = new ExtensionCommand(m_extension, TelescopePosition.COLLECTION);
         LowPoleApproachCommandGroup  m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_Lift, m_collector);
