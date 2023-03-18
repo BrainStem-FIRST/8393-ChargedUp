@@ -88,6 +88,8 @@ public class Robot extends TimedRobot {
 
   private boolean hasDepositingRun = false;
   public ArrayList<BrainSTEMSubsystem> brainSTEMSubsystemsWithoutSwerve;
+  private boolean hasMonkDriveCanceled = true;
+
 
   
 
@@ -183,6 +185,7 @@ public class Robot extends TimedRobot {
     // m_driver1_X.update(m_robotContainer.m_driver1XButton.getAsBoolean() && !m_robotContainer.m_driver1AButton.getAsBoolean());
     m_driver1_A.update(m_robotContainer.m_driver1AButton.getAsBoolean());
     m_driver1_X.update(m_robotContainer.m_driver1XButton.getAsBoolean());
+    m_driver1_B.update(m_robotContainer.m_driver1BButton.getAsBoolean());
     if (m_robotContainer.m_driver1AButton.getAsBoolean()) {
       m_driver1_X.setState(false);
     } else if (m_robotContainer.m_driver1XButton.getAsBoolean()) {
@@ -224,6 +227,13 @@ public class Robot extends TimedRobot {
     //   m_robotContainer.m_swerve.m_adjustableDriveNeutralMode = NeutralMode.Coast;
     //   m_robotContainer.m_swerve.m_adjustableAngleNeutralMode = NeutralMode.Coast;
     // }
+    if(m_robotContainer.m_driver1BButton.getAsBoolean()) {
+      m_robotContainer.monkDrive.schedule();
+      hasMonkDriveCanceled = false;
+    } else if(!hasMonkDriveCanceled){
+      m_robotContainer.monkDrive.cancel();
+      hasMonkDriveCanceled = true;
+    }
 
     m_driver1_BackButton.update(m_robotContainer.m_driver1.getRawButton(JoystickConstants.k_backButton));
     setRobotState();

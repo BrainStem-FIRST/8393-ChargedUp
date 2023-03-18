@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class MonkDrive extends CommandBase {
         public static final class MonkDriveContants {
-                public static final double k_p = 0.01;
+                public static final double k_p = 0.1;
                 public static final double k_i = 0;
                 public static final double k_d = 0;
         }
@@ -49,7 +49,7 @@ public class MonkDrive extends CommandBase {
             
                         m_swerve.drive(
                                         new Translation2d(0, 0),
-                                        rotationPower * SwerveConstants.k_maxAngularVelocity,
+                                        rotationPower * (SwerveConstants.k_maxAngularVelocity / 4),
                                         true,
                                         true);
                 
