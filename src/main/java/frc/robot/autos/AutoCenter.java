@@ -50,7 +50,7 @@ public class AutoCenter extends SequentialCommandGroup {
 
     public static final class AutoConstants { // TODO: The below constants are used in the example auto, and must be
                                               // tuned to specific robot
-        public static final double k_maxSpeedMetersPerSecond = 1.6;
+        public static final double k_maxSpeedMetersPerSecond = 1.8;
         public static final double k_maxAccelerationMetersPerSecondSquared = 0.9;
         public static final double k_maxAngularSpeedRadiansPerSecond = Math.PI / 10;
         public static final double k_maxAngularSpeedRadiansPerSecondSquared = Math.PI / 10;
