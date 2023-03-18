@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.RobotContainer.JoystickConstants;
-import frc.robot.autos.AutoCenter;
+import frc.robot.autos.zutoCenter;
 import frc.robot.commandGroups.CarryRetractedCommandGroup;
 import frc.robot.commandGroups.DepositSequenceCommandGroup;
 import frc.robot.commandGroups.DepositSequenceHighPoleCommandGroup;
@@ -146,14 +146,14 @@ public class Robot extends TimedRobot {
     for(BrainSTEMSubsystem isubsystem: brainSTEMSubsystems){
       isubsystem.initialize();
     }
-    AutoCenter.sideAuto = true;
+    zutoCenter.sideAuto = true;
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
     if((m_robotContainer.m_swerve.getTilt() > 5) || (m_robotContainer.m_swerve.getTilt() < -5)) {
-      AutoCenter.sideAuto = false;
+      zutoCenter.sideAuto = false;
     }
   }
 

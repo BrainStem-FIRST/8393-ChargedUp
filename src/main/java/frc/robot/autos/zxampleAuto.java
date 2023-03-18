@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
-public class ExampleAuto extends SequentialCommandGroup {
+public class zxampleAuto extends SequentialCommandGroup {
 
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
         public static final double k_maxSpeedMetersPerSecond = 3;
@@ -34,7 +34,7 @@ public class ExampleAuto extends SequentialCommandGroup {
                 k_maxAngularSpeedRadiansPerSecond, k_maxAngularSpeedRadiansPerSecondSquared);
     }
     
-    public ExampleAuto(Swerve s_Swerve){
+    public zxampleAuto(Swerve s_Swerve){
         TrajectoryConfig config =
             new TrajectoryConfig(
                     AutoConstants.k_maxSpeedMetersPerSecond,
