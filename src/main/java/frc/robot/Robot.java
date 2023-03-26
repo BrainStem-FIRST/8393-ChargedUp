@@ -26,6 +26,7 @@ import frc.robot.commandGroups.HighPoleApproachCommandGroup;
 import frc.robot.commandGroups.LowPoleApproachCommandGroup;
 import frc.robot.commandGroups.ShelfCarryRetractedCommandGroup;
 import frc.robot.commandGroups.ShelfCollectionApproachCommandGroup;
+import frc.robot.commands.GreenMonkDrive;
 import frc.robot.commands.extensionCommands.ExtensionDepositSequenceCommand;
 import frc.robot.subsystems.Collector;
 import frc.robot.subsystems.Extension;
@@ -91,6 +92,8 @@ public class Robot extends TimedRobot {
   public ArrayList<BrainSTEMSubsystem> brainSTEMSubsystemsWithoutSwerve;
   private boolean hasMonkDriveCanceled = true;
   private boolean hasLimelightMonkDriveCanceled = true;
+
+  public static double limelightCurrent;
   //private boolean hasLimelightRun = false;
 
 
@@ -215,7 +218,9 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putNumber("Limelight Reflective Tape", LimelightHelpers.getTX("limelight"));
+    SmartDashboard.putNumber("Limelight Light Current ", limelightCurrent);
+
+    limelightCurrent = LimelightHelpers.getTX("limelight");
 
     //CODE TO TEST OUT HOOK UP AND DOWN POSITIONS
     // if(m_robotContainer.m_driver2YButton.getAsBoolean()) {
@@ -256,12 +261,17 @@ public class Robot extends TimedRobot {
     //   hasLimelightMonkDriveCanceled = true;
     //}
 
-    if(m_robotContainer.m_driver2YButton.getAsBoolean()) {
-      m_robotContainer.rightGreenMonkDrive.schedule();
-    }
+  
 
-    if(m_robotContainer.m_driver2XButton.getAsBoolean()) {
+    if(m_robotContainer.m_driver1.getPOV() == 90) {
+      SmartDashboard.putString("D1 POV","Right");
+      m_robotContainer.rightGreenMonkDrive.schedule();
+    } else if (m_robotContainer.m_driver1.getPOV() == 270) {
+      SmartDashboard.putString("D1 POV","Left");
       m_robotContainer.leftGreenMonkDrive.schedule();
+    } else {
+      m_robotContainer.rightGreenMonkDrive.cancel();
+      m_robotContainer.leftGreenMonkDrive.cancel();
     }
 
     m_driver1_BackButton.update(m_robotContainer.m_driver1.getRawButton(JoystickConstants.k_backButton));

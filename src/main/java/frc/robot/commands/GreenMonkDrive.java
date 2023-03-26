@@ -12,6 +12,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class GreenMonkDrive extends CommandBase {
@@ -30,10 +31,13 @@ public class GreenMonkDrive extends CommandBase {
         private Swerve m_swerve;
         private BooleanSupplier robotCentricSup;
         private PIDController drivePIDController;
+        private boolean m_targetLeft = true;
+        private double strafePower = 0.3;
 
 
-        public GreenMonkDrive(Swerve p_swerve) {
+        public GreenMonkDrive(Swerve p_swerve, boolean p_targetLeft) {
                 this.m_swerve = p_swerve;
+                this.m_targetLeft = p_targetLeft;
                 addRequirements(p_swerve);
 
                 drivePIDController = new PIDController(MonkDriveContants.k_p, MonkDriveContants.k_i,
@@ -42,22 +46,17 @@ public class GreenMonkDrive extends CommandBase {
 
         @Override
         public void execute() {
-                double currentYaw = m_swerve.getYaw().getDegrees();
-                double rotationPower = drivePIDController.calculate(LimelightHelpers.getTX("limelight"), 0);
+                if (!m_targetLeft) {
+                        strafePower = strafePower * -1;
+                }
 
 
                 /* Drive */
-            
-                        m_swerve.drive(
-                                        new Translation2d(0, 0),
-                                        rotationPower * (SwerveConstants.k_maxAngularVelocity / 4),
-                                        true,
-                                        true);
+                if (LimelightHelpers.getTV("limelight")) {
+                        strafePower = drivePIDController.calculate(LimelightHelpers.getTX("limelight"), 0);
+                } 
+                SmartDashboard.putNumber("Strafe Power", strafePower);
+                new TeleopSwerve(m_swerve, () -> 0, () -> strafePower, () -> 0, () -> false).execute();
                 
-        }
-
-        @Override
-        public boolean isFinished() {
-                return ((LimelightHelpers.getTX("limelight") > -2) && (LimelightHelpers.getTX("limelight") < 2));
         }
 }

@@ -97,9 +97,8 @@ public class RobotContainer {
     public GroundCollectionCommandGroup m_groundCollection = new GroundCollectionCommandGroup(m_extension, m_lift, m_collector);
     public ShelfCollectionApproachCommandGroup m_shelfCollection = new ShelfCollectionApproachCommandGroup(m_extension, m_lift);
     public MonkDrive monkDrive = new MonkDrive(m_swerve);
-    public GreenMonkDrive limelightMonkDrive = new GreenMonkDrive(m_swerve);
-    public RightGreenMonkDrive rightGreenMonkDrive = new RightGreenMonkDrive(m_swerve);
-    public LeftGreenMonkDrive leftGreenMonkDrive = new LeftGreenMonkDrive(m_swerve);
+    public GreenMonkDrive leftGreenMonkDrive = new GreenMonkDrive(m_swerve, true);
+    public GreenMonkDrive rightGreenMonkDrive = new GreenMonkDrive(m_swerve, false);
     //public DefaultLimelightCommand m_limelightCommand = new DefaultLimelightCommand(m_Limelight);
   /*
    * The container for the robot. Contains subsystems, OI devices, and commands.
