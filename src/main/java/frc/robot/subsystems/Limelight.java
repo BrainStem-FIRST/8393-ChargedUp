@@ -8,7 +8,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 
-public class Limelight3 extends SubsystemBase implements BrainSTEMSubsystem {
+public class Limelight extends SubsystemBase implements BrainSTEMSubsystem {
 
 
     private double limeLightX;
@@ -22,7 +22,7 @@ public class Limelight3 extends SubsystemBase implements BrainSTEMSubsystem {
 
     }
 
-    public Limelight3() {
+    public Limelight() {
         double limeLightDouble = limeLight.getDouble(0.0);
         this.limeLightX = limeLightDouble;
     }

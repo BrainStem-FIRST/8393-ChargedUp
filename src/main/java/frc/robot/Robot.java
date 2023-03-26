@@ -89,6 +89,7 @@ public class Robot extends TimedRobot {
   private boolean hasDepositingRun = false;
   public ArrayList<BrainSTEMSubsystem> brainSTEMSubsystemsWithoutSwerve;
   private boolean hasMonkDriveCanceled = true;
+  private boolean hasLimelightRun = false;
 
 
   
@@ -162,6 +163,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    hasLimelightRun = false;
+    
     
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
@@ -227,6 +230,12 @@ public class Robot extends TimedRobot {
     //   m_robotContainer.m_swerve.m_adjustableDriveNeutralMode = NeutralMode.Coast;
     //   m_robotContainer.m_swerve.m_adjustableAngleNeutralMode = NeutralMode.Coast;
     // }
+    if(!hasLimelightRun) {
+      m_robotContainer.m_limelightCommand.schedule();
+      hasLimelightRun = true;
+    }
+    
+
     if(m_robotContainer.m_driver1BButton.getAsBoolean()) {
       m_robotContainer.monkDrive.schedule();
       hasMonkDriveCanceled = false;

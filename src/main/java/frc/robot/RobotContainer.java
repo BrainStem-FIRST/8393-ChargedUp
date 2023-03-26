@@ -87,6 +87,7 @@ public class RobotContainer {
     Lift m_lift = new Lift();
     Extension m_extension = new Extension();
     Collector m_collector = new Collector();
+    Limelight m_Limelight = new Limelight();
 
     /* Command Groups */
     public LowPoleApproachCommandGroup m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_lift, m_collector);
@@ -96,6 +97,7 @@ public class RobotContainer {
     public GroundCollectionCommandGroup m_groundCollection = new GroundCollectionCommandGroup(m_extension, m_lift, m_collector);
     public ShelfCollectionApproachCommandGroup m_shelfCollection = new ShelfCollectionApproachCommandGroup(m_extension, m_lift);
     public MonkDrive monkDrive = new MonkDrive(m_swerve);
+    public DefaultLimelightCommand m_limelightCommand = new DefaultLimelightCommand(m_Limelight);
   /*
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
