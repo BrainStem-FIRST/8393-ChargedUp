@@ -38,6 +38,7 @@ import frc.robot.subsystems.Extension.TelescopePosition;
 import frc.robot.subsystems.Lift.HookState;
 import frc.robot.subsystems.Lift.LiftPosition;
 import frc.robot.utilities.BrainSTEMSubsystem;
+import frc.robot.utilities.LimelightHelpers;
 import frc.robot.utilities.ToggleButton;
 
 /**
@@ -89,7 +90,8 @@ public class Robot extends TimedRobot {
   private boolean hasDepositingRun = false;
   public ArrayList<BrainSTEMSubsystem> brainSTEMSubsystemsWithoutSwerve;
   private boolean hasMonkDriveCanceled = true;
-  private boolean hasLimelightRun = false;
+  private boolean hasLimelightMonkDriveCanceled = true;
+  //private boolean hasLimelightRun = false;
 
 
   
@@ -163,7 +165,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    hasLimelightRun = false;
+    //hasLimelightRun = false;
     
     
     // This makes sure that the autonomous stops running when
@@ -213,6 +215,8 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    SmartDashboard.putNumber("Limelight Reflective Tape", LimelightHelpers.getTX("limelight"));
+
     //CODE TO TEST OUT HOOK UP AND DOWN POSITIONS
     // if(m_robotContainer.m_driver2YButton.getAsBoolean()) {
     //   new InstantCommand(() -> m_robotContainer.m_lift.m_hookState = HookState.DOWN).schedule();
@@ -230,10 +234,10 @@ public class Robot extends TimedRobot {
     //   m_robotContainer.m_swerve.m_adjustableDriveNeutralMode = NeutralMode.Coast;
     //   m_robotContainer.m_swerve.m_adjustableAngleNeutralMode = NeutralMode.Coast;
     // }
-    if(!hasLimelightRun) {
-      m_robotContainer.m_limelightCommand.schedule();
-      hasLimelightRun = true;
-    }
+    // if(!hasLimelightRun) {
+    //   m_robotContainer.m_limelightCommand.schedule();
+    //   hasLimelightRun = true;
+    // }
     
 
     if(m_robotContainer.m_driver1BButton.getAsBoolean()) {
@@ -242,6 +246,22 @@ public class Robot extends TimedRobot {
     } else if(!hasMonkDriveCanceled){
       m_robotContainer.monkDrive.cancel();
       hasMonkDriveCanceled = true;
+    } 
+
+    // if(m_robotContainer.m_driver2YButton.getAsBoolean()) {
+    //   m_robotContainer.limelightMonkDrive.schedule();
+    //   hasLimelightMonkDriveCanceled = false;
+    // } else if(!hasLimelightMonkDriveCanceled){
+    //   m_robotContainer.limelightMonkDrive.cancel();
+    //   hasLimelightMonkDriveCanceled = true;
+    //}
+
+    if(m_robotContainer.m_driver2YButton.getAsBoolean()) {
+      m_robotContainer.rightGreenMonkDrive.schedule();
+    }
+
+    if(m_robotContainer.m_driver2XButton.getAsBoolean()) {
+      m_robotContainer.leftGreenMonkDrive.schedule();
     }
 
     m_driver1_BackButton.update(m_robotContainer.m_driver1.getRawButton(JoystickConstants.k_backButton));

@@ -87,7 +87,7 @@ public class RobotContainer {
     Lift m_lift = new Lift();
     Extension m_extension = new Extension();
     Collector m_collector = new Collector();
-    Limelight m_Limelight = new Limelight();
+    //Limelight m_limelight = new Limelight();
 
     /* Command Groups */
     public LowPoleApproachCommandGroup m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_lift, m_collector);
@@ -97,7 +97,10 @@ public class RobotContainer {
     public GroundCollectionCommandGroup m_groundCollection = new GroundCollectionCommandGroup(m_extension, m_lift, m_collector);
     public ShelfCollectionApproachCommandGroup m_shelfCollection = new ShelfCollectionApproachCommandGroup(m_extension, m_lift);
     public MonkDrive monkDrive = new MonkDrive(m_swerve);
-    public DefaultLimelightCommand m_limelightCommand = new DefaultLimelightCommand(m_Limelight);
+    public GreenMonkDrive limelightMonkDrive = new GreenMonkDrive(m_swerve);
+    public RightGreenMonkDrive rightGreenMonkDrive = new RightGreenMonkDrive(m_swerve);
+    public LeftGreenMonkDrive leftGreenMonkDrive = new LeftGreenMonkDrive(m_swerve);
+    //public DefaultLimelightCommand m_limelightCommand = new DefaultLimelightCommand(m_Limelight);
   /*
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -110,6 +113,8 @@ public class RobotContainer {
             () -> -(m_driver1.getRawAxis(k_strafeAxis) * Math.abs(m_driver1.getRawAxis(k_strafeAxis))),
             () -> -(m_driver1.getRawAxis(k_rotationAxis) * Math.abs(m_driver1.getRawAxis(k_rotationAxis)) * 1.2),
             () -> false));
+
+    //m_limelight.setDefaultCommand(new DefaultLimelightCommand(m_limelight));
 
     // Configure the button bindings
     configureButtonBindings();
