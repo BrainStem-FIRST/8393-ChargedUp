@@ -10,14 +10,21 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class Limelight3 extends SubsystemBase implements BrainSTEMSubsystem {
 
+
+    private double limeLightX;
+    private double controllerDeadzone;
+    private NetworkTableEntry limeLight;
+    
     
 
     public static final class Limelight3Constants {
+        
 
     }
 
     public Limelight3() {
-  
+        double limeLightDouble = limeLight.getDouble(0.0);
+        this.limeLightX = limeLightDouble;
     }
 
     @Override
@@ -41,7 +48,7 @@ public class Limelight3 extends SubsystemBase implements BrainSTEMSubsystem {
     @Override 
     public void periodic() {
 
-        
+        SmartDashboard.putNumber("Limelight Refelctive Tape", limeLightX);
 
     }
     

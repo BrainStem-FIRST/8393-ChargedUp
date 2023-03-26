@@ -1,7 +1,7 @@
 package frc.robot.autos;
 
 import frc.robot.autoCommands.LiftCollectPreLoad;
-import frc.robot.autoCommands.autoCommandGroups.CollectPreLoadCommand;
+import frc.robot.autoCommands.autoCommandGroups.collectPreLoadCommand;
 import frc.robot.commandGroups.DepositSequenceCommandGroup;
 import frc.robot.commandGroups.LowPoleApproachCommandGroup;
 import frc.robot.commands.BalanceCommand;
@@ -60,7 +60,7 @@ public class AutoSide extends SequentialCommandGroup {
     }
     
     public AutoSide(Swerve s_Swerve, Lift m_Lift, Collector m_collector, Extension m_extension){
-        CollectPreLoadCommand m_collectPreLoadCommand = new CollectPreLoadCommand(m_Lift, m_collector);
+        collectPreLoadCommand m_collectPreLoadCommand = new collectPreLoadCommand(m_Lift, m_collector);
         ExtensionCommand m_extensionCarry = new ExtensionCommand(m_extension, TelescopePosition.COLLECTION);
         LowPoleApproachCommandGroup  m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_Lift, m_collector);
         DepositSequenceCommandGroup m_depositSequenceCommandGroup = new DepositSequenceCommandGroup(m_Lift, m_extension, m_collector);
