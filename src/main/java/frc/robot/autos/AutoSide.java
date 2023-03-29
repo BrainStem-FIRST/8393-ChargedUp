@@ -15,6 +15,8 @@ import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Extension.TelescopePosition;
 import frc.robot.subsystems.Swerve.SwerveConstants;
+import frc.robot.utilities.LimelightHelpers;
+
 import java.util.List;
 import java.util.function.DoubleSupplier;
 
@@ -138,20 +140,40 @@ public class AutoSide extends SequentialCommandGroup {
             // collect pre load command here 
 
             // score on low pole command here 
-            new InstantCommand(() -> m_Timer.start()),
-            m_intakeIn,
-            m_collectPreLoadCommand,
-            m_extensionCarry,
-            m_lowPoleApproach,
-            m_depositSequenceCommandGroup,
-            m_intakeOff,
-            new InstantCommand(() -> s_Swerve.resetOdometry(runOverChargeStationTrajectory.getInitialPose())), 
-            runOverChargeStationCommand
+            // new InstantCommand(() -> m_Timer.start()),
+            // m_intakeIn,
+            // m_collectPreLoadCommand,
+            // m_extensionCarry,
+            // m_lowPoleApproach,
+            // m_depositSequenceCommandGroup,
+            // m_intakeOff,
+            // new InstantCommand(() -> s_Swerve.resetOdometry(runOverChargeStationTrajectory.getInitialPose())), 
+            // runOverChargeStationCommand
             // runBackOntoChargeStationCommand,
             // new InstantCommand(() -> autoBalance(s_Swerve, m_Timer))
 
+            new InstantCommand(() -> lineUpOnCone())
+            ,new InstantCommand(() -> readTheCone())
+
         );
     }
+
+    private void lineUpOnCone() {
+        LimelightHelpers.setPipelineIndex("limelight", 1);
+        SmartDashboard.putBoolean("Cone Pipeline", true);
+    }
+
+    
+
+    private void test() {
+        SmartDashboard.putString("test", "test");
+    }
+
+    private void readTheCone() {
+        SmartDashboard.putBoolean("Limelight Seeing?", (LimelightHelpers.getTV("limelight")));
+        SmartDashboard.putNumber("TX Value", LimelightHelpers.getTX("limelight"));
+    }
+
 
     private void autoBalance(Swerve s_Swerve, Timer m_Timer) {
         double pitch = s_Swerve.getTilt();
