@@ -4,18 +4,18 @@ import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Collector;
-import frc.robot.subsystems.Collector.CollectorState;
-import frc.robot.subsystems.Collector.IntakeState;
+import frc.robot.subsystems.NewCollector;
+import frc.robot.subsystems.NewCollector.CollectorState;
+import frc.robot.subsystems.NewCollector.IntakeState;
 
 public class IntakeInCommand extends CommandBase {
     
-    private Collector collector; 
+    private NewCollector collector; 
     private BooleanSupplier collectorOn;
     private BooleanSupplier closeCollector;
     Timer m_timer = new Timer();
 
-    public IntakeInCommand (Collector collector) {
+    public IntakeInCommand (NewCollector collector) {
         this.collector = collector;
         addRequirements(collector);
     }

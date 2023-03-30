@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.RobotContainer.JoystickConstants;
-import frc.robot.autos.AutoCenter;
+//import frc.robot.autos.AutoCenter;
 import frc.robot.commandGroups.CarryRetractedCommandGroup;
 import frc.robot.commandGroups.DepositSequenceCommandGroup;
 import frc.robot.commandGroups.DepositSequenceHighPoleCommandGroup;
@@ -28,13 +28,13 @@ import frc.robot.commandGroups.ShelfCarryRetractedCommandGroup;
 import frc.robot.commandGroups.ShelfCollectionApproachCommandGroup;
 import frc.robot.commands.GreenMonkDrive;
 import frc.robot.commands.extensionCommands.ExtensionDepositSequenceCommand;
-import frc.robot.subsystems.Collector;
+import frc.robot.subsystems.NewCollector;
 import frc.robot.subsystems.Extension;
 import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Swerve;
-import frc.robot.subsystems.Collector.CollectorConstants;
-import frc.robot.subsystems.Collector.CollectorState;
-import frc.robot.subsystems.Collector.IntakeState;
+import frc.robot.subsystems.NewCollector.CollectorConstants;
+import frc.robot.subsystems.NewCollector.CollectorState;
+import frc.robot.subsystems.NewCollector.IntakeState;
 import frc.robot.subsystems.Extension.TelescopePosition;
 import frc.robot.subsystems.Lift.HookState;
 import frc.robot.subsystems.Lift.LiftPosition;
@@ -146,7 +146,7 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+     //m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -155,14 +155,14 @@ public class Robot extends TimedRobot {
     for(BrainSTEMSubsystem isubsystem: brainSTEMSubsystems){
       isubsystem.initialize();
     }
-    AutoCenter.sideAuto = true;
+    //AutoCenter.sideAuto = true;
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
     if((m_robotContainer.m_swerve.getTilt() > 5) || (m_robotContainer.m_swerve.getTilt() < -5)) {
-      AutoCenter.sideAuto = false;
+      //AutoCenter.sideAuto = false;
     }
   }
 
@@ -205,8 +205,8 @@ public class Robot extends TimedRobot {
     if (m_robotContainer.m_driver2AButton.getAsBoolean()) {
       m_driver1_X.setState(false);
       m_driver1_A.setState(false);
-      new InstantCommand(() -> m_robotContainer.m_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed).schedule();
-      m_robotContainer.m_collector.m_collectorState = CollectorState.CLOSED;
+      //new InstantCommand(() -> m_robotContainer.m_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed).schedule();
+      //m_robotContainer.m_collector.m_collectorState = CollectorState.CLOSED;
       s_robotMode = RobotMode.COLLECTING;
     } else if (m_robotContainer.m_driver2BButton.getAsBoolean()) {
       m_driver1_X.setState(false);
@@ -283,7 +283,7 @@ public class Robot extends TimedRobot {
       }
       m_robotContainer.m_lift.turnOffLiftMotors();
       m_robotContainer.m_extension.turnOffExtensionMotor();
-      m_robotContainer.m_collector.killCollectorMotors();
+      //m_robotContainer.m_collector.killCollectorMotors();
     } else {
       for(BrainSTEMSubsystem i_subsystem : brainSTEMSubsystemsWithoutSwerve){
         i_subsystem.enablePeriodic();
@@ -304,23 +304,23 @@ public class Robot extends TimedRobot {
       if(m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) > 0.7 && !hasDepositingRun) {
         hasDepositingRun = true;
         if (s_depositLocation == DepositLocation.HIGH) {
-          new DepositSequenceHighPoleCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule();
+          //new DepositSequenceHighPoleCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule();
         } else {
-          new DepositSequenceCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule(); 
+          //new DepositSequenceCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule(); 
         }
       }
       if (m_robotContainer.m_driver1XButton.getAsBoolean() && (m_robotContainer.m_lift.m_state != LiftPosition.HIGH_POLE_TILT) && (m_robotContainer.m_lift.m_state != LiftPosition.HIGH_POLE)) { // && (m_robotContainer.m_lift.m_state != LiftPosition.HIGH_POLE_TILT) && (m_robotContainer.m_lift.m_state != LiftPosition.HIGH_POLE)
         s_depositLocation = DepositLocation.LOW;
-        new LowPoleApproachCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift, m_robotContainer.m_collector).schedule();
+        //new LowPoleApproachCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift, m_robotContainer.m_collector).schedule();
       }
       if (m_robotContainer.m_driver1YButton.getAsBoolean() && (m_robotContainer.m_lift.m_state != LiftPosition.LOW_POLE)) { //&& (m_robotContainer.m_lift.m_state != LiftPosition.LOW_POLE)
         s_depositLocation = DepositLocation.HIGH;
-        new HighPoleApproachCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift, m_robotContainer.m_collector).schedule();
+        //new HighPoleApproachCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift, m_robotContainer.m_collector).schedule();
       } 
       
       
     } else {
-      m_robotContainer.m_collector.m_collectorState = CollectorState.CLOSED;
+      
       /* Collector */
       if(!m_driver1_A.getState()) {
         hasGroundCollectionRun = false;
@@ -337,13 +337,13 @@ public class Robot extends TimedRobot {
         m_robotContainer.m_shelfCollection.schedule();        //new InstantCommand(() -> m_robotContainer.m_collector.m_intakeState = IntakeState.IN).schedule();
       } else if (m_driver1_A.getState() && !hasGroundCollectionRun) {
         SmartDashboard.putString("Lift Extension", "Ground");
-        m_robotContainer.m_groundCollection.schedule();
+        //m_robotContainer.m_groundCollection.schedule();
         hasGroundCollectionRun = true;
       } else if ((!m_driver1_A.getState() && !m_driver1_X.getState())) {
         SmartDashboard.putString("Lift Extension", "Carry");
         if(m_robotContainer.m_lift.m_state == LiftPosition.SHELF_COLLECTION && !hasShelfCarryRetractedRun) {
           hasShelfCarryRetractedRun = true;
-          new ShelfCarryRetractedCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift, m_robotContainer.m_collector).schedule();
+          //new ShelfCarryRetractedCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift, m_robotContainer.m_collector).schedule();
         } else if (!hasCarryRetractedRun){
           hasCarryRetractedRun = true;
           m_robotContainer.m_carryRetracted.schedule();
@@ -352,17 +352,17 @@ public class Robot extends TimedRobot {
 
       /* Intake Control */
       if (m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) > 0.5) {
-        m_robotContainer.m_collector.m_adjustableWheelMotorPower = 0.3;
-        m_robotContainer.m_collector.m_intakeState = IntakeState.IN;
+        //m_robotContainer.m_collector.m_adjustableWheelMotorPower = 0.3;
+        //m_robotContainer.m_collector.m_intakeState = IntakeState.IN;
       } else {
-        m_robotContainer.m_collector.m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed;
-        m_robotContainer.m_collector.m_intakeState = IntakeState.OFF;
+        //m_robotContainer.m_collector.m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed;
+        //m_robotContainer.m_collector.m_intakeState = IntakeState.OFF;
       }
 
 
     }
 
-    m_robotContainer.m_driver1LeftBumper.toggleOnTrue(new InstantCommand(() -> m_robotContainer.m_collector.m_collectorState = CollectorState.OPEN));
+    //m_robotContainer.m_driver1LeftBumper.toggleOnTrue(new InstantCommand(() -> m_robotContainer.m_collector.m_collectorState = CollectorState.OPEN));
     
     
 

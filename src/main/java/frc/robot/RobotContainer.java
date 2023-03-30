@@ -18,8 +18,8 @@ import frc.robot.commandGroups.LowPoleApproachCommandGroup;
 import frc.robot.commandGroups.ShelfCollectionApproachCommandGroup;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.Collector.CollectorState;
-import frc.robot.subsystems.Collector.IntakeState;
+import frc.robot.subsystems.NewCollector.CollectorState;
+import frc.robot.subsystems.NewCollector.IntakeState;
 import frc.robot.subsystems.Lift.LiftPosition;
 import frc.robot.utilities.BrainSTEMSubsystem;
 import frc.robot.utilities.ToggleButton;
@@ -86,7 +86,7 @@ public class RobotContainer {
     Swerve m_swerve = new Swerve();
     Lift m_lift = new Lift();
     Extension m_extension = new Extension();
-    Collector m_collector = new Collector();
+    NewCollector m_collector = new NewCollector();
     //Limelight m_limelight = new Limelight();
 
     /* Command Groups */
@@ -94,7 +94,6 @@ public class RobotContainer {
     public GroundRetractedCommandGroup m_groundRetracted = new GroundRetractedCommandGroup(m_extension, m_lift);
     public CarryRetractedCommandGroup m_carryRetracted = new CarryRetractedCommandGroup(m_extension, m_lift, m_collector);
     public CollectCommandGroup m_collectCommandGroup = new CollectCommandGroup(m_collector);
-    public GroundCollectionCommandGroup m_groundCollection = new GroundCollectionCommandGroup(m_extension, m_lift, m_collector);
     public ShelfCollectionApproachCommandGroup m_shelfCollection = new ShelfCollectionApproachCommandGroup(m_extension, m_lift);
     public MonkDrive monkDrive = new MonkDrive(m_swerve);
     public GreenMonkDrive leftGreenMonkDrive = new GreenMonkDrive(m_swerve, true);
@@ -138,10 +137,10 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
+  //public Command getAutonomousCommand() {
     //return new autoSide(m_swerve, m_lift, m_collector, m_extension);
-    return new AutoSide(m_swerve, m_lift, m_collector, m_extension);
-  }
+    //return new AutoSide(m_swerve, m_lift, m_collector, m_extension);
+  //}
 
   public ArrayList<BrainSTEMSubsystem> getBrainSTEMSubsystems(){
     ArrayList<BrainSTEMSubsystem> brainSTEMSubsystems = new ArrayList<>();
