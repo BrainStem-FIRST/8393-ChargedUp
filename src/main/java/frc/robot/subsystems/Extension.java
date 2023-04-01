@@ -24,7 +24,9 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
 
   public static final class ExtensionConstants {
     private static final double k_gearRatioMultiplication = 1.2;
-    private static final int k_extensionMotorID = 14;
+    private static final int k_extensionMotorID = 14; //FIXME
+    private static final int k_frontExtensionMotorID = 14; 
+    private static final int k_backExtensionMotorID = 31; 
     private static final int k_extensionServoID = 9;
     private static final double k_proportional = 0.00006; //0.00008
     private static final double k_integral = 0;

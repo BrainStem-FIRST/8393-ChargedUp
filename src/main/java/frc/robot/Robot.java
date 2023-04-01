@@ -215,6 +215,8 @@ public class Robot extends TimedRobot {
     }
   }
 
+  
+
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
@@ -222,27 +224,7 @@ public class Robot extends TimedRobot {
 
     limelightCurrent = LimelightHelpers.getTX("limelight");
 
-    //CODE TO TEST OUT HOOK UP AND DOWN POSITIONS
-    // if(m_robotContainer.m_driver2YButton.getAsBoolean()) {
-    //   new InstantCommand(() -> m_robotContainer.m_lift.m_hookState = HookState.DOWN).schedule();
-    // }
-
-    // if(m_robotContainer.m_driver2XButton.getAsBoolean()) {
-    //   new InstantCommand(() -> m_robotContainer.m_lift.m_hookState = HookState.UP).schedule();
-    // }
-
-    //CODE TO SET COAST OR BRAKE MODE ON DRIVETRAIN
-    // if(m_robotContainer.m_driver2YButton.getAsBoolean()) {
-    //   m_robotContainer.m_swerve.m_adjustableDriveNeutralMode = NeutralMode.Brake;
-    //   m_robotContainer.m_swerve.m_adjustableAngleNeutralMode = NeutralMode.Brake;
-    // } else if (m_robotContainer.m_driver2XButton.getAsBoolean()) {
-    //   m_robotContainer.m_swerve.m_adjustableDriveNeutralMode = NeutralMode.Coast;
-    //   m_robotContainer.m_swerve.m_adjustableAngleNeutralMode = NeutralMode.Coast;
-    // }
-    // if(!hasLimelightRun) {
-    //   m_robotContainer.m_limelightCommand.schedule();
-    //   hasLimelightRun = true;
-    // }
+    
     
 
     if(m_robotContainer.m_driver1BButton.getAsBoolean()) {
@@ -253,13 +235,7 @@ public class Robot extends TimedRobot {
       hasMonkDriveCanceled = true;
     } 
 
-    // if(m_robotContainer.m_driver2YButton.getAsBoolean()) {
-    //   m_robotContainer.limelightMonkDrive.schedule();
-    //   hasLimelightMonkDriveCanceled = false;
-    // } else if(!hasLimelightMonkDriveCanceled){
-    //   m_robotContainer.limelightMonkDrive.cancel();
-    //   hasLimelightMonkDriveCanceled = true;
-    //}
+    
 
   
 
