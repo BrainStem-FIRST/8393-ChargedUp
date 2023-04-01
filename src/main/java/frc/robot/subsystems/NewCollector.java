@@ -2,8 +2,6 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.Rev2mDistanceSensor.Port;
-import com.revrobotics.Rev2mDistanceSensor.RangeProfile;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -34,7 +32,6 @@ public class NewCollector extends SubsystemBase implements BrainSTEMSubsystem{
     private String m_profileSelected;
     private final SendableChooser<String> m_chooser = new SendableChooser<>();
     
-    private Rev2mDistanceSensor distSens; //look for why is this not importing correctly
 
 @Override
 public void initialize() {
@@ -44,36 +41,15 @@ public void initialize() {
     m_chooser.addOption("High Accuracy", highAccuracy);
     m_chooser.addOption("Long Range", longRange);
     SmartDashboard.putData("Profile", m_chooser);
-    distSens = new Rev2mDistanceSensor(Port.kOnboard);
-    distSens.setAutomaticMode(true);
-    distSens.setEnabled(true);
+
 }
 
 @Override
 public void periodic() {
     setCollectorState();
 
-    switch (m_profileSelected) {
-        case highSpeed:
-          distSens.setRangeProfile(RangeProfile.kHighSpeed);
-          break;
-        case highAccuracy:
-          distSens.setRangeProfile(RangeProfile.kHighAccuracy);
-          break;
-        case longRange:
-          distSens.setRangeProfile(RangeProfile.kLongRange);
-          break;
-        default:
-          distSens.setRangeProfile(RangeProfile.kDefault);
-          break;
-      }
+}
 
-    boolean isValid = distSens.isRangeValid();
-    SmartDashboard.putBoolean("Valid", isValid);
-    if(isValid) {
-        SmartDashboard.putNumber("Range", distSens.getRange());
-        SmartDashboard.putNumber("Timestamp", distSens.getTimestamp());
-    }
 
     private CANSparkMax m_rightMotor;
     private CANSparkMax m_leftMotor;
@@ -164,7 +140,6 @@ public void periodic() {
     @Override
     public void disablePeriodic() {
         m_collectorState = CollectorState.OFF;
-        distSens.setEnabled(false); //this might cause a problem, not sure until tested 
     }
 
 
