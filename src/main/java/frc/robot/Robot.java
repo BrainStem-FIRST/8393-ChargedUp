@@ -300,7 +300,8 @@ public class Robot extends TimedRobot {
       hasDepositingRun = false;
     }
 
-    if(s_robotMode == RobotMode.DEPOSITING) {
+    // s_robotMode == RobotMode.DEPOSITING
+    if(false) {
       if(m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) > 0.7 && !hasDepositingRun) {
         hasDepositingRun = true;
         if (s_depositLocation == DepositLocation.HIGH) {
@@ -319,7 +320,7 @@ public class Robot extends TimedRobot {
       } 
       
       
-    } else {
+    } else if (false) {
       
       /* Collector */
       if(!m_driver1_A.getState()) {
@@ -352,8 +353,8 @@ public class Robot extends TimedRobot {
 
       /* Intake Control */
       if (m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) > 0.5) {
-        //m_robotContainer.m_collector.m_adjustableWheelMotorPower = 0.3;
-        //m_robotContainer.m_collector.m_intakeState = IntakeState.IN;
+        // m_robotContainer.m_collector.m_adjustableWheelMotorPower = 0.3;
+        // m_robotContainer.m_collector.m_intakeState = IntakeState.IN;
       } else {
         //m_robotContainer.m_collector.m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed;
         //m_robotContainer.m_collector.m_intakeState = IntakeState.OFF;
@@ -371,6 +372,7 @@ public class Robot extends TimedRobot {
   }
 
   //code bombs are superior to any other kind of bomb
+  //i dont think that is historically accurate 
 
   @Override
   public void testInit() {

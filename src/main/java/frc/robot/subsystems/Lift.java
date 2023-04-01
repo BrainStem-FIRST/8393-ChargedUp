@@ -2,12 +2,17 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.BrainSTEMSubsystem;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -36,8 +41,9 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     
   }
 
-  private CANSparkMax m_forwardLift;
-  private CANSparkMax m_backLift;
+  private TalonFX m_forwardLift;
+  private TalonFX m_backLift;
+  private TalonFX m_rightLift;
   private Servo m_hookServo;
   private RelativeEncoder m_liftForwardEncoder;
   private RelativeEncoder m_liftBackEncoder;
@@ -46,15 +52,22 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   PIDController m_liftPID;
   public int depositDelta = 0;
 
+  public Encoder m_liftEncoder;
+
   public double m_adjustableLiftSpeed = LiftConstants.k_MaxPower;
 
   public Lift() {
+
     m_liftPID = new PIDController(LiftConstants.k_P, LiftConstants.k_I, LiftConstants.k_D);
-    m_forwardLift = new CANSparkMax(2, MotorType.kBrushless);
-    m_backLift = new CANSparkMax(3, MotorType.kBrushless);
-    m_liftForwardEncoder = m_forwardLift.getEncoder();
-    m_liftBackEncoder = m_backLift.getEncoder();
+
+    m_forwardLift = new TalonFX(2);
+    m_backLift = new TalonFX(3);
+    m_rightLift = new TalonFX(0); //FIXME
+    
     m_hookServo = new Servo(LiftConstants.k_hookServoID);
+
+    m_liftEncoder = new Encoder(2, 5, false, EncodingType.k2X);
+
   }
 
   public CommandBase exampleMethodCommand() {
@@ -85,24 +98,25 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   public LiftPosition m_state = LiftPosition.GROUND_COLLECTION;
 
   public boolean exampleCondition() {
+    
     return false;
+  
+    
   }
 
   @Override
   public void initialize() {
     m_liftForwardEncoder.setPosition(0);
     m_liftBackEncoder.setPosition(0);
-    m_forwardLift.setIdleMode(IdleMode.kBrake);
-    m_backLift.setIdleMode(IdleMode.kBrake);
     m_liftPID.setTolerance(15);
     m_liftForwardEncoder.setPositionConversionFactor(42);
     m_liftBackEncoder.setPositionConversionFactor(42);
-    m_forwardLift.set(0);
     m_state = LiftPosition.GROUND_COLLECTION;
     m_adjustableLiftSpeed = LiftConstants.k_MaxPower;
     m_liftSetPoint = 0;
     m_hookState = HookState.UP;
     m_hookServo.set(LiftConstants.k_hookServoUpPosition);
+    m_liftEncoder.setDistancePerPulse(4.0/256);
     enablePeriodic();
   }
 
@@ -121,56 +135,36 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   }
 
   public void liftUp() {
-    m_forwardLift.set(MathUtil.clamp(m_liftPID.calculate(m_liftBackEncoder.getPosition(), 3880), -0.05, 0.05));
-    m_forwardLift.setIdleMode(IdleMode.kBrake);
-    m_backLift.setIdleMode(IdleMode.kBrake);
-    // mforwardLift.set(0.09);
+    m_forwardLift.set(ControlMode.PercentOutput, MathUtil.clamp(m_liftPID.calculate(m_liftBackEncoder.getPosition(), 3880), -0.05, 0.05));
+    m_forwardLift.setNeutralMode(NeutralMode.Brake);
+    m_backLift.setNeutralMode(NeutralMode.Brake);
   }
 
   public void turnOffLiftMotors() {
-    m_forwardLift.set(0);
-    m_backLift.set(0);
+    m_forwardLift.set(ControlMode.PercentOutput, 0);
+    m_backLift.set(ControlMode.PercentOutput, 0);
   }
 
   public void liftUpIncs(double amount) {
-    m_forwardLift.set(.1 * m_liftPID.calculate(m_liftBackEncoder.getPosition(), amount * 15));
+    m_forwardLift.set(ControlMode.PercentOutput, .1 * m_liftPID.calculate(m_liftBackEncoder.getPosition(), amount * 15));
   }
 
   public void liftDown() {
-    m_forwardLift.setIdleMode(IdleMode.kCoast);
-    m_backLift.setIdleMode(IdleMode.kCoast);
-    // mforwardLift.set(.1*mliftPID.calculate(mliftForwardEncoder.getPosition(),
-    // 0));
+    m_forwardLift.setNeutralMode(NeutralMode.Coast);
+    m_backLift.setNeutralMode(NeutralMode.Coast);
+    m_rightLift.setNeutralMode(NeutralMode.Coast);
   }
 
-  // public void cycleHookServo(){
-  //   if(m_hookServo.get() == LiftConstants.k_hookServoUpPosition) {
-  //     m_hookServo.set(0.5);
-  //     SmartDashboard.putString("Hook Servo", "0.5");
-  //   } else if (m_hookServo.get() == 0.5) {
-  //     m_hookServo.set(LiftConstants.k_hookServoDownPosition);
-  //     SmartDashboard.putString("Hook Servo", "Hook Down Position");
-  //   } else if (m_hookServo.get() == LiftConstants.k_hookServoDownPosition) {
-  //     m_hookServo.set(LiftConstants.k_hookServoUpPosition);
-  //     SmartDashboard.putString("Hook Servo", "Hook Up Position");
-  //   }
-  // }
-
-  public void lowerHooks() {
-    m_hookServo.set(LiftConstants.k_hookServoDownPosition);
+  public double liftPosition() {
+    return m_liftEncoder.getDistance();
   }
 
-  public void raiseHooks() {
-    m_hookServo.set(LiftConstants.k_hookServoUpPosition);
-  }
-
-
-
+  
   
 
   public void liftStop() {
     m_liftPID.reset();
-    m_forwardLift.set(0);
+    m_forwardLift.set(ControlMode.PercentOutput, 0);
   }
 
   private boolean inTolerance(int currentPosition, int targetPosition, int tolerance) {
@@ -246,14 +240,14 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   }
 
   private void updateWithPID() {
-    m_forwardLift.setIdleMode(IdleMode.kBrake);
+    m_forwardLift.setNeutralMode(NeutralMode.Brake);
     SmartDashboard.putNumber("Lift Setpoint", m_liftSetPoint);
     SmartDashboard.putNumber("Lift PID Output",
         MathUtil.clamp(m_liftPID.calculate(m_liftBackEncoder.getPosition(), m_liftSetPoint),
             -m_adjustableLiftSpeed, m_adjustableLiftSpeed));
     SmartDashboard.putNumber("Lift Motor Encoder", m_liftBackEncoder.getPosition());
 
-    m_forwardLift.set(MathUtil.clamp(m_liftPID.calculate(m_liftBackEncoder.getPosition(), m_liftSetPoint),
+    m_forwardLift.set(ControlMode.PercentOutput, MathUtil.clamp(m_liftPID.calculate(m_liftBackEncoder.getPosition(), m_liftSetPoint),
         -m_adjustableLiftSpeed, m_adjustableLiftSpeed));
   }
 
@@ -265,11 +259,14 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   @Override
   public void periodic() {
     if (m_enableLiftPeriodic) {
+      SmartDashboard.putString("Lift Data", "------------------------------------");
+      SmartDashboard.putNumber("Trough Bore Encoder", liftPosition());
       SmartDashboard.putString("Lift State", m_state.toString());
       SmartDashboard.putBoolean("Lift Periodic Called", true);
       SmartDashboard.getNumber("Hook Position set", m_hookServo.get());
       SmartDashboard.putNumber("Lift Back Encoder", m_liftBackEncoder.getPosition());
-      m_backLift.follow(m_forwardLift, true);
+      m_backLift.follow(m_forwardLift);
+      m_rightLift.follow(m_forwardLift);
       setLiftState();
       setHookState();
       updateWithPID();
