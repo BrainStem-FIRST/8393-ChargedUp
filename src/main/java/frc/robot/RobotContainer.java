@@ -137,10 +137,10 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  //public Command getAutonomousCommand() {
-    //return new autoSide(m_swerve, m_lift, m_collector, m_extension);
-    //return new AutoSide(m_swerve, m_lift, m_collector, m_extension);
-  //}
+  public Command getAutonomousCommand() {
+    return new AutoCenter(m_swerve, m_lift, m_collector, m_extension);
+    // return new AutoSide(m_swerve, m_lift, m_collector, m_extension);
+  }
 
   public ArrayList<BrainSTEMSubsystem> getBrainSTEMSubsystems(){
     ArrayList<BrainSTEMSubsystem> brainSTEMSubsystems = new ArrayList<>();
