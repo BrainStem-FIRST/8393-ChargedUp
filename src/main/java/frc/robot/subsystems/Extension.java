@@ -237,16 +237,12 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
   @Override
   public void periodic() {
     if (m_enableExtensionPeriodic) {
-      SmartDashboard.putNumber("Telescope Set Point", m_telescopeSetPoint);
-      SmartDashboard.putNumber("Telescope Current Position", m_telescopeMotor.getSelectedSensorPosition());
-      setRatchetState();
-      setTelescopeState();
-      updateWithPID();
+      // SmartDashboard.putNumber("Telescope Set Point", m_telescopeSetPoint);
+      // SmartDashboard.putNumber("Telescope Current Position", m_telescopeMotor.getSelectedSensorPosition());
+      // setRatchetState();
+      // setTelescopeState();
+      // updateWithPID();
     }
-
-    
-
-
   }
 
   @Override

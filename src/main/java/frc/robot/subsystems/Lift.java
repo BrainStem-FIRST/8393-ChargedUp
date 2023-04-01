@@ -10,6 +10,7 @@ import frc.robot.utilities.BrainSTEMSubsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FollowerType;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
@@ -21,7 +22,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   public static final class LiftConstants {
-    public static final double k_P = 0.003;
+    public static final double k_P = 0.0007;
     public static final double k_I = 0.0000;
     public static final double k_D = 0.0000;
 
@@ -30,14 +31,14 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     public static final int k_rightLiftMotorID = 32;
 
     public static final int k_groundCollectionValue = 0;
-    public static final int k_carryValue = 500 * 3000;
-    public static final int k_shelfCollectionValue = 3775 * 3000;
+    public static final int k_carryValue = 0;// 500 * 3000;
+    public static final int k_shelfCollectionValue = 2048 * 3;
     public static final int k_lowPoleValue = 3775 * 3000;
     public static final int k_highPoleValue = 3560 * 3000;
     public static final int k_highPoleTiltValue = 2800 * 3000;
     public static final int k_liftPreLoadPosition = 300 * 3000;
-    public static final double k_MaxPower = 0.03;
-    public static final int k_liftTolerance = 20 * 3000;
+    public static final double k_MaxPower = 0.2;
+    public static final int k_liftTolerance = 1012;
     public static final int k_depositDelta = 400 * 3000;
 
     public static final int k_hookServoID = 8;
@@ -50,7 +51,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   TalonFX m_backLift;
   TalonFX m_rightLift;
   private Servo m_hookServo;
-  
+
   private int m_liftSetPoint = 0;
   private boolean m_enableLiftPeriodic = false;
   PIDController m_liftPID;
@@ -63,7 +64,6 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     m_forwardLift = new TalonFX(LiftConstants.k_forwardLiftMotorID);
     m_backLift = new TalonFX(LiftConstants.k_backLiftMotorID);
     m_rightLift = new TalonFX(LiftConstants.k_rightLiftMotorID);
-;
     m_hookServo = new Servo(LiftConstants.k_hookServoID);
   }
 
@@ -104,8 +104,8 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     m_backLift.set(TalonFXControlMode.PercentOutput, 0);
     m_rightLift.set(TalonFXControlMode.PercentOutput, 0);
     resetLiftEncoder();
-    m_liftPID.setTolerance(15);
-    
+    m_liftPID.setTolerance(100);
+
     m_state = LiftPosition.GROUND_COLLECTION;
     m_adjustableLiftSpeed = LiftConstants.k_MaxPower;
     m_liftSetPoint = 0;
@@ -131,10 +131,20 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   }
 
   public void liftUp() {
-    m_forwardLift.set(TalonFXControlMode.PercentOutput, MathUtil.clamp(m_liftPID.calculate(m_forwardLift.getSelectedSensorPosition(), 3880), -0.05, 0.05));
+    m_forwardLift.set(TalonFXControlMode.PercentOutput,
+        MathUtil.clamp(m_liftPID.calculate(m_forwardLift.getSelectedSensorPosition(), 3880), -0.05, 0.05));
     m_forwardLift.setNeutralMode(NeutralMode.Brake);
     m_backLift.setNeutralMode(NeutralMode.Brake);
     m_rightLift.setNeutralMode(NeutralMode.Brake);
+  }
+
+  public void liftRawPower(double power) {
+    m_backLift.setInverted(InvertType.OpposeMaster);
+    m_rightLift.setInverted(InvertType.OpposeMaster);
+    m_backLift.follow(m_forwardLift);
+    m_rightLift.follow(m_forwardLift);
+    m_forwardLift.set(TalonFXControlMode.PercentOutput, -power);
+
   }
 
   public void turnOffLiftMotors() {
@@ -144,7 +154,8 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   }
 
   public void liftUpIncs(double amount) {
-    m_forwardLift.set(TalonFXControlMode.PercentOutput, .1 * m_liftPID.calculate(m_forwardLift.getSelectedSensorPosition(), amount * 15));
+    m_forwardLift.set(TalonFXControlMode.PercentOutput,
+        .1 * m_liftPID.calculate(m_forwardLift.getSelectedSensorPosition(), amount * 15));
   }
 
   public void liftDown() {
@@ -264,9 +275,12 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
         MathUtil.clamp(m_liftPID.calculate(m_forwardLift.getSelectedSensorPosition(), m_liftSetPoint),
             -m_adjustableLiftSpeed, m_adjustableLiftSpeed));
     SmartDashboard.putNumber("Lift Motor Encoder", m_forwardLift.getSelectedSensorPosition());
+    if (!isLiftAtCorrectPosition()) {
+      m_forwardLift.set(TalonFXControlMode.PercentOutput,
+          MathUtil.clamp(m_liftPID.calculate(m_forwardLift.getSelectedSensorPosition(), m_liftSetPoint),
+              -m_adjustableLiftSpeed, m_adjustableLiftSpeed));
+    }
 
-    m_forwardLift.set(TalonFXControlMode.PercentOutput, MathUtil.clamp(m_liftPID.calculate(m_forwardLift.getSelectedSensorPosition(), m_liftSetPoint),
-        -m_adjustableLiftSpeed, m_adjustableLiftSpeed));
   }
 
   public boolean isLiftAtCorrectPosition() {
@@ -283,12 +297,12 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
       SmartDashboard.getNumber("Hook Position set", m_hookServo.get());
       SmartDashboard.putNumber("Forward Lift Encoder", m_forwardLift.getSelectedSensorPosition());
       SmartDashboard.putNumber("Lift Back Encoder", m_backLift.getSelectedSensorPosition());
+      setLiftState();
+      setHookState();
       m_backLift.setInverted(TalonFXInvertType.OpposeMaster);
       m_rightLift.setInverted(TalonFXInvertType.OpposeMaster);
       m_backLift.follow(m_forwardLift, FollowerType.PercentOutput);
       m_rightLift.follow(m_forwardLift, FollowerType.PercentOutput);
-      setLiftState();
-      setHookState();
       updateWithPID();
     }
   }

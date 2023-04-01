@@ -1,6 +1,11 @@
 package frc.robot;
 
 import java.util.ArrayList;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -25,9 +30,12 @@ import frc.robot.utilities.BrainSTEMSubsystem;
 import frc.robot.utilities.ToggleButton;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
@@ -49,62 +57,71 @@ public class RobotContainer {
     public static final int k_startButton = 8;
     public static final int k_leftJoystickButton = 9;
     public static final int k_rightJoystickButton = 10;
-}
+  }
 
   /* Controllers */
-    public final Joystick m_driver1 = new Joystick(0);
-    private final Joystick m_driver2 = new Joystick(1);
-    public static final double k_stickDeadband = 0.05;
-  
+  public final Joystick m_driver1 = new Joystick(0);
+  private final Joystick m_driver2 = new Joystick(1);
+  public static final double k_stickDeadband = 0.05;
+
   /* Drive Controls */
-    final int k_translationAxis = XboxController.Axis.kLeftY.value;
-    private final int k_strafeAxis = XboxController.Axis.kLeftX.value;
-    private final int k_rotationAxis = XboxController.Axis.kRightX.value;
+  final int k_translationAxis = XboxController.Axis.kLeftY.value;
+  private final int k_strafeAxis = XboxController.Axis.kLeftX.value;
+  private final int k_rotationAxis = XboxController.Axis.kRightX.value;
 
   /* Toggle Buttons */
-    ToggleButton driver1X = new ToggleButton();
-    ToggleButton driver1A = new ToggleButton();
+  ToggleButton driver1X = new ToggleButton();
+  ToggleButton driver1A = new ToggleButton();
 
   /* Driver 1 Buttons */
-    public final JoystickButton m_driver1AButton = new JoystickButton(m_driver1, JoystickConstants.k_aButton);
-    public final JoystickButton m_driver1BButton = new JoystickButton(m_driver1, JoystickConstants.k_bButton);
-    public final JoystickButton m_driver1XButton = new JoystickButton(m_driver1, JoystickConstants.k_xButton);
-    public final JoystickButton m_zeroGyro = new JoystickButton(m_driver1, JoystickConstants.k_startButton);
-    public final JoystickButton m_driver1LeftBumper = new JoystickButton(m_driver1, JoystickConstants.k_leftBumper);
-    public final JoystickButton m_driver1RightBumper = new JoystickButton(m_driver1, JoystickConstants.k_rightBumper);
-    public final JoystickButton m_driver1YButton = new JoystickButton(m_driver1, JoystickConstants.k_yButton);
+  public final JoystickButton m_driver1AButton = new JoystickButton(m_driver1, JoystickConstants.k_aButton);
+  public final JoystickButton m_driver1BButton = new JoystickButton(m_driver1, JoystickConstants.k_bButton);
+  public final JoystickButton m_driver1XButton = new JoystickButton(m_driver1, JoystickConstants.k_xButton);
+  public final JoystickButton m_zeroGyro = new JoystickButton(m_driver1, JoystickConstants.k_startButton);
+  public final JoystickButton m_driver1LeftBumper = new JoystickButton(m_driver1, JoystickConstants.k_leftBumper);
+  public final JoystickButton m_driver1RightBumper = new JoystickButton(m_driver1, JoystickConstants.k_rightBumper);
+  public final JoystickButton m_driver1YButton = new JoystickButton(m_driver1, JoystickConstants.k_yButton);
 
   /* Driver 2 Buttons */
-    public final JoystickButton m_driver2AButton = new JoystickButton(m_driver2, JoystickConstants.k_aButton);
-    public final JoystickButton m_driver2BButton = new JoystickButton(m_driver2, JoystickConstants.k_bButton);
-    public final JoystickButton m_driver2YButton = new JoystickButton(m_driver2, JoystickConstants.k_yButton);
-    public final JoystickButton m_driver2XButton = new JoystickButton(m_driver2, JoystickConstants.k_xButton);
-    public final JoystickButton m_driver2LeftBumper = new JoystickButton(m_driver2, JoystickConstants.k_leftBumper);
-    public final JoystickButton m_driver2RightBumper = new JoystickButton(m_driver2, JoystickConstants.k_rightBumper);
+  public final JoystickButton m_driver2AButton = new JoystickButton(m_driver2, JoystickConstants.k_aButton);
+  public final JoystickButton m_driver2BButton = new JoystickButton(m_driver2, JoystickConstants.k_bButton);
+  public final JoystickButton m_driver2YButton = new JoystickButton(m_driver2, JoystickConstants.k_yButton);
+  public final JoystickButton m_driver2XButton = new JoystickButton(m_driver2, JoystickConstants.k_xButton);
+  public final JoystickButton m_driver2LeftBumper = new JoystickButton(m_driver2, JoystickConstants.k_leftBumper);
+  public final JoystickButton m_driver2RightBumper = new JoystickButton(m_driver2, JoystickConstants.k_rightBumper);
 
   /* Subsystems */
-    Swerve m_swerve = new Swerve();
-    Lift m_lift = new Lift();
-    Extension m_extension = new Extension();
-    Collector m_collector = new Collector();
-    //Limelight m_limelight = new Limelight();
+  Swerve m_swerve = new Swerve();
+  Lift m_lift = new Lift();
+  Extension m_extension = new Extension();
+  Collector m_collector = new Collector();
+  // Limelight m_limelight = new Limelight();
 
-    /* Command Groups */
-    public LowPoleApproachCommandGroup m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_lift, m_collector);
-    public GroundRetractedCommandGroup m_groundRetracted = new GroundRetractedCommandGroup(m_extension, m_lift);
-    public CarryRetractedCommandGroup m_carryRetracted = new CarryRetractedCommandGroup(m_extension, m_lift, m_collector);
-    public CollectCommandGroup m_collectCommandGroup = new CollectCommandGroup(m_collector);
-    public GroundCollectionCommandGroup m_groundCollection = new GroundCollectionCommandGroup(m_extension, m_lift, m_collector);
-    public ShelfCollectionApproachCommandGroup m_shelfCollection = new ShelfCollectionApproachCommandGroup(m_extension, m_lift);
-    public MonkDrive monkDrive = new MonkDrive(m_swerve);
-    public GreenMonkDrive leftGreenMonkDrive = new GreenMonkDrive(m_swerve, true);
-    public GreenMonkDrive rightGreenMonkDrive = new GreenMonkDrive(m_swerve, false);
-    //public DefaultLimelightCommand m_limelightCommand = new DefaultLimelightCommand(m_Limelight);
+  // private TalonFX rightlift = new TalonFX(32);
+  // private TalonFX backlift = new TalonFX(33);
+  // private TalonFX frontlift = new TalonFX(30);
+
+  /* Command Groups */
+  public LowPoleApproachCommandGroup m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_lift,
+      m_collector);
+  public GroundRetractedCommandGroup m_groundRetracted = new GroundRetractedCommandGroup(m_extension, m_lift);
+  public CarryRetractedCommandGroup m_carryRetracted = new CarryRetractedCommandGroup(m_extension, m_lift, m_collector);
+  public CollectCommandGroup m_collectCommandGroup = new CollectCommandGroup(m_collector);
+  public GroundCollectionCommandGroup m_groundCollection = new GroundCollectionCommandGroup(m_extension, m_lift,
+      m_collector);
+  public ShelfCollectionApproachCommandGroup m_shelfCollection = new ShelfCollectionApproachCommandGroup(m_extension,
+      m_lift);
+  public MonkDrive monkDrive = new MonkDrive(m_swerve);
+  public GreenMonkDrive leftGreenMonkDrive = new GreenMonkDrive(m_swerve, true);
+  public GreenMonkDrive rightGreenMonkDrive = new GreenMonkDrive(m_swerve, false);
+
+  // public DefaultLimelightCommand m_limelightCommand = new
+  // DefaultLimelightCommand(m_Limelight);
   /*
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    
+
     m_swerve.setDefaultCommand(
         new TeleopSwerve(
             m_swerve,
@@ -113,12 +130,11 @@ public class RobotContainer {
             () -> -(m_driver1.getRawAxis(k_rotationAxis) * Math.abs(m_driver1.getRawAxis(k_rotationAxis)) * 1.2),
             () -> false));
 
-    //m_limelight.setDefaultCommand(new DefaultLimelightCommand(m_limelight));
+    // m_limelight.setDefaultCommand(new DefaultLimelightCommand(m_limelight));
 
     // Configure the button bindings
     configureButtonBindings();
   }
-  
 
   /**
    * Use this method to define your button->command mappings. Buttons can be
@@ -129,21 +145,22 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    
+
   }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
-  
    *
+   * 
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    //return new autoSide(m_swerve, m_lift, m_collector, m_extension);
-    return new AutoCenter(m_swerve, m_lift, m_collector, m_extension);
+   
+    //return new AutoCenter(m_swerve, m_lift, m_collector, m_extension);
+    return new InstantCommand(() -> killmeplzwok());
   }
 
-  public ArrayList<BrainSTEMSubsystem> getBrainSTEMSubsystems(){
+  public ArrayList<BrainSTEMSubsystem> getBrainSTEMSubsystems() {
     ArrayList<BrainSTEMSubsystem> brainSTEMSubsystems = new ArrayList<>();
     brainSTEMSubsystems.add(m_lift);
     brainSTEMSubsystems.add(m_extension);
@@ -152,5 +169,10 @@ public class RobotContainer {
     return brainSTEMSubsystems;
   }
 
-  
+  public void killmeplzwok() {
+    // rightlift.set(TalonFXControlMode.PercentOutput, -0.15);
+    // backlift.set(TalonFXControlMode.PercentOutput, -0.15);
+    // frontlift.set(TalonFXControlMode.PercentOutput, 0.15);
+  }
+
 }

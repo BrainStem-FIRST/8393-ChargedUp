@@ -6,7 +6,9 @@ package frc.robot;
 
 import java.util.ArrayList;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.cscore.CameraServerJNI.TelemetryKind;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -158,12 +160,17 @@ public class Robot extends TimedRobot {
     AutoCenter.sideAuto = true;
   }
 
+  
+
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    if((m_robotContainer.m_swerve.getTilt() > 5) || (m_robotContainer.m_swerve.getTilt() < -5)) {
-      AutoCenter.sideAuto = false;
-    }
+    // if((m_robotContainer.m_swerve.getTilt() > 5) || (m_robotContainer.m_swerve.getTilt() < -5)) {
+    //   AutoCenter.sideAuto = false;
+    // }
+
+    
+
   }
 
   @Override
@@ -228,17 +235,16 @@ public class Robot extends TimedRobot {
     
 
     if(m_robotContainer.m_driver1BButton.getAsBoolean()) {
+      //new InstantCommand(() -> m_robotContainer.m_lift.liftRawPower(-0.15)).schedule();
       m_robotContainer.monkDrive.schedule();
       hasMonkDriveCanceled = false;
     } else if(!hasMonkDriveCanceled){
+      //new InstantCommand(() -> m_robotContainer.m_lift.liftRawPower(0.0)).schedule();
       m_robotContainer.monkDrive.cancel();
       hasMonkDriveCanceled = true;
     } 
 
     
-
-  
-
     if(m_robotContainer.m_driver1.getPOV() == 90) {
       SmartDashboard.putString("D1 POV","Right");
       m_robotContainer.rightGreenMonkDrive.schedule();
