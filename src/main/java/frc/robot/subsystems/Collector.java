@@ -15,7 +15,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   
   public static final class CollectorConstants {
-    public static final int k_clawMotorID = 19;
+    public static final int k_wheelMotor2ID = 19;
     public static final int k_wheelMotorID = 22;
     public static final int k_clawDepositPosition = 509;
     public static final double k_clawMotorCurrentDrawLimit = 30;
@@ -44,7 +44,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   public CollectorState m_collectorState = CollectorState.OFF;
   public IntakeState m_intakeState = IntakeState.OFF;
 
-  CANSparkMax m_clawMotor;
+  CANSparkMax m_wheelMotor2;
   CANSparkMax m_wheelMotor;
   RelativeEncoder m_clawMotorEncoder;
   PIDController m_clawMotorPIDController;
@@ -63,8 +63,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
 
   //double clawMotorSetPoint = CollectorConstants.clawOpenPosition;
   public Collector() {
-    m_clawMotor = new CANSparkMax(CollectorConstants.k_clawMotorID, MotorType.kBrushless);
-    m_clawMotorEncoder = m_clawMotor.getEncoder();
+    m_wheelMotor2 = new CANSparkMax(CollectorConstants.k_wheelMotor2ID, MotorType.kBrushless);
+    m_clawMotorEncoder = m_wheelMotor2.getEncoder();
     m_wheelMotor = new CANSparkMax(CollectorConstants.k_wheelMotorID, MotorType.kBrushless);
     m_wheelMotor.setInverted(true); 
     m_collectorPID = new PIDController(CollectorConstants.k_p, CollectorConstants.k_i, CollectorConstants.k_d);
@@ -74,8 +74,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   @Override
   public void initialize() {
     m_clawMotorEncoder.setPosition(0);
-    m_clawMotor.setIdleMode(IdleMode.kBrake);
-    m_clawMotor.set(0);
+    m_wheelMotor2.setIdleMode(IdleMode.kBrake);
+    m_wheelMotor2.set(0);
     m_wheelMotor.setIdleMode(IdleMode.kBrake);
     m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed;
     m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed;
@@ -110,7 +110,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   }
 
   public void killCollectorMotors() {
-    m_clawMotor.set(0);
+    m_wheelMotor2.set(0);
     m_wheelMotor.set(0);
   }
 
@@ -143,6 +143,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
 
   private void collectorOut() {
     m_wheelMotor.set(-m_adjustableWheelMotorPower);
+
   }
 
   private void collectorOff() {
@@ -164,11 +165,11 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   }
 
   private void openCollector() {
-    if (m_clawMotor.getOutputCurrent() < CollectorConstants.k_clawMotorCurrentDrawLimit) {
-      m_clawMotor.set(m_adjustableClawMotorOpenPower);
-    } else {
-      m_clawMotor.set(CollectorConstants.k_clawMotorHoldingSpeed);
-    }
+    // if (m_wheelMotor2.getOutputCurrent() < CollectorConstants.k_clawMotorCurrentDrawLimit) {
+    //   m_wheelMotor2.set(m_adjustableClawMotorOpenPower);
+    // } else {
+    //   m_wheelMotor2.set(CollectorConstants.k_clawMotorHoldingSpeed);
+    // }
   }
 
   private void closeCollector() {
@@ -177,7 +178,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     // } else {
     //   m_clawMotor.set(CollectorConstants.k_clawMotorHoldingSpeed);
     // }
-    m_clawMotor.set(m_adjustableClawMotorPower);
+    // m_wheelMotor2.set(m_adjustableClawMotorPower);
   }
 
   public void toggleClawButton() {
@@ -253,7 +254,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   @Override
   public void periodic() { //single responsibility principle so yea
     if(m_collectorPeriodicEnabled){
-      // setIntakeState();
+      setIntakeState();
+      m_wheelMotor2.follow(m_wheelMotor, true);
       // setCollectorState();
       // SmartDashboard.putNumber("Collector Spinning Wheel Current Draw ", m_wheelMotor.getOutputCurrent());
       // SmartDashboard.putNumber("Collector Claw Motor Current Draw", m_clawMotor.getOutputCurrent());
