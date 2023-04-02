@@ -253,13 +253,13 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   @Override
   public void periodic() { //single responsibility principle so yea
     if(m_collectorPeriodicEnabled){
-      setIntakeState();
-      setCollectorState();
-      SmartDashboard.putNumber("Collector Spinning Wheel Current Draw ", m_wheelMotor.getOutputCurrent());
-      SmartDashboard.putNumber("Collector Claw Motor Current Draw", m_clawMotor.getOutputCurrent());
-      SmartDashboard.putString("Intake State", m_intakeState.toString());
-      SmartDashboard.putNumber("Collector Claw Encoder Position", m_clawMotorEncoder.getPosition());
-      SmartDashboard.putNumber("Claw Speed", m_clawMotor.get());
+      // setIntakeState();
+      // setCollectorState();
+      // SmartDashboard.putNumber("Collector Spinning Wheel Current Draw ", m_wheelMotor.getOutputCurrent());
+      // SmartDashboard.putNumber("Collector Claw Motor Current Draw", m_clawMotor.getOutputCurrent());
+      // SmartDashboard.putString("Intake State", m_intakeState.toString());
+      // SmartDashboard.putNumber("Collector Claw Encoder Position", m_clawMotorEncoder.getPosition());
+      // SmartDashboard.putNumber("Claw Speed", m_clawMotor.get());
     }
   }
 
