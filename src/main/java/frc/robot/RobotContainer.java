@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -95,11 +97,7 @@ public class RobotContainer {
   Lift m_lift = new Lift();
   Extension m_extension = new Extension();
   Collector m_collector = new Collector();
-  // Limelight m_limelight = new Limelight();
 
-  // private TalonFX rightlift = new TalonFX(32);
-  // private TalonFX backlift = new TalonFX(33);
-  // private TalonFX frontlift = new TalonFX(30);
 
   /* Command Groups */
   public LowPoleApproachCommandGroup m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_lift,
@@ -114,6 +112,9 @@ public class RobotContainer {
   public MonkDrive monkDrive = new MonkDrive(m_swerve);
   public GreenMonkDrive leftGreenMonkDrive = new GreenMonkDrive(m_swerve, true);
   public GreenMonkDrive rightGreenMonkDrive = new GreenMonkDrive(m_swerve, false);
+
+  public CANSparkMax m_collectorMotor1 = new CANSparkMax(19, MotorType.kBrushless);
+  public CANSparkMax m_collectorMotor2 = new CANSparkMax(22, MotorType.kBrushless);
 
   // public DefaultLimelightCommand m_limelightCommand = new
   // DefaultLimelightCommand(m_Limelight);
@@ -170,6 +171,8 @@ public class RobotContainer {
   }
 
   public void killmeplzwok() {
+    m_collectorMotor1.set(0.5);
+    m_collectorMotor2.set(0.5);
     // rightlift.set(TalonFXControlMode.PercentOutput, -0.15);
     // backlift.set(TalonFXControlMode.PercentOutput, -0.15);
     // frontlift.set(TalonFXControlMode.PercentOutput, 0.15);

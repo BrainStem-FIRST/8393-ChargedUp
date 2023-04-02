@@ -15,8 +15,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   
   public static final class CollectorConstants {
-    public static final int k_wheelMotor2ID = 19;
-    public static final int k_wheelMotorID = 22;
+    public static final int k_wheelMotor2ID = 49; //19
+    public static final int k_wheelMotorID = 42; //22
     public static final int k_clawDepositPosition = 509;
     public static final double k_clawMotorCurrentDrawLimit = 30;
     public static final double k_clawMotorHoldingSpeed = 0.20;
@@ -254,8 +254,12 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   @Override
   public void periodic() { //single responsibility principle so yea
     if(m_collectorPeriodicEnabled){
-      setIntakeState();
-      m_wheelMotor2.follow(m_wheelMotor, true);
+      // setIntakeState();
+      // m_wheelMotor2.follow(m_wheelMotor, true);
+
+
+
+      //SUS DONT UNCOMMENT
       // setCollectorState();
       // SmartDashboard.putNumber("Collector Spinning Wheel Current Draw ", m_wheelMotor.getOutputCurrent());
       // SmartDashboard.putNumber("Collector Claw Motor Current Draw", m_clawMotor.getOutputCurrent());

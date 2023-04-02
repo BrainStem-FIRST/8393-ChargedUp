@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -9,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.BrainSTEMSubsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -24,9 +26,13 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   public static final class LiftConstants {
-    public static final double k_P = 0.00006;
-    public static final double k_I = 0.0000001;
+    public static final double k_P = 0.00003;
+    public static final double k_I = 0.0000000;
     public static final double k_D = 0.0000;
+
+    public static final double k_S = 0.00000;
+    public static final double k_G = 100;
+    public static final double k_V = 0.0000;
 
     public static final int k_forwardLiftMotorID = 30;
     public static final int k_backLiftMotorID = 33;
@@ -39,7 +45,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     public static final int k_highPoleValue = 3560 * 3000;
     public static final int k_highPoleTiltValue = 2800 * 3000;
     public static final int k_liftPreLoadPosition = 300 * 3000;
-    public static final double k_MaxPower = 0.5;
+    public static final double k_MaxPower = 1.0;
     public static final int k_liftTolerance = Lift.inchesToTicks(0.09);
     public static final int k_depositDelta = 400 * 3000;
 
@@ -57,12 +63,14 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   private int m_liftSetPoint = 0;
   private boolean m_enableLiftPeriodic = false;
   PIDController m_liftPID;
+  ElevatorFeedforward m_liftFeedForward;
   public int depositDelta = 0;
 
   public double m_adjustableLiftSpeed = LiftConstants.k_MaxPower;
 
   public Lift() {
     m_liftPID = new PIDController(LiftConstants.k_P, LiftConstants.k_I, LiftConstants.k_D);
+    m_liftFeedForward = new ElevatorFeedforward(LiftConstants.k_S, LiftConstants.k_G, LiftConstants.k_V);
     m_forwardLift = new TalonFX(LiftConstants.k_forwardLiftMotorID);
     m_backLift = new TalonFX(LiftConstants.k_backLiftMotorID);
     m_rightLift = new TalonFX(LiftConstants.k_rightLiftMotorID);
@@ -297,23 +305,25 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
 
     double liftPosition = m_forwardLift.getSelectedSensorPosition();
 
-    if (isLiftAtCorrectPosition()) {
-      m_forwardLift.set(TalonFXControlMode.PercentOutput, 0.03);
-      m_backLift.set(TalonFXControlMode.PercentOutput, -0.03);
-      m_rightLift.set(TalonFXControlMode.PercentOutput, -0.03);
-    } else {
-      m_forwardLift.set(TalonFXControlMode.PercentOutput,
-          MathUtil.clamp(m_liftPID.calculate(liftPosition, m_liftSetPoint),
-              -m_adjustableLiftSpeed, m_adjustableLiftSpeed));
+    // if (false) { //isLiftAtCorrectPosition()
+    // m_forwardLift.set(TalonFXControlMode.PercentOutput, 0.03);
+    // m_backLift.set(TalonFXControlMode.PercentOutput, -0.03);
+    // m_rightLift.set(TalonFXControlMode.PercentOutput, -0.03);
+    // } else {
 
-      m_backLift.set(TalonFXControlMode.PercentOutput,
-          -MathUtil.clamp(m_liftPID.calculate(liftPosition, m_liftSetPoint),
-              -m_adjustableLiftSpeed, m_adjustableLiftSpeed));
+    double motorPercentOutput = MathUtil.clamp(m_liftPID.calculate(liftPosition, m_liftSetPoint),
+        -m_adjustableLiftSpeed, m_adjustableLiftSpeed);
+    double feedForwardOutput = m_liftFeedForward.calculate(m_liftSetPoint);
 
-      m_rightLift.set(TalonFXControlMode.PercentOutput,
-          -MathUtil.clamp(m_liftPID.calculate(liftPosition, m_liftSetPoint),
-              -m_adjustableLiftSpeed, m_adjustableLiftSpeed));
-    }
+    m_forwardLift.set(TalonFXControlMode.PercentOutput,
+        motorPercentOutput, DemandType.ArbitraryFeedForward, feedForwardOutput);
+
+    m_backLift.set(TalonFXControlMode.PercentOutput,
+        -motorPercentOutput, DemandType.ArbitraryFeedForward, -feedForwardOutput);
+
+    m_rightLift.set(TalonFXControlMode.PercentOutput,
+        -motorPercentOutput, DemandType.ArbitraryFeedForward, -feedForwardOutput);
+    // }
   }
 
   public boolean isLiftAtCorrectPosition() {
