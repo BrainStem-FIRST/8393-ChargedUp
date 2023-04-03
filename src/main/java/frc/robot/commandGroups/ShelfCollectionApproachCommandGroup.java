@@ -24,7 +24,7 @@ public class ShelfCollectionApproachCommandGroup extends SequentialCommandGroup 
             new LiftShelfHeightCommand(lift)
             ,new WaitCommand(2)
             ,new ExtensionCommand(extension, TelescopePosition.COLLECTION)
-            ,new InstantCommand(() -> m_robotContainer.m_collector.m_intakeState = IntakeState.OUT)
+            
         );
       
     }

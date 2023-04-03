@@ -28,15 +28,15 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     private static final int k_frontExtensionMotorID = 14; 
     private static final int k_backExtensionMotorID = 31; 
     private static final int k_extensionServoID = 9;
-    private static final double k_proportional = 0.00008; //0.00008
+    private static final double k_proportional = 0.00009; //0.00008
     private static final double k_integral = 0;
     private static final double k_derivative = 0;
-    private static final int k_retractedTelescopeValue = 5000; //20000
-    private static final int k_collectionTelescopeValue = (int)((165000/2) * k_gearRatioMultiplication);
+    private static final int k_retractedTelescopeValue = 0; //20000
+    private static final int k_collectionTelescopeValue = (int)((220000/2) * k_gearRatioMultiplication);
     private static final int k_lowPoleTelescopeValue = (int) ((int)(165000 * k_gearRatioMultiplication) * 1.1);
     private static final int k_highPoleTelescopeValue = (int) ((int)((245000 * k_gearRatioMultiplication)) * 1.3);
-    private static final int k_telescopeTolerance = (int)(2500 * k_gearRatioMultiplication);
-    private static final double k_telescopeMaxPower = 0.9;
+    private static final int k_telescopeTolerance = (int)(100 * k_gearRatioMultiplication);
+    private static final double k_telescopeMaxPower = 0.95;
     public static final int k_backMotorOffRatchetValue = (int) ((75000 * k_gearRatioMultiplication) / 2); // FIXME
     public static final double k_backOffMotorSpeed = -0.01; // FIXME
   }
@@ -242,7 +242,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     } else {
       m_backMotor.set(
         TalonFXControlMode.PercentOutput,
-        0.6 * (MathUtil.clamp(
+        (MathUtil.clamp(
             m_telescopePIDController.calculate(m_backMotor.getSelectedSensorPosition(), m_telescopeSetPoint),
             -k_MaxPower, k_MaxPower)));
     } 
