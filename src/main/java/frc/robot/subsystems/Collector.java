@@ -177,24 +177,27 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
 
     SmartDashboard.putBoolean("Collecotr Motor 2", m_wheelMotor2.getOutputCurrent() > currentDraw);
 
+    
+    m_wheelMotor.set(m_adjustableWheelMotorPower);
+    m_wheelMotor2.set(m_adjustableWheelMotorPower);
 
     
 
-    if (!objectCollected) {
-      if ((m_wheelMotor.getOutputCurrent() > currentDraw || m_wheelMotor2.getOutputCurrent() > currentDraw) && m_timer.get() < 1) {
+    // if (!objectCollected) {
+    //   if ((m_wheelMotor.getOutputCurrent() > currentDraw || m_wheelMotor2.getOutputCurrent() > currentDraw) && m_timer.get() < 1) {
 
-        killCollectorMotors();
-        firstTIme = false;
-        objectCollected = true;
-        SmartDashboard.putString("COLLECTOR TEST ", getName());
+    //     killCollectorMotors();
+    //     firstTIme = false;
+    //     objectCollected = true;
+    //     SmartDashboard.putString("COLLECTOR TEST ", getName());
 
-      } else {
+    //   } else {
 
-        m_wheelMotor.set(m_adjustableWheelMotorPower);
-        m_wheelMotor2.set(m_adjustableWheelMotorPower);
+    //     m_wheelMotor.set(m_adjustableWheelMotorPower);
+    //     m_wheelMotor2.set(m_adjustableWheelMotorPower);
         
-      }
-    }
+    //   }
+    // }
     
     
 

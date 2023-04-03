@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -62,7 +63,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   TalonFX m_rightLift;
   private Servo m_hookServo;
 
-  Encoder m_liftEncoder;
+  DutyCycleEncoder m_liftEncoder;
 
   private int m_liftSetPoint = 0;
   private boolean m_enableLiftPeriodic = false;
@@ -89,11 +90,9 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     m_rightLift.enableVoltageCompensation(true);
 
 
-    m_liftEncoder = new Encoder(5, 2);
+    // m_liftEncoder = new Encoder(2, 5, true, Encoder.EncodingType.k4X);
 
-    
-
-
+    m_liftEncoder = new DutyCycleEncoder(3);
   }
 
   public CommandBase exampleMethodCommand() {
@@ -156,6 +155,13 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     enablePeriodic();
   }
 
+  private int absoluteToRelativeConversion() {
+    double slope = 5984.4;
+    double y_intercept = 957.5;
+
+    return (int) (m_liftEncoder.get() * slope - y_intercept);
+  }
+
   @Override
   public void enablePeriodic() {
     m_enableLiftPeriodic = true;
@@ -167,9 +173,9 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   }
 
   public void resetLiftEncoder() {
-    m_forwardLift.setSelectedSensorPosition(0);
-    m_backLift.setSelectedSensorPosition(0);
-    m_rightLift.setSelectedSensorPosition(0);
+    m_forwardLift.setSelectedSensorPosition(absoluteToRelativeConversion());
+    m_backLift.setSelectedSensorPosition(absoluteToRelativeConversion());
+    m_rightLift.setSelectedSensorPosition(absoluteToRelativeConversion());
   }
 
   public void liftUp() {
@@ -426,7 +432,8 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
       SmartDashboard.putNumber("Lift back Motor Encoder ", m_backLift.getSelectedSensorPosition());
       SmartDashboard.putNumber("Lift front Motor Encoder ", m_forwardLift.getSelectedSensorPosition());
       SmartDashboard.putNumber("Lift right Motor Encoder ", m_rightLift.getSelectedSensorPosition());
-      SmartDashboard.putNumber("Lift Throughbore Encoder", m_backLift.getSelectedSensorPosition(1));
+      SmartDashboard.putNumber("Lift Throughbore Encoder", m_liftEncoder.get());
+      SmartDashboard.putBoolean("Lift Throughbore Encoder Connected", m_liftEncoder.isConnected());
     }
   }
 
