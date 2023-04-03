@@ -21,6 +21,7 @@ import frc.robot.RobotContainer.JoystickConstants;
 import frc.robot.autos.AutoCenter;
 import frc.robot.commandGroups.CarryRetractedCommandGroup;
 import frc.robot.commandGroups.DepositSequenceCommandGroup;
+import frc.robot.commandGroups.DepositSequenceCommandGroup2;
 import frc.robot.commandGroups.DepositSequenceHighPoleCommandGroup;
 import frc.robot.commandGroups.GroundCollectionCommandGroup;
 import frc.robot.commandGroups.GroundCollectionSequenceCommandGroup;
@@ -348,15 +349,27 @@ public class Robot extends TimedRobot {
 
           hasShelfCarryRetractedRun = true;
           new ShelfCarryRetractedCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift, m_robotContainer.m_collector).schedule();
+          //new DepositSequenceCommandGroup2(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule(); 
+
           m_robotContainer.m_collector.m_intakeState = IntakeState.OFF;
+          //m_robotContainer.m_collector.firstTIme = false;
 
         } else if (!hasCarryRetractedRun){
 
+          m_robotContainer.m_collector.objectCollected = false;
           hasCarryRetractedRun = true;
+          //new DepositSequenceCommandGroup2(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule(); 
           m_robotContainer.m_carryRetracted.schedule();
           m_robotContainer.m_collector.m_intakeState = IntakeState.OFF;
+          //m_robotContainer.m_collector.firstTIme = false;
+
 
         }
+      }
+
+    
+      if (m_robotContainer.m_lift.m_state == LiftPosition.CARRY) {
+         m_robotContainer.m_collector.firstTIme = true;
       }
 
       /* Intake Control */
@@ -378,6 +391,8 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putBoolean("Driver 1 A Button State", m_driver1_A.getState());
     SmartDashboard.putString("ROBOT MODE", s_robotMode.toString());
+
+    SmartDashboard.putBoolean("C - FIRST TIME", m_robotContainer.m_collector.firstTIme);
 
   }
 

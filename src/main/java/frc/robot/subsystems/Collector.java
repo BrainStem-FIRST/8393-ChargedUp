@@ -20,7 +20,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     public static final int k_wheelMotor2ID = 19;
     public static final int k_wheelMotorID = 22;
     public static final int k_clawDepositPosition = 509;
-    public static final double k_clawMotorCurrentDrawLimit = 30;
+    public static final double k_clawMotorCurrentDrawLimit = 6.50;
     public static final double k_clawMotorHoldingSpeed = 0.20;
     public static final double k_clawMotorCloseSpeed = 0.20;
     public static final double k_clawMotorOpenSpeed = -0.03;
@@ -56,6 +56,14 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   private boolean m_collectorPeriodicEnabled = false;
   private Timer m_timer = new Timer();
   PIDController m_collectorPID;
+
+  boolean firstTime = true;
+
+  public boolean firstTIme = true;
+
+
+
+  public boolean objectCollected = false;
 
   public double m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed;
 
@@ -133,17 +141,62 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     m_collectorState = CollectorState.OFF;
   }
 
+  public void resetCollectorTimer() {
+
+    int i =0;
+
+
+    
+    if (firstTIme) {
+      i += 1;
+      SmartDashboard.putNumber("A TEST", i);
+      m_timer.reset();
+      m_timer.start();
+      firstTime = false;
+    }
+    
+  }
+
   private void collectorIn() {
-    // SmartDashboard.putNumber("Collector Current Draw", m_wheelMotor.getOutputCurrent());
+    double currentDraw = CollectorConstants.k_clawMotorCurrentDrawLimit;
+    
+    //  SmartDashboard.putNumber("Collector Current Draw", m_wheelMotor.getOutputCurrent());
     // if (m_wheelMotor.getOutputCurrent() < CollectorConstants.k_wheelMotorCurrentDrawLimit) {
-    //   m_wheelMotor.set(CollectorConstants.k_wheelMotorSpeed);
+    //     m_wheelMotor.set(m_adjustableWheelMotorPower);
+    //     m_wheelMotor2.set(m_adjustableWheelMotorPower);
     // } else {
     //   m_intakeState = IntakeState.OFF;
-    //   m_collectorState = CollectorState.CLOSED;
     // }
-    m_timer.reset();
-    m_wheelMotor.set(m_adjustableWheelMotorPower);
-    m_wheelMotor2.set(m_adjustableWheelMotorPower);
+    
+    resetCollectorTimer();
+
+    SmartDashboard.putNumber("C - Timer TIme", m_timer.get());
+    SmartDashboard.putBoolean("C - Timer Boolean ", m_timer.get() < 4);
+    SmartDashboard.putBoolean("CONDITION ", ((m_wheelMotor.getOutputCurrent() > currentDraw || m_wheelMotor2.getOutputCurrent() > currentDraw) && m_timer.get() < 1));
+    SmartDashboard.putBoolean("Collecotr Motor 1", m_wheelMotor.getOutputCurrent() > currentDraw);
+
+    SmartDashboard.putBoolean("Collecotr Motor 2", m_wheelMotor2.getOutputCurrent() > currentDraw);
+
+
+    
+
+    if (!objectCollected) {
+      if ((m_wheelMotor.getOutputCurrent() > currentDraw || m_wheelMotor2.getOutputCurrent() > currentDraw) && m_timer.get() < 1) {
+
+        killCollectorMotors();
+        firstTIme = false;
+        objectCollected = true;
+        SmartDashboard.putString("COLLECTOR TEST ", getName());
+
+      } else {
+
+        m_wheelMotor.set(m_adjustableWheelMotorPower);
+        m_wheelMotor2.set(m_adjustableWheelMotorPower);
+        
+      }
+    }
+    
+    
 
   }
 
@@ -266,13 +319,10 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   public void periodic() { //single responsibility principle so yea
     if(m_collectorPeriodicEnabled){
       setIntakeState();
-      //m_wheelMotor2.follow(m_wheelMotor, true);
-
-
-
-      //SUS DONT UNCOMMENT
+    
       // setCollectorState();
-      // SmartDashboard.putNumber("Collector Spinning Wheel Current Draw ", m_wheelMotor.getOutputCurrent());
+      SmartDashboard.putNumber("Collector Wheel  Current Draw ", m_wheelMotor.getOutputCurrent());
+      SmartDashboard.putNumber("Collector Wheel 2 Current Draw ", m_wheelMotor2.getOutputCurrent());
       // SmartDashboard.putNumber("Collector Claw Motor Current Draw", m_clawMotor.getOutputCurrent());
       // SmartDashboard.putString("Intake State", m_intakeState.toString());
       // SmartDashboard.putNumber("Collector Claw Encoder Position", m_clawMotorEncoder.getPosition());

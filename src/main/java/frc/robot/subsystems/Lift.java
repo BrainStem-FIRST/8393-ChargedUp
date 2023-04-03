@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -61,6 +62,8 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   TalonFX m_rightLift;
   private Servo m_hookServo;
 
+  Encoder m_liftEncoder;
+
   private int m_liftSetPoint = 0;
   private boolean m_enableLiftPeriodic = false;
   PIDController m_liftPID;
@@ -84,6 +87,13 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     m_forwardLift.enableVoltageCompensation(true);
     m_backLift.enableVoltageCompensation(true);
     m_rightLift.enableVoltageCompensation(true);
+
+
+    m_liftEncoder = new Encoder(5, 2);
+
+    
+
+
   }
 
   public CommandBase exampleMethodCommand() {
@@ -342,7 +352,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
       m_rightLift.set(ControlMode.PercentOutput, 0);
     } else if (liftPosition > m_liftSetPoint) {
 
-      double motorPercentOutput = 0.2 * (MathUtil.clamp(m_liftPID.calculate(liftPosition, m_liftSetPoint),
+      double motorPercentOutput = 0.3 * (MathUtil.clamp(m_liftPID.calculate(liftPosition, m_liftSetPoint),
       -m_adjustableLiftSpeed, m_adjustableLiftSpeed));
     
       double feedForwardOutput = m_liftFeedForward.calculate(m_liftSetPoint);
@@ -377,10 +387,6 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
 
     }
 
-    
-
-
-
   }
 
   public boolean isLiftAtCorrectPosition() {
@@ -409,6 +415,18 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
           m_forwardLift.getOutputCurrent());
       setHookState();
       updateWithPID();
+
+      // m_backLift.setNeutralMode(NeutralMode.Coast);
+      // m_forwardLift.setNeutralMode(NeutralMode.Coast);
+      // m_rightLift.setNeutralMode(NeutralMode.Coast);
+
+
+
+
+      SmartDashboard.putNumber("Lift back Motor Encoder ", m_backLift.getSelectedSensorPosition());
+      SmartDashboard.putNumber("Lift front Motor Encoder ", m_forwardLift.getSelectedSensorPosition());
+      SmartDashboard.putNumber("Lift right Motor Encoder ", m_rightLift.getSelectedSensorPosition());
+      SmartDashboard.putNumber("Lift Throughbore Encoder", m_backLift.getSelectedSensorPosition(1));
     }
   }
 
