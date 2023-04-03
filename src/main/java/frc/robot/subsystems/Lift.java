@@ -30,8 +30,9 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     public static final double k_I = 0.0000000;
     public static final double k_D = 0.0000;
 
-    public static final double k_S = 0.00000;
-    public static final double k_G = 100;
+    // All Volts 
+    public static final double k_S = 0.0;
+    public static final double k_G = 0.055; 
     public static final double k_V = 0.0000;
 
     public static final int k_forwardLiftMotorID = 30;
@@ -39,12 +40,12 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     public static final int k_rightLiftMotorID = 32;
 
     public static final int k_groundCollectionValue = 0;
-    public static final int k_carryValue = 0;// 500 * 3000;
-    public static final int k_shelfCollectionValue = Lift.inchesToTicks(12);
-    public static final int k_lowPoleValue = 3775 * 3000;
-    public static final int k_highPoleValue = 3560 * 3000;
-    public static final int k_highPoleTiltValue = 2800 * 3000;
-    public static final int k_liftPreLoadPosition = 300 * 3000;
+    public static final int k_carryValue = Lift.inchesToTicks(1);
+    public static final int k_shelfCollectionValue = Lift.inchesToTicks(18);
+    public static final int k_lowPoleValue = Lift.inchesToTicks(15);
+    public static final int k_highPoleValue = Lift.inchesToTicks(18);
+    public static final int k_highPoleTiltValue = Lift.inchesToTicks(15);
+    public static final int k_liftPreLoadPosition = Lift.inchesToTicks(15);
     public static final double k_MaxPower = 1.0;
     public static final int k_liftTolerance = Lift.inchesToTicks(0.09);
     public static final int k_depositDelta = 400 * 3000;
@@ -75,6 +76,14 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     m_backLift = new TalonFX(LiftConstants.k_backLiftMotorID);
     m_rightLift = new TalonFX(LiftConstants.k_rightLiftMotorID);
     m_hookServo = new Servo(LiftConstants.k_hookServoID);
+
+    m_forwardLift.configVoltageCompSaturation(12);
+    m_backLift.configVoltageCompSaturation(12);
+    m_rightLift.configVoltageCompSaturation(12);
+
+    m_forwardLift.enableVoltageCompensation(true);
+    m_backLift.enableVoltageCompensation(true);
+    m_rightLift.enableVoltageCompensation(true);
   }
 
   public CommandBase exampleMethodCommand() {
@@ -114,13 +123,13 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     m_backLift.set(TalonFXControlMode.PercentOutput, 0);
     m_rightLift.set(TalonFXControlMode.PercentOutput, 0);
 
-    m_forwardLift.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 35.0, 35.0, 0.001));
-    m_backLift.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 35.0, 35.0, 0.001));
-    m_rightLift.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 35.0, 35.0, 0.001));
+    m_forwardLift.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 40.0, 40.0, 0.01));
+    m_backLift.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 40.0, 40.0, 0.01));
+    m_rightLift.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 40.0, 40.0, 0.01));
 
-    m_forwardLift.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 35.0, 35.0, 0.001));
-    m_backLift.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 35.0, 35.0, 0.001));
-    m_rightLift.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 35.0, 35.0, 0.001));
+    m_forwardLift.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 40.0, 40.0, 0.01));
+    m_backLift.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 40.0, 40.0, 0.01));
+    m_rightLift.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 40.0, 40.0, 0.01));
 
     m_forwardLift.configNeutralDeadband(0.01);
     m_backLift.configNeutralDeadband(0.01);
@@ -219,6 +228,16 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     m_forwardLift.set(TalonFXControlMode.PercentOutput, 0);
   }
 
+  public void liftBrake() {
+    m_forwardLift.set(ControlMode.PercentOutput, -0.0);
+    m_backLift.set(ControlMode.PercentOutput, -0.0);
+    m_rightLift.set(ControlMode.PercentOutput, -0.0);
+
+    m_forwardLift.setNeutralMode(NeutralMode.Brake);
+    m_backLift.setNeutralMode(NeutralMode.Brake);
+    m_rightLift.setNeutralMode(NeutralMode.Brake);
+  }
+
   private boolean inTolerance(int currentPosition, int targetPosition, int tolerance) {
     return (currentPosition > (targetPosition - tolerance)) &&
         (currentPosition < (targetPosition + tolerance));
@@ -236,6 +255,10 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     } else {
       m_state = LiftPosition.GROUND_COLLECTION;
     }
+  }
+
+  public void lowerLiftToCarry() {
+    m_state = LiftPosition.GROUND_COLLECTION;
   }
 
   public void decrementLiftHeight() {
@@ -303,6 +326,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
             -m_adjustableLiftSpeed, m_adjustableLiftSpeed));
     SmartDashboard.putNumber("Lift Motor Encoder", m_forwardLift.getSelectedSensorPosition());
 
+
     double liftPosition = m_forwardLift.getSelectedSensorPosition();
 
     // if (false) { //isLiftAtCorrectPosition()
@@ -311,19 +335,52 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     // m_rightLift.set(TalonFXControlMode.PercentOutput, -0.03);
     // } else {
 
-    double motorPercentOutput = MathUtil.clamp(m_liftPID.calculate(liftPosition, m_liftSetPoint),
-        -m_adjustableLiftSpeed, m_adjustableLiftSpeed);
-    double feedForwardOutput = m_liftFeedForward.calculate(m_liftSetPoint);
 
-    m_forwardLift.set(TalonFXControlMode.PercentOutput,
-        motorPercentOutput, DemandType.ArbitraryFeedForward, feedForwardOutput);
+    if (m_state == m_state.CARRY && liftPosition < 2000) {
+      m_forwardLift.set(ControlMode.PercentOutput, 0);
+      m_backLift.set(ControlMode.PercentOutput, 0);
+      m_rightLift.set(ControlMode.PercentOutput, 0);
+    } else if (liftPosition > m_liftSetPoint) {
 
-    m_backLift.set(TalonFXControlMode.PercentOutput,
-        -motorPercentOutput, DemandType.ArbitraryFeedForward, -feedForwardOutput);
+      double motorPercentOutput = 0.2 * (MathUtil.clamp(m_liftPID.calculate(liftPosition, m_liftSetPoint),
+      -m_adjustableLiftSpeed, m_adjustableLiftSpeed));
+    
+      double feedForwardOutput = m_liftFeedForward.calculate(m_liftSetPoint);
 
-    m_rightLift.set(TalonFXControlMode.PercentOutput,
-        -motorPercentOutput, DemandType.ArbitraryFeedForward, -feedForwardOutput);
-    // }
+      m_forwardLift.set(TalonFXControlMode.PercentOutput,
+      motorPercentOutput, DemandType.ArbitraryFeedForward, feedForwardOutput);
+
+      m_backLift.set(TalonFXControlMode.PercentOutput,
+      -motorPercentOutput, DemandType.ArbitraryFeedForward, -feedForwardOutput);
+
+       m_rightLift.set(TalonFXControlMode.PercentOutput,
+      -motorPercentOutput, DemandType.ArbitraryFeedForward, -feedForwardOutput);
+
+      SmartDashboard.putNumber("Feed Forward for Lift ", feedForwardOutput);
+
+    } else {
+      double motorPercentOutput = MathUtil.clamp(m_liftPID.calculate(liftPosition, m_liftSetPoint),
+      -m_adjustableLiftSpeed, m_adjustableLiftSpeed);
+    
+      double feedForwardOutput = m_liftFeedForward.calculate(m_liftSetPoint);
+
+      m_forwardLift.set(TalonFXControlMode.PercentOutput,
+      motorPercentOutput, DemandType.ArbitraryFeedForward, feedForwardOutput);
+
+      m_backLift.set(TalonFXControlMode.PercentOutput,
+      -motorPercentOutput, DemandType.ArbitraryFeedForward, -feedForwardOutput);
+
+       m_rightLift.set(TalonFXControlMode.PercentOutput,
+      -motorPercentOutput, DemandType.ArbitraryFeedForward, -feedForwardOutput);
+
+      SmartDashboard.putNumber("Feed Forward for Lift ", feedForwardOutput);
+
+    }
+
+    
+
+
+
   }
 
   public boolean isLiftAtCorrectPosition() {
@@ -340,6 +397,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
       SmartDashboard.getNumber("Hook Position set", m_hookServo.get());
       SmartDashboard.putNumber("Forward Lift Encoder", m_forwardLift.getSelectedSensorPosition());
       SmartDashboard.putNumber("Lift Back Encoder", m_backLift.getSelectedSensorPosition());
+      
       setLiftState();
       SmartDashboard.putNumber("Front Motor Current",
           m_forwardLift.getSupplyCurrent());

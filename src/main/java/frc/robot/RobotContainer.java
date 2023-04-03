@@ -63,7 +63,7 @@ public class RobotContainer {
 
   /* Controllers */
   public final Joystick m_driver1 = new Joystick(0);
-  private final Joystick m_driver2 = new Joystick(1);
+  public final Joystick m_driver2 = new Joystick(1);
   public static final double k_stickDeadband = 0.05;
 
   /* Drive Controls */
@@ -91,6 +91,7 @@ public class RobotContainer {
   public final JoystickButton m_driver2XButton = new JoystickButton(m_driver2, JoystickConstants.k_xButton);
   public final JoystickButton m_driver2LeftBumper = new JoystickButton(m_driver2, JoystickConstants.k_leftBumper);
   public final JoystickButton m_driver2RightBumper = new JoystickButton(m_driver2, JoystickConstants.k_rightBumper);
+  
 
   /* Subsystems */
   Swerve m_swerve = new Swerve();
@@ -105,16 +106,14 @@ public class RobotContainer {
   public GroundRetractedCommandGroup m_groundRetracted = new GroundRetractedCommandGroup(m_extension, m_lift);
   public CarryRetractedCommandGroup m_carryRetracted = new CarryRetractedCommandGroup(m_extension, m_lift, m_collector);
   public CollectCommandGroup m_collectCommandGroup = new CollectCommandGroup(m_collector);
-  public GroundCollectionCommandGroup m_groundCollection = new GroundCollectionCommandGroup(m_extension, m_lift,
-      m_collector);
-  public ShelfCollectionApproachCommandGroup m_shelfCollection = new ShelfCollectionApproachCommandGroup(m_extension,
-      m_lift);
+  public GroundCollectionCommandGroup m_groundCollection = new GroundCollectionCommandGroup(m_extension, m_lift, m_collector);
+  public ShelfCollectionApproachCommandGroup m_shelfCollection = new ShelfCollectionApproachCommandGroup(m_extension, m_lift);
   public MonkDrive monkDrive = new MonkDrive(m_swerve);
   public GreenMonkDrive leftGreenMonkDrive = new GreenMonkDrive(m_swerve, true);
   public GreenMonkDrive rightGreenMonkDrive = new GreenMonkDrive(m_swerve, false);
 
-  public CANSparkMax m_collectorMotor1 = new CANSparkMax(19, MotorType.kBrushless);
-  public CANSparkMax m_collectorMotor2 = new CANSparkMax(22, MotorType.kBrushless);
+  // public CANSparkMax m_collectorMotor1 = new CANSparkMax(19, MotorType.kBrushless);
+  // public CANSparkMax m_collectorMotor2 = new CANSparkMax(22, MotorType.kBrushless);
 
   // public DefaultLimelightCommand m_limelightCommand = new
   // DefaultLimelightCommand(m_Limelight);
@@ -157,8 +156,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
    
-    //return new AutoCenter(m_swerve, m_lift, m_collector, m_extension);
-    return new InstantCommand(() -> killmeplzwok());
+    return new AutoCenter(m_swerve, m_lift, m_collector, m_extension);
+    
   }
 
   public ArrayList<BrainSTEMSubsystem> getBrainSTEMSubsystems() {
@@ -170,12 +169,6 @@ public class RobotContainer {
     return brainSTEMSubsystems;
   }
 
-  public void killmeplzwok() {
-    m_collectorMotor1.set(0.5);
-    m_collectorMotor2.set(0.5);
-    // rightlift.set(TalonFXControlMode.PercentOutput, -0.15);
-    // backlift.set(TalonFXControlMode.PercentOutput, -0.15);
-    // frontlift.set(TalonFXControlMode.PercentOutput, 0.15);
-  }
+
 
 }

@@ -22,7 +22,8 @@ public class LiftCarryCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return m_lift.isLiftAtCorrectPosition();
+        //return m_lift.isLiftAtCorrectPosition();
+        return true;
     }
     
 }

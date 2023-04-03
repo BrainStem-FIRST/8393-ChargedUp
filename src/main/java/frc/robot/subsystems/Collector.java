@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.utilities.BrainSTEMSubsystem;
 
+import java.security.cert.CertPathValidatorException.BasicReason;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -15,14 +17,14 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   
   public static final class CollectorConstants {
-    public static final int k_wheelMotor2ID = 49; //19
-    public static final int k_wheelMotorID = 42; //22
+    public static final int k_wheelMotor2ID = 19;
+    public static final int k_wheelMotorID = 22;
     public static final int k_clawDepositPosition = 509;
     public static final double k_clawMotorCurrentDrawLimit = 30;
     public static final double k_clawMotorHoldingSpeed = 0.20;
     public static final double k_clawMotorCloseSpeed = 0.20;
     public static final double k_clawMotorOpenSpeed = -0.03;
-    public static final double k_wheelMotorSpeed = 0.2; //FIXME
+    public static final double k_wheelMotorSpeed = 0.50; //FIXME
     public static final double k_wheelMotorCurrentDrawLimit = 40; //FIXME
     public static final double k_p = 0.0005; //FIXME
     public static final double k_i = 0; //FIXME
@@ -60,6 +62,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   public double m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed;
 
   public double m_adjustableClawMotorOpenPower = CollectorConstants.k_clawMotorOpenSpeed;
+
+  public boolean m_collectingByCommand = false;
 
   //double clawMotorSetPoint = CollectorConstants.clawOpenPosition;
   public Collector() {
@@ -139,23 +143,30 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     // }
     m_timer.reset();
     m_wheelMotor.set(m_adjustableWheelMotorPower);
+    m_wheelMotor2.set(m_adjustableWheelMotorPower);
+
   }
 
   private void collectorOut() {
     m_wheelMotor.set(-m_adjustableWheelMotorPower);
+    m_wheelMotor2.set(-m_adjustableWheelMotorPower);
 
   }
 
   private void collectorOff() {
     m_wheelMotor.setIdleMode(IdleMode.kBrake);
+    m_wheelMotor2.setIdleMode(IdleMode.kBrake);
     m_wheelMotor.set(0);
+    m_wheelMotor2.set(0);
     //m_wheelMotor.stopMotor();
   }
 
   private void stopCollector() {
     m_wheelMotor.setIdleMode(IdleMode.kBrake);
+    m_wheelMotor2.setIdleMode(IdleMode.kBrake);
     m_wheelMotor.set(0);
-    //m_clawMotor.stopMotor();
+    m_wheelMotor2.set(0);
+
   }
 
 
@@ -254,8 +265,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   @Override
   public void periodic() { //single responsibility principle so yea
     if(m_collectorPeriodicEnabled){
-      // setIntakeState();
-      // m_wheelMotor2.follow(m_wheelMotor, true);
+      setIntakeState();
+      //m_wheelMotor2.follow(m_wheelMotor, true);
 
 
 

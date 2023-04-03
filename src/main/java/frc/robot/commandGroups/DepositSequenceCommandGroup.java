@@ -35,16 +35,12 @@ public class DepositSequenceCommandGroup extends SequentialCommandGroup {
         this.m_collector = p_collector;
         
         addCommands(
-            new InstantCommand(() -> m_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorCloseSpeed),
-            new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OUT),
-            new WaitCommand(0.1),
-            // new InstantCommand(() -> m_lift.depositDelta = LiftConstants.k_depositDelta),
-            new CollectorDepositCommand(m_collector),
-            new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF),
-            // new InstantCommand(() -> m_lift.depositDelta = 0),
-            new ShelfCarryRetractedCommandGroup(m_extension, m_lift, m_collector),
-            new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF),
-            new InstantCommand(() -> m_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed)
+            new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OUT)
+            ,new WaitCommand(0.25)
+            ,new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF)
+            ,new ShelfCarryRetractedCommandGroup(m_extension, m_lift, m_collector)
+            ,new InstantCommand(() -> m_lift.lowerLiftToCarry())
+            ,new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF)
         );
         
     }

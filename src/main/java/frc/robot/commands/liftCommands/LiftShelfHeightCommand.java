@@ -20,8 +20,6 @@ public class LiftShelfHeightCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return m_lift.isLiftAtCorrectPosition();
+        return true;
     }
-
-    
 }

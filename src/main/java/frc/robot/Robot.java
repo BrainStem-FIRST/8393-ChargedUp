@@ -200,7 +200,7 @@ public class Robot extends TimedRobot {
     // m_driver1_X.update(m_robotContainer.m_driver1XButton.getAsBoolean() && !m_robotContainer.m_driver1AButton.getAsBoolean());
     m_driver1_A.update(m_robotContainer.m_driver1AButton.getAsBoolean());
     m_driver1_X.update(m_robotContainer.m_driver1XButton.getAsBoolean());
-    m_driver1_B.update(m_robotContainer.m_driver1BButton.getAsBoolean());
+    //m_driver1_B.update(m_robotContainer.m_driver1BButton.getAsBoolean());
     if (m_robotContainer.m_driver1AButton.getAsBoolean()) {
       m_driver1_X.setState(false);
     } else if (m_robotContainer.m_driver1XButton.getAsBoolean()) {
@@ -227,13 +227,20 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putNumber("Limelight Light Current ", limelightCurrent);
 
+    // if (m_robotContainer.m_driver2YButton.getAsBoolean()) {
+    //   new InstantCommand(() -> m_robotContainer.m_lift.liftRawPower(-0.085)).schedule();
+    // } else {
+    //   new InstantCommand(() -> m_robotContainer.m_lift.liftRawPower(-0.05)).schedule();
+    // }
+
+    // LIME LIGHT ////////////////////////////////////////////////////////////////////////
+    SmartDashboard.putNumber("Limelight Light Current ", limelightCurrent);
     limelightCurrent = LimelightHelpers.getTX("limelight");
 
     
     
-
+    // MONK DRIVE & OTHER STUFF? //////////////////////////////////////////////////////////
     if(m_robotContainer.m_driver1BButton.getAsBoolean()) {
       //new InstantCommand(() -> m_robotContainer.m_lift.liftRawPower(-0.15)).schedule();
       m_robotContainer.monkDrive.schedule();
@@ -244,12 +251,10 @@ public class Robot extends TimedRobot {
       hasMonkDriveCanceled = true;
     } 
 
-    
+    // LIME LIGHT STRAFE //////////////////////////////////////////////////////////////////
     if(m_robotContainer.m_driver1.getPOV() == 90) {
-      SmartDashboard.putString("D1 POV","Right");
       m_robotContainer.rightGreenMonkDrive.schedule();
     } else if (m_robotContainer.m_driver1.getPOV() == 270) {
-      SmartDashboard.putString("D1 POV","Left");
       m_robotContainer.leftGreenMonkDrive.schedule();
     } else {
       m_robotContainer.rightGreenMonkDrive.cancel();
@@ -259,6 +264,8 @@ public class Robot extends TimedRobot {
     m_driver1_BackButton.update(m_robotContainer.m_driver1.getRawButton(JoystickConstants.k_backButton));
     setRobotState();
     setToggleButtons();
+
+    // EMERGENCY STOP ////////////////////////////////////////////////////////////////////////
     if(m_driver1_BackButton.getState()) {
       for(BrainSTEMSubsystem i_subsystem : brainSTEMSubsystemsWithoutSwerve){
         i_subsystem.disablePeriodic();
@@ -272,25 +279,31 @@ public class Robot extends TimedRobot {
       }
     }
 
-    SmartDashboard.putBoolean("Driver 1 A Button State", m_driver1_A.getState());
+    
 
-    SmartDashboard.putString("Robot Mode", s_robotMode.toString());
 
-    /* Driver Buttons */
+
+
+    // DRIVER BUTTON ////////////////////////////////////////////////////////////////////////
 
     if(m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) < 0.7) {
       hasDepositingRun = false;
     }
 
     if(s_robotMode == RobotMode.DEPOSITING) {
-      if(m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) > 0.7 && !hasDepositingRun) {
+
+      if(m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) > 0.7) { //  && !hasDepositingRun
         hasDepositingRun = true;
-        if (s_depositLocation == DepositLocation.HIGH) {
-          new DepositSequenceHighPoleCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule();
-        } else {
-          new DepositSequenceCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule(); 
-        }
+        new DepositSequenceCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule(); 
+        // if (/* s_depositLocation == DepositLocation.HIGH */ false) {
+        //   //new DepositSequenceHighPoleCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule();
+        // } else {
+        //   new DepositSequenceCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule(); 
+        //   //new ShelfCarryRetractedCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift, m_robotContainer.m_collector).schedule();
+
+        // }
       }
+
       if (m_robotContainer.m_driver1XButton.getAsBoolean() && (m_robotContainer.m_lift.m_state != LiftPosition.HIGH_POLE_TILT) && (m_robotContainer.m_lift.m_state != LiftPosition.HIGH_POLE)) { // && (m_robotContainer.m_lift.m_state != LiftPosition.HIGH_POLE_TILT) && (m_robotContainer.m_lift.m_state != LiftPosition.HIGH_POLE)
         s_depositLocation = DepositLocation.LOW;
         new LowPoleApproachCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift, m_robotContainer.m_collector).schedule();
@@ -302,7 +315,6 @@ public class Robot extends TimedRobot {
       
       
     } else {
-      m_robotContainer.m_collector.m_collectorState = CollectorState.CLOSED;
       /* Collector */
       if(!m_driver1_A.getState()) {
         hasGroundCollectionRun = false;
@@ -315,44 +327,62 @@ public class Robot extends TimedRobot {
 
       /* Lift and Extension States */
       if (m_driver1_X.getState()) {
+
         SmartDashboard.putString("Lift Extension", "Shelf");
-        m_robotContainer.m_shelfCollection.schedule();        //new InstantCommand(() -> m_robotContainer.m_collector.m_intakeState = IntakeState.IN).schedule();
+        m_robotContainer.m_shelfCollection.schedule();   
+        m_robotContainer.m_collector.m_intakeState = IntakeState.IN;     
+        m_robotContainer.m_collector.m_collectingByCommand = true;
+
       } else if (m_driver1_A.getState() && !hasGroundCollectionRun) {
+
         SmartDashboard.putString("Lift Extension", "Ground");
         m_robotContainer.m_groundCollection.schedule();
         hasGroundCollectionRun = true;
+        m_robotContainer.m_collector.m_intakeState = IntakeState.IN;
+        m_robotContainer.m_collector.m_collectingByCommand = true;
+
       } else if ((!m_driver1_A.getState() && !m_driver1_X.getState())) {
         SmartDashboard.putString("Lift Extension", "Carry");
+
         if(m_robotContainer.m_lift.m_state == LiftPosition.SHELF_COLLECTION && !hasShelfCarryRetractedRun) {
+
           hasShelfCarryRetractedRun = true;
           new ShelfCarryRetractedCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift, m_robotContainer.m_collector).schedule();
+          m_robotContainer.m_collector.m_intakeState = IntakeState.OFF;
+
         } else if (!hasCarryRetractedRun){
+
           hasCarryRetractedRun = true;
           m_robotContainer.m_carryRetracted.schedule();
+          m_robotContainer.m_collector.m_intakeState = IntakeState.OFF;
+
         }
       }
 
       /* Intake Control */
-      if (m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) > 0.5) {
-        m_robotContainer.m_collector.m_adjustableWheelMotorPower = 0.3;
-        m_robotContainer.m_collector.m_intakeState = IntakeState.IN;
-      } else {
-        m_robotContainer.m_collector.m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed;
+      if (m_robotContainer.m_driver2.getRawAxis(JoystickConstants.k_rightTrigger) > 0.5) {
+        m_robotContainer.m_collector.m_intakeState = IntakeState.OUT;
+        m_robotContainer.m_collector.m_collectingByCommand = false;
+      } else if (!m_robotContainer.m_collector.m_collectingByCommand) {
         m_robotContainer.m_collector.m_intakeState = IntakeState.OFF;
       }
 
-
     }
 
+    
     m_robotContainer.m_driver1LeftBumper.toggleOnTrue(new InstantCommand(() -> m_robotContainer.m_collector.m_collectorState = CollectorState.OPEN));
     
-    
-
     m_robotContainer.m_zeroGyro.whileTrue(new InstantCommand(() -> m_robotContainer.m_swerve.zeroGyro()));
+
+    // TELEMETRY DATA //////////////////////////////////////////////////////////////////////
+
+    SmartDashboard.putBoolean("Driver 1 A Button State", m_driver1_A.getState());
+    SmartDashboard.putString("ROBOT MODE", s_robotMode.toString());
 
   }
 
   //code bombs are superior to any other kind of bomb
+  //theres a code bomb in our code.
 
   @Override
   public void testInit() {

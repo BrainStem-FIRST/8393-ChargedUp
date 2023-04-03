@@ -20,6 +20,7 @@ import frc.robot.subsystems.Collector;
 import frc.robot.subsystems.Extension;
 import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Collector.CollectorConstants;
+import frc.robot.subsystems.Collector.IntakeState;
 import frc.robot.subsystems.Extension.TelescopePosition;
 import frc.robot.subsystems.Lift.LiftConstants;
 import frc.robot.subsystems.Lift.LiftPosition;
@@ -30,10 +31,9 @@ public class ShelfCarryRetractedCommandGroup extends SequentialCommandGroup {
 
         
         addCommands(
-            new InstantCommand(() -> p_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorCloseSpeed),
-            new RetractedExtensionCommandGroup(extension),
-            new LiftCarryCommand(lift),
-            new InstantCommand(() -> p_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed)
+            new RetractedExtensionCommandGroup(extension)
+            ,new LiftCarryCommand(lift)
+            
         );
       
     }

@@ -27,8 +27,9 @@ public class CarryRetractedCommandGroup extends SequentialCommandGroup {
         
         addCommands(
             new InstantCommand(() -> p_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorCloseSpeed),
-            new LiftCarryCommand(lift),
             new RetractedExtensionCommandGroup(extension),
+            new WaitCommand(0.1),
+            new LiftCarryCommand(lift),
             new InstantCommand(() -> p_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed)
         );
       
