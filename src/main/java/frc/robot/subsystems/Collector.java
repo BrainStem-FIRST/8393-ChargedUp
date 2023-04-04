@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,6 +30,9 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     public static final double k_p = 0.0005; //FIXME
     public static final double k_i = 0; //FIXME
     public static final double k_d = 0; //FIXME
+
+    public static final double k_feedForwardkS = 1;
+    public static final double k_feedForwardkV = 12;
   }
 
   public enum CollectorState {
@@ -57,6 +61,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   private Timer m_timer = new Timer();
   PIDController m_collectorPID;
 
+  private SimpleMotorFeedforward m_wheelMotorFeedForward;
+
   boolean firstTime = true;
 
   public boolean firstTIme = true;
@@ -81,6 +87,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     m_wheelMotor.setInverted(true); 
     m_collectorPID = new PIDController(CollectorConstants.k_p, CollectorConstants.k_i, CollectorConstants.k_d);
     m_clawMotorEncoder.setPositionConversionFactor(42);
+
+    m_wheelMotorFeedForward = new SimpleMotorFeedforward(CollectorConstants.k_feedForwardkS, CollectorConstants.k_feedForwardkV);
   }
 
   @Override
@@ -178,6 +186,11 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     SmartDashboard.putBoolean("Collecotr Motor 2", m_wheelMotor2.getOutputCurrent() > currentDraw);
 
     
+    // if (m_wheelMotor2.getOutputCurrent() > currentDraw || m_wheelMotor.getOutputCurrent() > currentDraw) {
+
+    // } else {
+
+    // }
     m_wheelMotor.set(m_adjustableWheelMotorPower);
     m_wheelMotor2.set(m_adjustableWheelMotorPower);
 
@@ -318,10 +331,19 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     }
   }
 
+  public void updateWithFeedForward() {
+
+    double feedForwardOutput = m_wheelMotorFeedForward.calculate(0.1); 
+    m_wheelMotor2.setVoltage(feedForwardOutput);
+    m_wheelMotor.setVoltage(feedForwardOutput);
+  }
+
   @Override
   public void periodic() { //single responsibility principle so yea
     if(m_collectorPeriodicEnabled){
       setIntakeState();
+
+      // updateWithFeedForward();
     
       // setCollectorState();
       SmartDashboard.putNumber("Collector Wheel  Current Draw ", m_wheelMotor.getOutputCurrent());

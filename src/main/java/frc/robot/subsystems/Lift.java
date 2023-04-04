@@ -48,8 +48,8 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     public static final int k_highPoleValue = Lift.inchesToTicks(18);
     public static final int k_highPoleTiltValue = Lift.inchesToTicks(15);
     public static final int k_liftPreLoadPosition = Lift.inchesToTicks(15);
-    public static final double k_MaxPower = 1.0;
-    public static final int k_liftTolerance = Lift.inchesToTicks(0.09);
+    public static final double k_MaxPower = .3;
+    public static final int k_liftTolerance = Lift.inchesToTicks(0.35);
     public static final int k_depositDelta = 400 * 3000;
 
     public static final int k_hookServoID = 8;
@@ -375,8 +375,8 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
       SmartDashboard.putNumber("Feed Forward for Lift ", feedForwardOutput);
 
     } else {
-      double motorPercentOutput = MathUtil.clamp(m_liftPID.calculate(liftPosition, m_liftSetPoint),
-      -m_adjustableLiftSpeed, m_adjustableLiftSpeed);
+      double motorPercentOutput = (MathUtil.clamp(m_liftPID.calculate(liftPosition, m_liftSetPoint),
+      -m_adjustableLiftSpeed, m_adjustableLiftSpeed));
     
       double feedForwardOutput = m_liftFeedForward.calculate(m_liftSetPoint);
 

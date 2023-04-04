@@ -18,7 +18,7 @@ import frc.robot.subsystems.Collector.CollectorConstants;
 import frc.robot.subsystems.Extension.TelescopePosition;
 import frc.robot.subsystems.Lift.LiftPosition;
 
-public class LowPoleApproachCommandGroup extends ParallelCommandGroup {
+public class LowPoleApproachCommandGroup extends SequentialCommandGroup {
     
     public LowPoleApproachCommandGroup(Extension extension, Lift lift, Collector collector) {
         addCommands(

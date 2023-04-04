@@ -3,8 +3,12 @@ package frc.robot.autos;
 import frc.robot.autoCommands.LiftCollectPreLoad;
 import frc.robot.autoCommands.autoCommandGroups.collectPreLoadCommand;
 import frc.robot.commandGroups.DepositSequenceCommandGroup;
+import frc.robot.commandGroups.GroundCollectionCommandGroup;
+import frc.robot.commandGroups.HighPoleApproachCommandGroup;
 import frc.robot.commandGroups.LowPoleApproachCommandGroup;
 import frc.robot.commands.BalanceCommand;
+import frc.robot.commands.DriveUntilLimelightCommand;
+import frc.robot.commands.GreenMonkDrive;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.collectorCommands.IntakeInCommand;
 import frc.robot.commands.collectorCommands.IntakeOffCommand;
@@ -35,17 +39,17 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj.Timer;
 
-public class AutoSide extends SequentialCommandGroup {
+public class OnePlusOneAuto extends SequentialCommandGroup {
 
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
-        public static final double k_maxSpeedMetersPerSecond = 1.3;
-        public static final double k_maxAccelerationMetersPerSecondSquared = 0.9;
-        public static final double k_maxAngularSpeedRadiansPerSecond = Math.PI/10;
-        public static final double k_maxAngularSpeedRadiansPerSecondSquared = Math.PI/10;
+        public static final double k_maxSpeedMetersPerSecond = 3;
+        public static final double k_maxAccelerationMetersPerSecondSquared = 2;
+        public static final double k_maxAngularSpeedRadiansPerSecond = Math.PI;
+        public static final double k_maxAngularSpeedRadiansPerSecondSquared = Math.PI;
     
         public static final double k_pXController = 1;
-        public static final double k_pYController = 0;
-        public static final double k_pThetaController = 0;
+        public static final double k_pYController = 1;
+        public static final double k_pThetaController = 2;
     
         /* Constraint for the motion profilied robot angle controller */
         public static final TrapezoidProfile.Constraints k_thetaControllerConstraints =
@@ -59,13 +63,16 @@ public class AutoSide extends SequentialCommandGroup {
         private static final double k_D = 0.0;
     }
     
-    public AutoSide(Swerve s_Swerve, Lift m_Lift, Collector m_collector, Extension m_extension){
+    public OnePlusOneAuto(Swerve s_Swerve, Lift m_Lift, Collector m_collector, Extension m_extension){
         collectPreLoadCommand m_collectPreLoadCommand = new collectPreLoadCommand(m_Lift, m_collector);
         ExtensionCommand m_extensionCarry = new ExtensionCommand(m_extension, TelescopePosition.COLLECTION);
         LowPoleApproachCommandGroup  m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_Lift, m_collector);
+        HighPoleApproachCommandGroup m_highPoleApproach = new HighPoleApproachCommandGroup(m_extension, m_Lift, m_collector);
         DepositSequenceCommandGroup m_depositSequenceCommandGroup = new DepositSequenceCommandGroup(m_Lift, m_extension, m_collector);
         IntakeOffCommand m_intakeOff = new IntakeOffCommand(m_collector);
         IntakeInCommand m_intakeIn = new IntakeInCommand(m_collector);
+        GroundCollectionCommandGroup m_groundCollection = new GroundCollectionCommandGroup(m_extension, m_Lift, m_collector);
+        DriveUntilLimelightCommand m_driveWithLimelightRIGHT = new DriveUntilLimelightCommand(false, s_Swerve);
         Timer m_Timer = new Timer();
 
         TrajectoryConfig config =
@@ -80,28 +87,29 @@ public class AutoSide extends SequentialCommandGroup {
             TrajectoryGenerator.generateTrajectory(
                 // Set the origin at (5,0) facing the +X direction
                 // Robot starts facing the poles
-                new Pose2d(5.5, 0, new Rotation2d(Math.toRadians(0))),
+                new Pose2d(5.3, 0, new Rotation2d(Math.toRadians(0))),
                 // Pass through these two interior waypoints, making an 's' curve path
                 List.of(
-                    new Translation2d(2, 0) //Just kind of a test thing to see if another waypooint fixes auto
+                    new Translation2d(4, 0.25) //Just kind of a test thing to see if another waypooint fixes auto
                 ),
                 // End 5 meters behind ahead of where we started, rotating 180 degrees, now facing forward
-                new Pose2d(1, 0, new Rotation2d(Math.toRadians(0))),
+                new Pose2d(1, 0.315, new Rotation2d(Math.toRadians(179))),
                 config);
 
-                config.setReversed(false);
+                config.setReversed(true);
                 // An example trajectory to follow.  All units in meters.
-                Trajectory runBackOnToChargeStationTrajectory =
+                Trajectory runBackToMoveBlueLinTrajectory =
                     TrajectoryGenerator.generateTrajectory(
                         // Set the origin at (5,0) facing the +X direction
                         // Robot starts facing the poles
-                        new Pose2d(1, 0, new Rotation2d(Math.toRadians(0))),
+                        new Pose2d(5.3, 0.3, new Rotation2d(Math.toRadians(0))),
                         // Pass through these two interior waypoints, making an 's' curve path
                         List.of(
-                            new Translation2d(2, 0) //Just kind of a test thing to see if another waypooint fixes auto
+                            new Translation2d(4, 0.75) //Just kind of a test thing to see if another waypooint fixes auto
+                            
                         ),
                         // End 5 meters behind ahead of where we started, rotating 180 degrees, now facing forward
-                        new Pose2d(3.6, 0, new Rotation2d(Math.toRadians(0))),
+                        new Pose2d(1.25, 0, new Rotation2d(Math.toRadians(179))),
                         config);
                 
 
@@ -121,9 +129,9 @@ public class AutoSide extends SequentialCommandGroup {
                 s_Swerve::setModuleStates,
                 s_Swerve);
 
-        SwerveControllerCommand runBackOntoChargeStationCommand =
+        SwerveControllerCommand runBackToMoveBlueLineCommand =
                 new SwerveControllerCommand(
-                    runBackOnToChargeStationTrajectory,
+                    runBackToMoveBlueLinTrajectory,
                     s_Swerve::getPose,
                     SwerveConstants.k_swerveKinematics,
                     new PIDController(AutoConstants.k_pXController, 0, 0),
@@ -134,81 +142,38 @@ public class AutoSide extends SequentialCommandGroup {
 
 
         addCommands(
-            // new InstantCommand(() -> s_Swerve.setGyroRobotFacingReverse()),
+            new InstantCommand(() -> s_Swerve.setGyroRobotFacingReverse()),
             // collect pre load command here 
 
-            // score on low pole here 
+            // score on low high here 
             new InstantCommand(() -> m_Timer.start()),
-            m_intakeIn,
-            m_collectPreLoadCommand,
-            m_extensionCarry,
-            m_lowPoleApproach,
-            m_depositSequenceCommandGroup,
-            m_intakeOff,
+            // m_collectPreLoadCommand,
+            // m_highPoleApproach,
+            // m_depositSequenceCommandGroup,
+            // m_intakeOff,
+
+            // go to collect block 
             new InstantCommand(() -> s_Swerve.resetOdometry(runOverChargeStationTrajectory.getInitialPose())), 
             runOverChargeStationCommand
-            // runBackOntoChargeStationCommand,
+            // ,new InstantCommand(() -> stopDT(s_Swerve, m_Timer))
+            // ,m_groundCollection
+
+
+            // come to blue line for pose estimate w/ april tag 
+            ,new InstantCommand(() -> s_Swerve.resetOdometry(runBackToMoveBlueLinTrajectory.getInitialPose())),
+            runBackToMoveBlueLineCommand,
+
+            m_driveWithLimelightRIGHT
+
+
+            // score!
+
             // new InstantCommand(() -> autoBalance(s_Swerve, m_Timer))
 
         );
     }
 
-    private void autoBalance(Swerve s_Swerve, Timer m_Timer) {
-        double pitch = s_Swerve.getTilt();
-        PIDController m_balancePID = new PIDController(BalanceConstants.k_P, BalanceConstants.k_I, BalanceConstants.k_D);
-        m_balancePID.setTolerance(10);
-        int counter = 0;
-        boolean balancing = false;
-        
-        
-            pitch = s_Swerve.getTilt();
-            
-            // final double initialPower = 0.4;
-
-            // while (pitch < 10) {
-            //     pitch = s_Swerve.getTilt();
-            //     TeleopSwerve m_teleopSwerve = new TeleopSwerve(
-            //         s_Swerve,
-            //         () -> initialPower,
-            //         () -> 0,
-            //         () -> 0,
-            //         () -> false
-            //     );
-            //     m_teleopSwerve.execute();
-            // }
-
-            // while (pitch > 10) {
-            //     pitch = s_Swerve.getTilt();
-    
-            //     TeleopSwerve m_teleopSwerve = new TeleopSwerve(
-            //         s_Swerve,
-            //         () -> 0.25,
-            //         () -> 0,
-            //         () -> 0,
-            //         () -> false
-            //     );
-               
-            //     m_teleopSwerve.execute();
-                
-            //     SmartDashboard.putNumber("Auto Pitch", pitch);
-            //     SmartDashboard.putBoolean("Balance Power", balancing);
-            //     SmartDashboard.putNumber("Counter", counter);
-            // }
-
-            // TeleopSwerve m_teleopSwerve = new TeleopSwerve(
-            //         s_Swerve, 
-            //         () -> 0,
-            //         () -> 0,
-            //         () -> 0,
-            //         () -> false
-            //     );
-    
-            // m_teleopSwerve.execute();
-
-            SmartDashboard.putNumber("Auto Pitch", pitch);
-            SmartDashboard.putBoolean("Balance Power", balancing);
-            SmartDashboard.putNumber("Counter", counter);
-
+    private void stopDT(Swerve s_Swerve, Timer m_Timer) {
             TeleopSwerve m_teleopSwerve = new TeleopSwerve(
                 s_Swerve, 
                     () -> 0,
@@ -217,36 +182,6 @@ public class AutoSide extends SequentialCommandGroup {
                     () -> false
                 );
 
-
-            int x = 0;
-            while (pitch > 2 && x < 100000) {
-                pitch = s_Swerve.getTilt();
-                double power = MathUtil.clamp(m_balancePID.calculate(pitch, 0), -0.25, 0.25);
-    
-                m_teleopSwerve = new TeleopSwerve(
-                s_Swerve, 
-                    () -> -power * 0.78,
-                    () -> 0,
-                    () -> 0,
-                    () -> false
-                );
-    
-                x ++;
-                m_teleopSwerve.execute();
-                counter ++;
-                SmartDashboard.putNumber("Auto Pitch", pitch);
-                SmartDashboard.putNumber("Balance Power", power);
-                SmartDashboard.putNumber("Counter", counter);
-                SmartDashboard.putNumber("Timer", m_Timer.getFPGATimestamp());
-            }
-
-            m_teleopSwerve = new TeleopSwerve(
-                s_Swerve, 
-                () -> 0,
-                () -> 0,
-                () -> 0.3,
-                () -> false
-            );
-            m_teleopSwerve.execute();      
+            m_teleopSwerve.execute();   
     }
 }

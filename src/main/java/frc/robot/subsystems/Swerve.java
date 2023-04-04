@@ -198,6 +198,7 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem{
     
     @Override
     public void initialize(){
+
         m_adjustableDriveNeutralMode = SwerveConstants.k_driveNeutralMode;
         m_adjustableAngleNeutralMode = SwerveConstants.k_angleNeutralMode;
         enablePeriodic();
@@ -278,7 +279,10 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem{
             swerveOdometry.update(getYaw(), getModulePositions());
             for(SwerveModule mod : mSwerveMods){
                 mod.setModuleNeutralMode(m_adjustableDriveNeutralMode, m_adjustableAngleNeutralMode);
+                
             }
+
+            
 
             for(SwerveModule mod : mSwerveMods){
                 SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());

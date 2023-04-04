@@ -2,19 +2,10 @@ package frc.robot;
 
 import java.util.ArrayList;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.autos.*;
 import frc.robot.commandGroups.CarryRetractedCommandGroup;
@@ -25,9 +16,6 @@ import frc.robot.commandGroups.LowPoleApproachCommandGroup;
 import frc.robot.commandGroups.ShelfCollectionApproachCommandGroup;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.Collector.CollectorState;
-import frc.robot.subsystems.Collector.IntakeState;
-import frc.robot.subsystems.Lift.LiftPosition;
 import frc.robot.utilities.BrainSTEMSubsystem;
 import frc.robot.utilities.ToggleButton;
 
@@ -109,8 +97,8 @@ public class RobotContainer {
   public GroundCollectionCommandGroup m_groundCollection = new GroundCollectionCommandGroup(m_extension, m_lift, m_collector);
   public ShelfCollectionApproachCommandGroup m_shelfCollection = new ShelfCollectionApproachCommandGroup(m_extension, m_lift);
   public MonkDrive monkDrive = new MonkDrive(m_swerve);
-  public GreenMonkDrive leftGreenMonkDrive = new GreenMonkDrive(m_swerve, true);
-  public GreenMonkDrive rightGreenMonkDrive = new GreenMonkDrive(m_swerve, false);
+  public DriveUntilLimelightCommand leftGreenMonkDrive = new DriveUntilLimelightCommand(true, m_swerve);
+  public DriveUntilLimelightCommand rightGreenMonkDrive = new DriveUntilLimelightCommand(false, m_swerve);
 
   // public CANSparkMax m_collectorMotor1 = new CANSparkMax(19, MotorType.kBrushless);
   // public CANSparkMax m_collectorMotor2 = new CANSparkMax(22, MotorType.kBrushless);
@@ -155,8 +143,14 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-   
-    return new AutoCenter(m_swerve, m_lift, m_collector, m_extension);
+
+    // auto Center
+    // return new AutoCenter(m_swerve, m_lift, m_collector, m_extension);
+
+    // 1 + 1 block auto 
+    return new OnePlusOneAuto(m_swerve, m_lift, m_collector, m_extension);
+
+    // more to come...
     
   }
 

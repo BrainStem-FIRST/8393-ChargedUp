@@ -32,7 +32,7 @@ public class GreenMonkDrive extends CommandBase {
         private BooleanSupplier robotCentricSup;
         private PIDController drivePIDController;
         private boolean m_targetLeft = true;
-        private double strafePower = 0.3;
+        private double strafePower = 0.15;
 
 
         public GreenMonkDrive(Swerve p_swerve, boolean p_targetLeft) {
@@ -52,8 +52,8 @@ public class GreenMonkDrive extends CommandBase {
 
 
                 /* Drive */
-                if (LimelightHelpers.getTV("limelight")) {
-                        strafePower = drivePIDController.calculate(LimelightHelpers.getTX("limelight"), 0);
+                if (LimelightHelpers.getTV("limelight-a")) {
+                        strafePower = drivePIDController.calculate(LimelightHelpers.getTX("limelight-a"), 0);
                 } 
                 SmartDashboard.putNumber("Strafe Power", strafePower);
                 new TeleopSwerve(m_swerve, () -> 0, () -> strafePower, () -> 0, () -> false).execute();
