@@ -41,19 +41,19 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class OnePlusOneAuto extends SequentialCommandGroup {
 
-    public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
+    public static final class AutoConstants { // TODO: The below constants are used in the example auto, and must be
+                                              // tuned to specific robot
         public static final double k_maxSpeedMetersPerSecond = 3;
         public static final double k_maxAccelerationMetersPerSecondSquared = 2;
         public static final double k_maxAngularSpeedRadiansPerSecond = Math.PI;
         public static final double k_maxAngularSpeedRadiansPerSecondSquared = Math.PI;
-    
+
         public static final double k_pXController = 1;
         public static final double k_pYController = 1;
         public static final double k_pThetaController = 2;
-    
+
         /* Constraint for the motion profilied robot angle controller */
-        public static final TrapezoidProfile.Constraints k_thetaControllerConstraints =
-            new TrapezoidProfile.Constraints(
+        public static final TrapezoidProfile.Constraints k_thetaControllerConstraints = new TrapezoidProfile.Constraints(
                 k_maxAngularSpeedRadiansPerSecond, k_maxAngularSpeedRadiansPerSecondSquared);
     }
 
@@ -62,65 +62,65 @@ public class OnePlusOneAuto extends SequentialCommandGroup {
         private static final double k_I = 0.000;
         private static final double k_D = 0.0;
     }
-    
-    public OnePlusOneAuto(Swerve s_Swerve, Lift m_Lift, Collector m_collector, Extension m_extension){
+
+    public OnePlusOneAuto(Swerve s_Swerve, Lift m_Lift, Collector m_collector, Extension m_extension) {
         collectPreLoadCommand m_collectPreLoadCommand = new collectPreLoadCommand(m_Lift, m_collector);
         ExtensionCommand m_extensionCarry = new ExtensionCommand(m_extension, TelescopePosition.COLLECTION);
-        LowPoleApproachCommandGroup  m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_Lift, m_collector);
-        HighPoleApproachCommandGroup m_highPoleApproach = new HighPoleApproachCommandGroup(m_extension, m_Lift, m_collector);
-        DepositSequenceCommandGroup m_depositSequenceCommandGroup = new DepositSequenceCommandGroup(m_Lift, m_extension, m_collector);
+        LowPoleApproachCommandGroup m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_Lift,
+                m_collector);
+        HighPoleApproachCommandGroup m_highPoleApproach = new HighPoleApproachCommandGroup(m_extension, m_Lift,
+                m_collector);
+        DepositSequenceCommandGroup m_depositSequenceCommandGroup = new DepositSequenceCommandGroup(m_Lift, m_extension,
+                m_collector);
         IntakeOffCommand m_intakeOff = new IntakeOffCommand(m_collector);
         IntakeInCommand m_intakeIn = new IntakeInCommand(m_collector);
-        GroundCollectionCommandGroup m_groundCollection = new GroundCollectionCommandGroup(m_extension, m_Lift, m_collector);
-        DriveUntilLimelightCommand m_driveWithLimelightRIGHT = new DriveUntilLimelightCommand(false, s_Swerve);
+        GroundCollectionCommandGroup m_groundCollection = new GroundCollectionCommandGroup(m_extension, m_Lift,
+                m_collector);
+        DriveUntilLimelightCommand m_driveWithLimelightRIGHT = new DriveUntilLimelightCommand(false, s_Swerve, () -> true);
         Timer m_Timer = new Timer();
 
-        TrajectoryConfig config =
-            new TrajectoryConfig(
-                    AutoConstants.k_maxSpeedMetersPerSecond,
-                    AutoConstants.k_maxAccelerationMetersPerSecondSquared)
+        TrajectoryConfig config = new TrajectoryConfig(
+                AutoConstants.k_maxSpeedMetersPerSecond,
+                AutoConstants.k_maxAccelerationMetersPerSecondSquared)
                 .setKinematics(SwerveConstants.k_swerveKinematics);
 
         config.setReversed(true);
-        // An example trajectory to follow.  All units in meters.
-        Trajectory runOverChargeStationTrajectory =
-            TrajectoryGenerator.generateTrajectory(
+        // An example trajectory to follow. All units in meters.
+        Trajectory goOutToCollectTrajectory = TrajectoryGenerator.generateTrajectory(
                 // Set the origin at (5,0) facing the +X direction
                 // Robot starts facing the poles
                 new Pose2d(5.3, 0, new Rotation2d(Math.toRadians(0))),
                 // Pass through these two interior waypoints, making an 's' curve path
                 List.of(
-                    new Translation2d(4, 0.25) //Just kind of a test thing to see if another waypooint fixes auto
+                        new Translation2d(4, 0.25) // Just kind of a test thing to see if another waypooint fixes auto
                 ),
-                // End 5 meters behind ahead of where we started, rotating 180 degrees, now facing forward
-                new Pose2d(1, 0.315, new Rotation2d(Math.toRadians(179))),
+                // End 5 meters behind ahead of where we started, rotating 180 degrees, now
+                // facing forward
+                new Pose2d(1, 0.615, new Rotation2d(Math.toRadians(179))),
                 config);
 
-                config.setReversed(true);
-                // An example trajectory to follow.  All units in meters.
-                Trajectory runBackToMoveBlueLinTrajectory =
-                    TrajectoryGenerator.generateTrajectory(
-                        // Set the origin at (5,0) facing the +X direction
-                        // Robot starts facing the poles
-                        new Pose2d(5.3, 0.3, new Rotation2d(Math.toRadians(0))),
-                        // Pass through these two interior waypoints, making an 's' curve path
-                        List.of(
-                            new Translation2d(4, 0.75) //Just kind of a test thing to see if another waypooint fixes auto
-                            
-                        ),
-                        // End 5 meters behind ahead of where we started, rotating 180 degrees, now facing forward
-                        new Pose2d(1.25, 0, new Rotation2d(Math.toRadians(179))),
-                        config);
-                
+        config.setReversed(true);
+        // An example trajectory to follow. All units in meters.
+        Trajectory depositTrajectory = TrajectoryGenerator.generateTrajectory(
+                // Set the origin at (5,0) facing the +X direction
+                // Robot starts facing the poles
+                new Pose2d(5.3, 0.6, new Rotation2d(Math.toRadians(0))),
+                // Pass through these two interior waypoints, making an 's' curve path
+                List.of(
+                        new Translation2d(4, 0.75) // Just kind of a test thing to see if another waypooint fixes auto
 
-        var thetaController =
-            new ProfiledPIDController(
+                ),
+                // End 5 meters behind ahead of where we started, rotating 180 degrees, now
+                // facing forward
+                new Pose2d(1, 0, new Rotation2d(Math.toRadians(179))),
+                config);
+
+        var thetaController = new ProfiledPIDController(
                 AutoConstants.k_pThetaController * 2, 0, 0, AutoConstants.k_thetaControllerConstraints);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-        SwerveControllerCommand runOverChargeStationCommand =
-            new SwerveControllerCommand(
-                runOverChargeStationTrajectory,
+        SwerveControllerCommand goOutToCollectCommand = new SwerveControllerCommand(
+                goOutToCollectTrajectory,
                 s_Swerve::getPose,
                 SwerveConstants.k_swerveKinematics,
                 new PIDController(AutoConstants.k_pXController, 0, 0),
@@ -129,59 +129,54 @@ public class OnePlusOneAuto extends SequentialCommandGroup {
                 s_Swerve::setModuleStates,
                 s_Swerve);
 
-        SwerveControllerCommand runBackToMoveBlueLineCommand =
-                new SwerveControllerCommand(
-                    runBackToMoveBlueLinTrajectory,
-                    s_Swerve::getPose,
-                    SwerveConstants.k_swerveKinematics,
-                    new PIDController(AutoConstants.k_pXController, 0, 0),
-                    new PIDController(AutoConstants.k_pYController, 0, 0),
-                    thetaController,
-                    s_Swerve::setModuleStates,
-                    s_Swerve);
-
+        SwerveControllerCommand runBackToMoveBlueLineCommand = new SwerveControllerCommand(
+                depositTrajectory,
+                s_Swerve::getPose,
+                SwerveConstants.k_swerveKinematics,
+                new PIDController(AutoConstants.k_pXController, 0, 0),
+                new PIDController(AutoConstants.k_pYController, 0, 0),
+                thetaController,
+                s_Swerve::setModuleStates,
+                s_Swerve);
 
         addCommands(
-            new InstantCommand(() -> s_Swerve.setGyroRobotFacingReverse()),
-            // collect pre load command here 
+                new InstantCommand(() -> s_Swerve.setGyroRobotFacingReverse()),
+                // collect pre load command here
 
-            // score on low high here 
-            new InstantCommand(() -> m_Timer.start()),
-            // m_collectPreLoadCommand,
-            // m_highPoleApproach,
-            // m_depositSequenceCommandGroup,
-            // m_intakeOff,
+                // score on low high here
+                new InstantCommand(() -> m_Timer.start()),
+                // m_collectPreLoadCommand,
+                //m_highPoleApproach,
+                // m_depositSequenceCommandGroup,
+                // m_intakeOff,
 
-            // go to collect block 
-            new InstantCommand(() -> s_Swerve.resetOdometry(runOverChargeStationTrajectory.getInitialPose())), 
-            runOverChargeStationCommand
-            // ,new InstantCommand(() -> stopDT(s_Swerve, m_Timer))
-            // ,m_groundCollection
+                // go to collect block
+                new InstantCommand(() -> s_Swerve.resetOdometry(goOutToCollectTrajectory.getInitialPose())),
+                goOutToCollectCommand
+                // ,new InstantCommand(() -> stopDT(s_Swerve, m_Timer))
+                // ,m_groundCollection
 
+                // come to blue line for pose estimate w/ april tag
+                , new InstantCommand(() -> s_Swerve.resetOdometry(depositTrajectory.getInitialPose())),
+                runBackToMoveBlueLineCommand
 
-            // come to blue line for pose estimate w/ april tag 
-            ,new InstantCommand(() -> s_Swerve.resetOdometry(runBackToMoveBlueLinTrajectory.getInitialPose())),
-            runBackToMoveBlueLineCommand,
+        // ,m_driveWithLimelightRIGHT
 
-            m_driveWithLimelightRIGHT
+        // score!
 
-
-            // score!
-
-            // new InstantCommand(() -> autoBalance(s_Swerve, m_Timer))
+        // new InstantCommand(() -> autoBalance(s_Swerve, m_Timer))
 
         );
     }
 
     private void stopDT(Swerve s_Swerve, Timer m_Timer) {
-            TeleopSwerve m_teleopSwerve = new TeleopSwerve(
-                s_Swerve, 
-                    () -> 0,
-                    () -> 0,
-                    () -> 0,
-                    () -> false
-                );
+        TeleopSwerve m_teleopSwerve = new TeleopSwerve(
+                s_Swerve,
+                () -> 0,
+                () -> 0,
+                () -> 0,
+                () -> false);
 
-            m_teleopSwerve.execute();   
+        m_teleopSwerve.execute();
     }
 }

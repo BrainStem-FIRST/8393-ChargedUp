@@ -152,6 +152,10 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem{
     public NeutralMode m_adjustableDriveNeutralMode = SwerveConstants.k_driveNeutralMode;
     public NeutralMode m_adjustableAngleNeutralMode = SwerveConstants.k_angleNeutralMode;
 
+    public SwerveModuleState[] swerveModuleStates;
+
+    public boolean isOpenLoop;
+
     
 
     public Swerve() {
@@ -176,7 +180,9 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem{
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
-        SwerveModuleState[] swerveModuleStates =
+
+        this.isOpenLoop = isOpenLoop;
+        swerveModuleStates =
             SwerveConstants.k_swerveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
                                     translation.getX(), 

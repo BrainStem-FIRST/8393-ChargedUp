@@ -98,8 +98,8 @@ public class RobotContainer {
   public GroundCollectionCommandGroup m_groundCollection = new GroundCollectionCommandGroup(m_extension, m_lift, m_collector);
   public ShelfCollectionApproachCommandGroup m_shelfCollection = new ShelfCollectionApproachCommandGroup(m_extension, m_lift);
   public MonkDrive monkDrive = new MonkDrive(m_swerve);
-  public DriveUntilLimelightCommand leftGreenMonkDrive = new DriveUntilLimelightCommand(true, m_swerve);
-  public DriveUntilLimelightCommand rightGreenMonkDrive = new DriveUntilLimelightCommand(false, m_swerve);
+  public DriveUntilLimelightCommand leftGreenMonkDrive = new DriveUntilLimelightCommand(true, m_swerve, () -> false);
+  public DriveUntilLimelightCommand rightGreenMonkDrive = new DriveUntilLimelightCommand(false, m_swerve, () -> false);
 
   // public CANSparkMax m_collectorMotor1 = new CANSparkMax(19, MotorType.kBrushless);
   // public CANSparkMax m_collectorMotor2 = new CANSparkMax(22, MotorType.kBrushless);
@@ -150,10 +150,10 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
 
     // auto Center
-    // return new AutoCenter(m_swerve, m_lift, m_collector, m_extension);
+     return new AutoCenter(m_swerve, m_lift, m_collector, m_extension);
 
     // 1 + 1 block auto 
-    return new OnePlusOneAuto(m_swerve, m_lift, m_collector, m_extension);
+    //return new OnePlusOneAuto(m_swerve, m_lift, m_collector, m_extension);
 
     // more to come...
     

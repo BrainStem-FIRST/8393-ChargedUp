@@ -79,11 +79,15 @@ public class SwerveModule implements BrainSTEMSubsystem {
         }
     }
 
-    private void setAngle(SwerveModuleState desiredState){
+    public void setAngle(SwerveModuleState desiredState){
         Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (SwerveConstants.k_maxSpeed * 0.01)) ? lastAngle : desiredState.angle; //Prevent rotating module if speed is less then 1%. Prevents Jittering.
         
         mAngleMotor.set(ControlMode.Position,  Conversions.degreesToFalcon(angle.getDegrees(), SwerveConstants.k_angleGearRatio));
         lastAngle = angle;
+    }
+
+    public void setAngleEncodersToZero() {
+            mAngleMotor.setSelectedSensorPosition(0);
     }
 
     private Rotation2d getAngle(){

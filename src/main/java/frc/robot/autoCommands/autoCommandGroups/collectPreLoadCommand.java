@@ -11,8 +11,7 @@ public class collectPreLoadCommand extends SequentialCommandGroup {
 
     public collectPreLoadCommand(Lift lift, Collector collector) {
         addCommands(
-            new LiftCollectPreLoad(lift)
-            ,new CollectorCloseCommand(collector)
+            new CollectorCloseCommand(collector)
         );
         
     }

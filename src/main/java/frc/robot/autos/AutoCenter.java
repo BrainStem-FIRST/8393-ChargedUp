@@ -3,6 +3,7 @@ package frc.robot.autos;
 import frc.robot.autoCommands.LiftCollectPreLoad;
 import frc.robot.autoCommands.autoCommandGroups.collectPreLoadCommand;
 import frc.robot.commandGroups.DepositSequenceCommandGroup;
+import frc.robot.commandGroups.HighPoleApproachCommandGroup;
 import frc.robot.commandGroups.LowPoleApproachCommandGroup;
 import frc.robot.commands.BalanceCommand;
 import frc.robot.commands.TeleopSwerve;
@@ -79,6 +80,8 @@ public class AutoCenter extends SequentialCommandGroup {
                 m_collector);
         IntakeOffCommand m_intakeOff = new IntakeOffCommand(m_collector);
         IntakeInCommand m_intakeIn = new IntakeInCommand(m_collector);
+        HighPoleApproachCommandGroup m_highPoleApproach = new HighPoleApproachCommandGroup(m_extension, m_lift,
+                m_collector);
         Timer m_Timer = new Timer();
 
         RectangularRegionConstraint drivetrainRestraint = new RectangularRegionConstraint(
@@ -155,31 +158,37 @@ public class AutoCenter extends SequentialCommandGroup {
 
                 // score on low pole command here
                 new InstantCommand(() -> m_Timer.start()),
-                new InstantCommand(
-                        () -> m_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorCloseSpeed * 1.2),
-                new InstantCommand(() -> m_collector.m_adjustableClawMotorOpenPower = CollectorConstants.k_clawMotorOpenSpeed * 1.5),
-                m_intakeIn,
+                // new InstantCommand(
+                //         () -> m_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorCloseSpeed * 1.2),
+                // new InstantCommand(() -> m_collector.m_adjustableClawMotorOpenPower = CollectorConstants.k_clawMotorOpenSpeed * 1.5),
+                // m_intakeIn,
+                // m_collectPreLoadCommand,
+                // m_extensionCarry,
+                // new InstantCommand(() -> m_collector.m_adjustableWheelMotorPower = 0),
+                // m_lowPoleApproach,
+                // m_depositSequenceCommandGroup,
+                // m_intakeOff,
+                // new InstantCommand(
+                //         () -> m_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorCloseSpeed * 3),
+                // new InstantCommand(() -> m_collector.m_collectorState = CollectorState.CLOSED),
+                new InstantCommand(() -> s_Swerve.resetOdometry(runOverChargeStationTrajectory.getInitialPose())),
                 m_collectPreLoadCommand,
-                m_extensionCarry,
-                new InstantCommand(() -> m_collector.m_adjustableWheelMotorPower = 0),
-                m_lowPoleApproach,
+                m_highPoleApproach,
                 m_depositSequenceCommandGroup,
                 m_intakeOff,
-                new InstantCommand(
-                        () -> m_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorCloseSpeed * 3),
-                new InstantCommand(() -> m_collector.m_collectorState = CollectorState.CLOSED),
-                new InstantCommand(() -> s_Swerve.resetOdometry(runOverChargeStationTrajectory.getInitialPose())),
                 runOverChargeStationCommand,
-                new InstantCommand(() -> m_lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower / 2),
-                new InstantCommand(() -> m_lift.m_state = LiftPosition.GROUND_COLLECTION),
-                runBackOntoChargeStationCommand,
-                new InstantCommand(() -> m_lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower),
-                new InstantCommand(() -> m_collector.m_adjustableClawMotorOpenPower = CollectorConstants.k_clawMotorOpenSpeed),
-                new InstantCommand(
-                        () -> m_collector.m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed),
-                new InstantCommand(
-                        () -> m_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed),
-                new InstantCommand(() -> autoBalance(s_Swerve, m_Timer)));
+                //new InstantCommand(() -> m_lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower / 2),
+                //new InstantCommand(() -> m_lift.m_state = LiftPosition.GROUND_COLLECTION),
+                runBackOntoChargeStationCommand
+                //,
+                //new InstantCommand(() -> m_lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower),
+                //new InstantCommand(() -> m_collector.m_adjustableClawMotorOpenPower = CollectorConstants.k_clawMotorOpenSpeed),
+                // new InstantCommand(
+                //         () -> m_collector.m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed),
+                // new InstantCommand(
+                //         () -> m_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed)
+                ,new InstantCommand(() -> autoBalance(s_Swerve, m_Timer))
+                 );
     }
 
     private void autoBalance(Swerve s_Swerve, Timer m_Timer) {
