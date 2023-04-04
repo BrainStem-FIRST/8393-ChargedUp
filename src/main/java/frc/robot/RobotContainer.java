@@ -110,12 +110,13 @@ public class RobotContainer {
    */
   public RobotContainer() {
 
+
     m_swerve.setDefaultCommand(
         new TeleopSwerve(
             m_swerve,
-            () -> -(m_driver1.getRawAxis(k_translationAxis) * Math.abs(m_driver1.getRawAxis(k_translationAxis))),
-            () -> -(m_driver1.getRawAxis(k_strafeAxis) * Math.abs(m_driver1.getRawAxis(k_strafeAxis))),
-            () -> -(m_driver1.getRawAxis(k_rotationAxis) * Math.abs(m_driver1.getRawAxis(k_rotationAxis)) * 1.2),
+            () -> -(m_driver1.getRawAxis(k_translationAxis) * m_lift.m_swerveMultiplyerTranslation),
+            () -> -(m_driver1.getRawAxis(k_strafeAxis) * m_lift.m_swerveMultiplyerTranslation),
+            () -> -(m_driver1.getRawAxis(k_rotationAxis) * m_lift.m_swerveTurningMultiplyer),
             () -> false));
 
     // m_limelight.setDefaultCommand(new DefaultLimelightCommand(m_limelight));

@@ -20,7 +20,7 @@ public class LiftHighPoleCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return m_lift.isLiftAtCorrectPosition();
+        return true;
     }
 
     

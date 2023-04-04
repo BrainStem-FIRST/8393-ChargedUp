@@ -22,6 +22,7 @@ public class ShelfCollectionApproachCommandGroup extends SequentialCommandGroup 
     public ShelfCollectionApproachCommandGroup(Extension extension, Lift lift) {
         addCommands(
             new LiftShelfHeightCommand(lift)
+            ,new WaitCommand(0.5)
             ,new ExtensionCommand(extension, TelescopePosition.COLLECTION)
             
         );

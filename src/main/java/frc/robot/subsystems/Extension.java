@@ -15,10 +15,6 @@ import frc.robot.commandGroups.HighPoleExtensionCommandGroup;
 import frc.robot.commandGroups.LowPoleExtensionCommandGroup;
 import frc.robot.commandGroups.RetractedExtensionCommandGroup;
 import frc.robot.utilities.BrainSTEMSubsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
 
@@ -28,7 +24,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     private static final int k_frontExtensionMotorID = 14; 
     private static final int k_backExtensionMotorID = 31; 
     private static final int k_extensionServoID = 9;
-    private static final double k_proportional = 0.00009; //0.00008
+    private static final double k_proportional = 0.00008;
     private static final double k_integral = 0;
     private static final double k_derivative = 0;
     private static final int k_retractedTelescopeValue = 0; //20000
@@ -49,6 +45,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
   public enum TelescopePosition {
     RETRACTED,
     COLLECTION,
+    GROUND_COLLECTION,
     LOW_POLE,
     HIGH_POLE,
     TRANSITION
@@ -212,6 +209,9 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
       case COLLECTION:
         m_telescopeSetPoint = ExtensionConstants.k_collectionTelescopeValue;
         break;
+      case GROUND_COLLECTION:
+        m_telescopeSetPoint = (int) (ExtensionConstants.k_collectionTelescopeValue * 0.7);
+        break;
       case LOW_POLE:
         m_telescopeSetPoint = ExtensionConstants.k_lowPoleTelescopeValue;
         break;
@@ -231,7 +231,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
       k_MaxPower = ExtensionConstants.k_telescopeMaxPower;
     }
 
-    SmartDashboard.putNumber("k_MaxPower", k_MaxPower);
+    SmartDashboard.putNumber("E - k_MaxPower", k_MaxPower);
 
     if (m_telescopeState != TelescopePosition.RETRACTED) {
       m_backMotor.set(
@@ -255,12 +255,14 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
   @Override
   public void periodic() {
     if (m_enableExtensionPeriodic) {
-      SmartDashboard.putNumber("Telescope Set Point", m_telescopeSetPoint);
-      SmartDashboard.putNumber("Telescope Current Position", m_backMotor.getSelectedSensorPosition());
       setRatchetState();
       setTelescopeState();
       updateWithPID();
       m_frontMotor.follow(m_backMotor);
+
+      // Extensoin TELEMETRY ////////////////////////////////////////////////////////////////////////////////
+      SmartDashboard.putNumber("E - Telescope Set Point", m_telescopeSetPoint);
+      SmartDashboard.putNumber("E - Telescope Current Position", m_backMotor.getSelectedSensorPosition());
     }
   }
 

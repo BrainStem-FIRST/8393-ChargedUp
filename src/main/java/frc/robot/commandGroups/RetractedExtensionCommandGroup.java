@@ -16,11 +16,4 @@ public class RetractedExtensionCommandGroup extends ParallelCommandGroup {
             new ExtensionCommand(extension, TelescopePosition.RETRACTED)
         );
     }
-
-    
-
-    
-        
-    
-
 }

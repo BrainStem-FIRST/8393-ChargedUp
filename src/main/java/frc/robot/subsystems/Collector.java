@@ -8,8 +8,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.utilities.BrainSTEMSubsystem;
 
-import java.security.cert.CertPathValidatorException.BasicReason;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -24,6 +22,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     public static final double k_clawMotorCurrentDrawLimit = 6.50;
     public static final double k_clawMotorHoldingSpeed = 0.20;
     public static final double k_clawMotorCloseSpeed = 0.20;
+    public static final double k_depositingSpeed = -0.50;
     public static final double k_clawMotorOpenSpeed = -0.03;
     public static final double k_wheelMotorSpeed = 0.50; //FIXME
     public static final double k_wheelMotorCurrentDrawLimit = 40; //FIXME
@@ -66,6 +65,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   boolean firstTime = true;
 
   public boolean firstTIme = true;
+
+  public boolean overLimit = false;
 
 
 
@@ -124,9 +125,20 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
 
   public CommandBase exampleMethodCommand() {
     return runOnce(
-        () -> {
+        () -> { 
 
         });
+  }
+
+  public CommandBase runOnceCommand() {
+    return runOnce(
+        () -> { 
+            resetCollectionMotor();
+        });
+  }
+
+  public void resetCollectionMotor() {
+    m_clawMotorEncoder.setPosition(0);
   }
 
   public void killCollectorMotors() {
@@ -167,67 +179,52 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
 
   private void collectorIn() {
     double currentDraw = CollectorConstants.k_clawMotorCurrentDrawLimit;
+
+
+    double speed = m_adjustableWheelMotorPower;
     
-    //  SmartDashboard.putNumber("Collector Current Draw", m_wheelMotor.getOutputCurrent());
-    // if (m_wheelMotor.getOutputCurrent() < CollectorConstants.k_wheelMotorCurrentDrawLimit) {
-    //     m_wheelMotor.set(m_adjustableWheelMotorPower);
-    //     m_wheelMotor2.set(m_adjustableWheelMotorPower);
-    // } else {
-    //   m_intakeState = IntakeState.OFF;
+   
+
+
+    
+
+    // if (hasCollectorReachVelocity()) {
+    //   runOnceCommand();
     // }
-    
-    resetCollectorTimer();
 
-    SmartDashboard.putNumber("C - Timer TIme", m_timer.get());
-    SmartDashboard.putBoolean("C - Timer Boolean ", m_timer.get() < 4);
-    SmartDashboard.putBoolean("CONDITION ", ((m_wheelMotor.getOutputCurrent() > currentDraw || m_wheelMotor2.getOutputCurrent() > currentDraw) && m_timer.get() < 1));
-    SmartDashboard.putBoolean("Collecotr Motor 1", m_wheelMotor.getOutputCurrent() > currentDraw);
-
-    SmartDashboard.putBoolean("Collecotr Motor 2", m_wheelMotor2.getOutputCurrent() > currentDraw);
+    runOnceCommand();
+    SmartDashboard.putBoolean("1AC - CONDITION ", ((m_wheelMotor2.getOutputCurrent() > 5 || (m_clawMotorEncoder.getVelocity() < 4500)) && m_clawMotorEncoder.getPosition() > 2500 ));
+    SmartDashboard.putBoolean("1AC - ENCODER ", m_clawMotorEncoder.getPosition() > 2500);
+    SmartDashboard.putNumber("1AC - ENCODER Position", m_clawMotorEncoder.getPosition());
+    SmartDashboard.putBoolean("1AC - Current Conditoin ", (m_wheelMotor2.getOutputCurrent() > 5 || (m_clawMotorEncoder.getVelocity() < 4500)));
 
     
-    // if (m_wheelMotor2.getOutputCurrent() > currentDraw || m_wheelMotor.getOutputCurrent() > currentDraw) {
-
-    // } else {
-
-    // }
-    m_wheelMotor.set(m_adjustableWheelMotorPower);
-    m_wheelMotor2.set(m_adjustableWheelMotorPower);
-
-    
-
-    // if (!objectCollected) {
-    //   if ((m_wheelMotor.getOutputCurrent() > currentDraw || m_wheelMotor2.getOutputCurrent() > currentDraw) && m_timer.get() < 1) {
-
-    //     killCollectorMotors();
-    //     firstTIme = false;
-    //     objectCollected = true;
-    //     SmartDashboard.putString("COLLECTOR TEST ", getName());
-
-    //   } else {
-
-    //     m_wheelMotor.set(m_adjustableWheelMotorPower);
-    //     m_wheelMotor2.set(m_adjustableWheelMotorPower);
-        
-    //   }
-    // }
-    
-    
+    if ((m_wheelMotor2.getOutputCurrent() > 7.5 || (m_clawMotorEncoder.getVelocity() < 4000)) && m_clawMotorEncoder.getPosition() > 2500 ) {
+      m_wheelMotor.set(0);
+      m_wheelMotor2.set(0);
+      
+    } else {
+      m_wheelMotor.set(m_adjustableWheelMotorPower);
+      m_wheelMotor2.set(m_adjustableWheelMotorPower);
+    }
 
   }
+
+  private boolean hasCollectorReachVelocity() { return m_clawMotorEncoder.getVelocity() > 5000; }
+
 
   private void collectorOut() {
-    m_wheelMotor.set(-m_adjustableWheelMotorPower);
-    m_wheelMotor2.set(-m_adjustableWheelMotorPower);
-
+    m_wheelMotor.set(CollectorConstants.k_depositingSpeed);
+    m_wheelMotor2.set(CollectorConstants.k_depositingSpeed);
+    m_clawMotorEncoder.setPosition(0);
   }
-
+  
   private void collectorOff() {
     m_wheelMotor.setIdleMode(IdleMode.kBrake);
     m_wheelMotor2.setIdleMode(IdleMode.kBrake);
     m_wheelMotor.set(0);
     m_wheelMotor2.set(0);
-    //m_wheelMotor.stopMotor();
+    m_clawMotorEncoder.setPosition(0);
   }
 
   private void stopCollector() {
@@ -235,7 +232,6 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     m_wheelMotor2.setIdleMode(IdleMode.kBrake);
     m_wheelMotor.set(0);
     m_wheelMotor2.set(0);
-
   }
 
 
@@ -339,19 +335,20 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   }
 
   @Override
-  public void periodic() { //single responsibility principle so yea
+  public void periodic() {
     if(m_collectorPeriodicEnabled){
       setIntakeState();
 
       // updateWithFeedForward();
     
-      // setCollectorState();
-      SmartDashboard.putNumber("Collector Wheel  Current Draw ", m_wheelMotor.getOutputCurrent());
-      SmartDashboard.putNumber("Collector Wheel 2 Current Draw ", m_wheelMotor2.getOutputCurrent());
-      // SmartDashboard.putNumber("Collector Claw Motor Current Draw", m_clawMotor.getOutputCurrent());
-      // SmartDashboard.putString("Intake State", m_intakeState.toString());
-      // SmartDashboard.putNumber("Collector Claw Encoder Position", m_clawMotorEncoder.getPosition());
-      // SmartDashboard.putNumber("Claw Speed", m_clawMotor.get());
+
+
+      // COLLECTOR TELEMETRY
+      SmartDashboard.putNumber("C - Collector Wheel  Current Draw ", m_wheelMotor.getOutputCurrent());
+      SmartDashboard.putNumber("C - Collector Wheel 2 Current Draw ", m_wheelMotor2.getOutputCurrent());
+      SmartDashboard.putNumber("C - Collector Wheel 2 Encoder Position", m_clawMotorEncoder.getPosition());
+      SmartDashboard.putNumber("C - COllector Wheel 2 Velocity ", m_clawMotorEncoder.getVelocity());
+      
     }
   }
 

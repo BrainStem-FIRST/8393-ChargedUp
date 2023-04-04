@@ -29,14 +29,14 @@ public class GroundCollectionCommandGroup extends SequentialCommandGroup {
     public GroundCollectionCommandGroup(Extension extension, Lift p_lift, Collector collector) {
         m_lift = p_lift;
             addCommands(
-                new InstantCommand(() -> collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorCloseSpeed),
-                new LiftCarryCommand(p_lift),
-                new CollectionExtensionCommandGroup(extension),
-                new InstantCommand(() -> m_lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower/2),
-                new LiftGroundCommand(p_lift),
-                new InstantCommand(() -> m_lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower),
-                new CollectorOpenCommand(collector),
-                new InstantCommand(() -> collector.m_intakeState = IntakeState.IN)
+                new InstantCommand(() -> collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorCloseSpeed)
+                ,new LiftCarryCommand(p_lift)
+                ,new InstantCommand(() -> extension.m_telescopeState = TelescopePosition.GROUND_COLLECTION)
+                ,new InstantCommand(() -> m_lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower/2)
+                ,new LiftGroundCommand(p_lift)
+                ,new InstantCommand(() -> m_lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower)
+                ,new CollectorOpenCommand(collector)
+                ,new InstantCommand(() -> collector.m_intakeState = IntakeState.IN)
             );
         
       

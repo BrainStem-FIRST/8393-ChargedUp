@@ -4,7 +4,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -13,48 +12,52 @@ import frc.robot.utilities.BrainSTEMSubsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
-import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   public static final class LiftConstants {
+
+    // pid constants 
     public static final double k_P = 0.00003;
     public static final double k_I = 0.0000000;
     public static final double k_D = 0.0000;
 
-    // All Volts 
+    // units r volts
     public static final double k_S = 0.0;
     public static final double k_G = 0.055; 
     public static final double k_V = 0.0000;
 
+    // lift motor ids 
     public static final int k_forwardLiftMotorID = 30;
     public static final int k_backLiftMotorID = 33;
     public static final int k_rightLiftMotorID = 32;
 
+    // lift positions 
     public static final int k_groundCollectionValue = 0;
-    public static final int k_carryValue = Lift.inchesToTicks(1);
+    public static final int k_carryValue = Lift.inchesToTicks(5);
     public static final int k_shelfCollectionValue = Lift.inchesToTicks(17);
-    public static final int k_lowPoleValue = Lift.inchesToTicks(15);
-    public static final int k_highPoleValue = Lift.inchesToTicks(18);
+    public static final int k_lowPoleValue = Lift.inchesToTicks(16);
+    public static final int k_highPoleValue = Lift.inchesToTicks(19);
     public static final int k_highPoleTiltValue = Lift.inchesToTicks(15);
     public static final int k_liftPreLoadPosition = Lift.inchesToTicks(15);
-    public static final double k_MaxPower = .3;
+
+    // power settings
+    public static final double k_MaxPower = 0.75;
     public static final int k_liftTolerance = Lift.inchesToTicks(0.35);
     public static final int k_depositDelta = 400 * 3000;
 
+    // hook servos
     public static final int k_hookServoID = 8;
     public static final double k_hookServoDownPosition = 0.99;
     public static final double k_hookServoUpPosition = 0.5;
+
+    public static final double k_swerveTranslationMultiplier = 0.5;
+    public static final double k_swerveTurningMultiplier = 0.25;
 
   }
 
@@ -73,6 +76,12 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
 
   public double m_adjustableLiftSpeed = LiftConstants.k_MaxPower;
 
+  public double m_swerveMultiplyerTranslation;
+  public double m_swerveTurningMultiplyer;
+
+  public double none = 0;
+
+
   public Lift() {
     m_liftPID = new PIDController(LiftConstants.k_P, LiftConstants.k_I, LiftConstants.k_D);
     m_liftFeedForward = new ElevatorFeedforward(LiftConstants.k_S, LiftConstants.k_G, LiftConstants.k_V);
@@ -89,8 +98,10 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     m_backLift.enableVoltageCompensation(true);
     m_rightLift.enableVoltageCompensation(true);
 
+    // m_forwardLift.setInverted(true);
+    // m_backLift.setInverted(true);
+    // m_rightLift.setInverted(true);
 
-    // m_liftEncoder = new Encoder(2, 5, true, Encoder.EncodingType.k4X);
 
     m_liftEncoder = new DutyCycleEncoder(3);
   }
@@ -140,9 +151,9 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     m_backLift.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 40.0, 40.0, 0.01));
     m_rightLift.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 40.0, 40.0, 0.01));
 
-    m_forwardLift.configNeutralDeadband(0.01);
-    m_backLift.configNeutralDeadband(0.01);
-    m_rightLift.configNeutralDeadband(0.01);
+    m_forwardLift.configNeutralDeadband(0.03);
+    m_backLift.configNeutralDeadband(0.03);
+    m_rightLift.configNeutralDeadband(0.03);
 
     resetLiftEncoder();
     m_liftPID.setTolerance(45);
@@ -210,22 +221,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     m_forwardLift.setNeutralMode(NeutralMode.Coast);
     m_backLift.setNeutralMode(NeutralMode.Coast);
     m_rightLift.setNeutralMode(NeutralMode.Coast);
-    // mforwardLift.set(.1*mliftPID.calculate(mliftForwardEncoder.getPosition(),
-    // 0));
   }
-
-  // public void cycleHookServo(){
-  // if(m_hookServo.get() == LiftConstants.k_hookServoUpPosition) {
-  // m_hookServo.set(0.5);
-  // SmartDashboard.putString("Hook Servo", "0.5");
-  // } else if (m_hookServo.get() == 0.5) {
-  // m_hookServo.set(LiftConstants.k_hookServoDownPosition);
-  // SmartDashboard.putString("Hook Servo", "Hook Down Position");
-  // } else if (m_hookServo.get() == LiftConstants.k_hookServoDownPosition) {
-  // m_hookServo.set(LiftConstants.k_hookServoUpPosition);
-  // SmartDashboard.putString("Hook Servo", "Hook Up Position");
-  // }
-  // }
 
   public static int inchesToTicks(double inches) {
     return (int) (((2048) / 1.75) * inches);
@@ -336,11 +332,11 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     m_backLift.setNeutralMode(NeutralMode.Brake);
     m_rightLift.setNeutralMode(NeutralMode.Brake);
 
-    SmartDashboard.putNumber("Lift Setpoint", m_liftSetPoint);
-    SmartDashboard.putNumber("Lift PID Output",
+    SmartDashboard.putNumber("L - Lift Setpoint", m_liftSetPoint);
+    SmartDashboard.putNumber("L - Lift PID Output",
         MathUtil.clamp(m_liftPID.calculate(m_forwardLift.getSelectedSensorPosition(), m_liftSetPoint),
             -m_adjustableLiftSpeed, m_adjustableLiftSpeed));
-    SmartDashboard.putNumber("Lift Motor Encoder", m_forwardLift.getSelectedSensorPosition());
+    SmartDashboard.putNumber("L - Lift Motor Encoder", m_forwardLift.getSelectedSensorPosition());
 
 
     double liftPosition = m_forwardLift.getSelectedSensorPosition();
@@ -352,13 +348,19 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     // } else {
 
 
-    if (m_state == m_state.CARRY && liftPosition < 2000) {
+    if (m_liftSetPoint < 2000 && liftPosition < 2000) {
+
+      
       m_forwardLift.set(ControlMode.PercentOutput, 0);
       m_backLift.set(ControlMode.PercentOutput, 0);
       m_rightLift.set(ControlMode.PercentOutput, 0);
+
+
     } else if (liftPosition > m_liftSetPoint) {
 
-      double motorPercentOutput = 0.3 * (MathUtil.clamp(m_liftPID.calculate(liftPosition, m_liftSetPoint),
+
+
+      double motorPercentOutput = 0.55 * (MathUtil.clamp(m_liftPID.calculate(liftPosition, m_liftSetPoint),
       -m_adjustableLiftSpeed, m_adjustableLiftSpeed));
     
       double feedForwardOutput = m_liftFeedForward.calculate(m_liftSetPoint);
@@ -372,9 +374,11 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
        m_rightLift.set(TalonFXControlMode.PercentOutput,
       -motorPercentOutput, DemandType.ArbitraryFeedForward, -feedForwardOutput);
 
-      SmartDashboard.putNumber("Feed Forward for Lift ", feedForwardOutput);
+      SmartDashboard.putNumber("L - Feed Forward for Lift ", feedForwardOutput);
 
     } else {
+
+
       double motorPercentOutput = (MathUtil.clamp(m_liftPID.calculate(liftPosition, m_liftSetPoint),
       -m_adjustableLiftSpeed, m_adjustableLiftSpeed));
     
@@ -389,10 +393,21 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
        m_rightLift.set(TalonFXControlMode.PercentOutput,
       -motorPercentOutput, DemandType.ArbitraryFeedForward, -feedForwardOutput);
 
-      SmartDashboard.putNumber("Feed Forward for Lift ", feedForwardOutput);
+      SmartDashboard.putNumber("L - Feed Forward for Lift ", feedForwardOutput);
+
 
     }
 
+  }
+
+  public void makeDrivingEasier() {
+    if (m_forwardLift.getSelectedSensorPosition() > Lift.inchesToTicks(10)) {
+      m_swerveMultiplyerTranslation = LiftConstants.k_swerveTranslationMultiplier;
+      m_swerveTurningMultiplyer = LiftConstants.k_swerveTurningMultiplier;
+    } else {
+      m_swerveMultiplyerTranslation = none;
+      m_swerveTurningMultiplyer = none;
+    }
   }
 
   public boolean isLiftAtCorrectPosition() {
@@ -404,36 +419,20 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   @Override
   public void periodic() {
     if (m_enableLiftPeriodic) {
-      SmartDashboard.putString("Lift State", m_state.toString());
-      SmartDashboard.putBoolean("Lift Periodic Called", true);
-      SmartDashboard.getNumber("Hook Position set", m_hookServo.get());
-      SmartDashboard.putNumber("Forward Lift Encoder", m_forwardLift.getSelectedSensorPosition());
-      SmartDashboard.putNumber("Lift Back Encoder", m_backLift.getSelectedSensorPosition());
       
       setLiftState();
-      SmartDashboard.putNumber("Front Motor Current",
-          m_forwardLift.getSupplyCurrent());
-      SmartDashboard.putNumber("Back Motor Current",
-          m_backLift.getSupplyCurrent());
-      SmartDashboard.putNumber("Right Motor Current",
-          m_rightLift.getSupplyCurrent());
-      SmartDashboard.putNumber("Front Motor Deprecated Current ",
-          m_forwardLift.getOutputCurrent());
       setHookState();
       updateWithPID();
 
-      // m_backLift.setNeutralMode(NeutralMode.Coast);
-      // m_forwardLift.setNeutralMode(NeutralMode.Coast);
-      // m_rightLift.setNeutralMode(NeutralMode.Coast);
 
-
-
-
-      SmartDashboard.putNumber("Lift back Motor Encoder ", m_backLift.getSelectedSensorPosition());
-      SmartDashboard.putNumber("Lift front Motor Encoder ", m_forwardLift.getSelectedSensorPosition());
-      SmartDashboard.putNumber("Lift right Motor Encoder ", m_rightLift.getSelectedSensorPosition());
-      SmartDashboard.putNumber("Lift Throughbore Encoder", m_liftEncoder.get());
-      SmartDashboard.putBoolean("Lift Throughbore Encoder Connected", m_liftEncoder.isConnected());
+      // LIFT TELEMETRY ////////////////////////////////////////////////////////////////////////////////
+      SmartDashboard.putString("L - Lift State", m_state.toString());
+      SmartDashboard.putBoolean("L - Lift Periodic Called", true);
+      SmartDashboard.putNumber("L -  Back Motor Encoder ", m_backLift.getSelectedSensorPosition());
+      SmartDashboard.putNumber("L -  Bront Motor Encoder ", m_forwardLift.getSelectedSensorPosition());
+      SmartDashboard.putNumber("L -  Bight Motor Encoder ", m_rightLift.getSelectedSensorPosition());
+      SmartDashboard.putNumber("L -  Throughbore Encoder Reading", m_liftEncoder.get());
+      SmartDashboard.putBoolean("L -  Throughbore Encoder Connected", m_liftEncoder.isConnected());
     }
   }
 

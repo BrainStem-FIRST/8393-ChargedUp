@@ -21,7 +21,6 @@ import frc.robot.RobotContainer.JoystickConstants;
 import frc.robot.autos.AutoCenter;
 import frc.robot.commandGroups.CarryRetractedCommandGroup;
 import frc.robot.commandGroups.DepositSequenceCommandGroup;
-import frc.robot.commandGroups.DepositSequenceCommandGroup2;
 import frc.robot.commandGroups.DepositSequenceHighPoleCommandGroup;
 import frc.robot.commandGroups.GroundCollectionCommandGroup;
 import frc.robot.commandGroups.GroundCollectionSequenceCommandGroup;
@@ -280,11 +279,7 @@ public class Robot extends TimedRobot {
       }
     }
 
-    
-
-
-
-
+  
     // DRIVER BUTTON ////////////////////////////////////////////////////////////////////////
 
     if(m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) < 0.7) {
@@ -296,19 +291,13 @@ public class Robot extends TimedRobot {
       if(m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) > 0.7) { //  && !hasDepositingRun
         hasDepositingRun = true;
         new DepositSequenceCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule(); 
-        // if (/* s_depositLocation == DepositLocation.HIGH */ false) {
-        //   //new DepositSequenceHighPoleCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule();
-        // } else {
-        //   new DepositSequenceCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule(); 
-        //   //new ShelfCarryRetractedCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift, m_robotContainer.m_collector).schedule();
-
-        // }
       }
 
       if (m_robotContainer.m_driver1XButton.getAsBoolean() && (m_robotContainer.m_lift.m_state != LiftPosition.HIGH_POLE_TILT) && (m_robotContainer.m_lift.m_state != LiftPosition.HIGH_POLE)) { // && (m_robotContainer.m_lift.m_state != LiftPosition.HIGH_POLE_TILT) && (m_robotContainer.m_lift.m_state != LiftPosition.HIGH_POLE)
         s_depositLocation = DepositLocation.LOW;
         new LowPoleApproachCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift, m_robotContainer.m_collector).schedule();
       }
+
       if (m_robotContainer.m_driver1YButton.getAsBoolean() && (m_robotContainer.m_lift.m_state != LiftPosition.LOW_POLE)) { //&& (m_robotContainer.m_lift.m_state != LiftPosition.LOW_POLE)
         s_depositLocation = DepositLocation.HIGH;
         new HighPoleApproachCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift, m_robotContainer.m_collector).schedule();
@@ -316,6 +305,7 @@ public class Robot extends TimedRobot {
       
       
     } else {
+
       /* Collector */
       if(!m_driver1_A.getState()) {
         hasGroundCollectionRun = false;
@@ -349,19 +339,16 @@ public class Robot extends TimedRobot {
 
           hasShelfCarryRetractedRun = true;
           new ShelfCarryRetractedCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift, m_robotContainer.m_collector).schedule();
-          //new DepositSequenceCommandGroup2(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule(); 
-
+          m_robotContainer.m_collector.overLimit = false;
           m_robotContainer.m_collector.m_intakeState = IntakeState.OFF;
-          //m_robotContainer.m_collector.firstTIme = false;
 
         } else if (!hasCarryRetractedRun){
 
           m_robotContainer.m_collector.objectCollected = false;
+          m_robotContainer.m_collector.overLimit = false;
           hasCarryRetractedRun = true;
-          //new DepositSequenceCommandGroup2(m_robotContainer.m_lift, m_robotContainer.m_extension, m_robotContainer.m_collector).schedule(); 
           m_robotContainer.m_carryRetracted.schedule();
           m_robotContainer.m_collector.m_intakeState = IntakeState.OFF;
-          //m_robotContainer.m_collector.firstTIme = false;
 
 
         }
@@ -374,7 +361,7 @@ public class Robot extends TimedRobot {
 
       /* Intake Control */
       if (m_robotContainer.m_driver2.getRawAxis(JoystickConstants.k_rightTrigger) > 0.5) {
-        m_robotContainer.m_collector.m_intakeState = IntakeState.OUT;
+        m_robotContainer.m_collector.m_intakeState = IntakeState.IN;
         m_robotContainer.m_collector.m_collectingByCommand = false;
       } else if (!m_robotContainer.m_collector.m_collectingByCommand) {
         m_robotContainer.m_collector.m_intakeState = IntakeState.OFF;
@@ -405,7 +392,7 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().cancelAll();
   }
 
-  /** This function is called periodically during test mode. */
+ 
   @Override
   public void testPeriodic() {}
 }

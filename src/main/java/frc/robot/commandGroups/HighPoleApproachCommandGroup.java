@@ -29,6 +29,7 @@ public class HighPoleApproachCommandGroup extends SequentialCommandGroup {
         addCommands(
             
             new LiftHighPoleCommand(lift)
+            , new WaitCommand(0.35)
             ,new HighPoleExtensionCommandGroup(extension)
         );
       
