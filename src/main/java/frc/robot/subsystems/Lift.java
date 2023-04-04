@@ -40,9 +40,9 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     // lift positions 
     public static final int k_groundCollectionValue = 0;
     public static final int k_carryValue = Lift.inchesToTicks(5);
-    public static final int k_shelfCollectionValue = Lift.inchesToTicks(17);
-    public static final int k_lowPoleValue = Lift.inchesToTicks(16);
-    public static final int k_highPoleValue = Lift.inchesToTicks(19);
+    public static final int k_shelfCollectionValue = Lift.inchesToTicks(17.7);
+    public static final int k_lowPoleValue = Lift.inchesToTicks(16.7);
+    public static final int k_highPoleValue = Lift.inchesToTicks(20);
     public static final int k_highPoleTiltValue = Lift.inchesToTicks(15);
     public static final int k_liftPreLoadPosition = Lift.inchesToTicks(15);
 
@@ -57,7 +57,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     public static final double k_hookServoUpPosition = 0.5;
 
     public static final double k_swerveTranslationMultiplier = 0.5;
-    public static final double k_swerveTurningMultiplier = 0.25;
+    public static final double k_swerveTurningMultiplier = 0.4;
 
   }
 
@@ -76,8 +76,8 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
 
   public double m_adjustableLiftSpeed = LiftConstants.k_MaxPower;
 
-  public double m_swerveMultiplyerTranslation;
-  public double m_swerveTurningMultiplyer;
+  public double m_swerveMultiplyerTranslation = 1;
+  public double m_swerveTurningMultiplyer = 1;
 
   public double none = 0;
 
@@ -360,7 +360,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
 
 
 
-      double motorPercentOutput = 0.55 * (MathUtil.clamp(m_liftPID.calculate(liftPosition, m_liftSetPoint),
+      double motorPercentOutput = 0.35 * (MathUtil.clamp(m_liftPID.calculate(liftPosition, m_liftSetPoint),
       -m_adjustableLiftSpeed, m_adjustableLiftSpeed));
     
       double feedForwardOutput = m_liftFeedForward.calculate(m_liftSetPoint);
@@ -405,8 +405,8 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
       m_swerveMultiplyerTranslation = LiftConstants.k_swerveTranslationMultiplier;
       m_swerveTurningMultiplyer = LiftConstants.k_swerveTurningMultiplier;
     } else {
-      m_swerveMultiplyerTranslation = none;
-      m_swerveTurningMultiplyer = none;
+      m_swerveMultiplyerTranslation = 1;
+      m_swerveTurningMultiplyer = 1;
     }
   }
 
@@ -423,6 +423,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
       setLiftState();
       setHookState();
       updateWithPID();
+      makeDrivingEasier();
 
 
       // LIFT TELEMETRY ////////////////////////////////////////////////////////////////////////////////
@@ -433,6 +434,9 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
       SmartDashboard.putNumber("L -  Bight Motor Encoder ", m_rightLift.getSelectedSensorPosition());
       SmartDashboard.putNumber("L -  Throughbore Encoder Reading", m_liftEncoder.get());
       SmartDashboard.putBoolean("L -  Throughbore Encoder Connected", m_liftEncoder.isConnected());
+
+      SmartDashboard.putNumber("LS - Translation Multiplier ", m_swerveMultiplyerTranslation);
+      SmartDashboard.putNumber("LS - Turning Multiplyer ", m_swerveTurningMultiplyer);
     }
   }
 

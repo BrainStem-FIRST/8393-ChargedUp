@@ -199,7 +199,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     SmartDashboard.putBoolean("1AC - Current Conditoin ", (m_wheelMotor2.getOutputCurrent() > 5 || (m_clawMotorEncoder.getVelocity() < 4500)));
 
     
-    if ((m_wheelMotor2.getOutputCurrent() > 7.5 || (m_clawMotorEncoder.getVelocity() < 4000)) && m_clawMotorEncoder.getPosition() > 2500 ) {
+    if ((m_wheelMotor2.getOutputCurrent() > 12 || (m_clawMotorEncoder.getVelocity() < 2000)) && m_clawMotorEncoder.getPosition() > 2500 ) {
       m_wheelMotor.set(0);
       m_wheelMotor2.set(0);
       
@@ -207,7 +207,6 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
       m_wheelMotor.set(m_adjustableWheelMotorPower);
       m_wheelMotor2.set(m_adjustableWheelMotorPower);
     }
-
   }
 
   private boolean hasCollectorReachVelocity() { return m_clawMotorEncoder.getVelocity() > 5000; }
