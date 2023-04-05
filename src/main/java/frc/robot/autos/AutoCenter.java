@@ -161,13 +161,7 @@ public class AutoCenter extends SequentialCommandGroup {
 
                                 // score on low pole command here
                                 new InstantCommand(() -> m_Timer.start()),
-                                //new RaiseToUnlockRatchetCommand(m_lift)
-                                new InstantCommand(
-                                                () -> m_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorCloseSpeed
-                                                                * 1.2),
-                                new InstantCommand(
-                                                () -> m_collector.m_adjustableClawMotorOpenPower = CollectorConstants.k_clawMotorOpenSpeed
-                                                                * 1.5),
+                                new RaiseToUnlockRatchetCommand(m_lift),
 
                                 new InstantCommand(() -> s_Swerve
                                                 .resetOdometry(runOverChargeStationTrajectory.getInitialPose())),
@@ -177,8 +171,7 @@ public class AutoCenter extends SequentialCommandGroup {
                                 // runOverChargeStationCommand,
                                 // runBackOntoChargeStationCommand
 
-                                new InstantCommand(() -> autoBalance(s_Swerve, m_Timer)),
-                                new InstantCommand(() -> m_lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower)
+                                new InstantCommand(() -> autoBalance(s_Swerve, m_Timer))
 
                 );
         }

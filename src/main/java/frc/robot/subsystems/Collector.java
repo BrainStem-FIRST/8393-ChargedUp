@@ -22,7 +22,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     public static final double k_clawMotorCurrentDrawLimit = 6.50;
     public static final double k_clawMotorHoldingSpeed = 0.20;
     public static final double k_clawMotorCloseSpeed = 0.20;
-    public static final double k_depositingSpeed = -0.6;
+    public static final double k_depositingSpeed = -0.4; //0.4
     public static final double k_clawMotorOpenSpeed = -0.03;
     public static final double k_wheelMotorSpeed = 0.50; //FIXME
     public static final double k_wheelMotorCurrentDrawLimit = 40; //FIXME
@@ -199,10 +199,9 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     SmartDashboard.putBoolean("1AC - Current Conditoin ", (m_wheelMotor2.getOutputCurrent() > 5 || (m_clawMotorEncoder.getVelocity() < 4500)));
 
     
-    if ((m_wheelMotor2.getOutputCurrent() > 12 || (m_clawMotorEncoder.getVelocity() < 2000)) && m_clawMotorEncoder.getPosition() > 2500 ) {
+    if ((m_wheelMotor2.getOutputCurrent() > 10 || (m_clawMotorEncoder.getVelocity() < 2000)) && m_clawMotorEncoder.getPosition() > 4500) {
       m_wheelMotor.set(0);
       m_wheelMotor2.set(0);
-      
     } else {
       m_wheelMotor.set(m_adjustableWheelMotorPower);
       m_wheelMotor2.set(m_adjustableWheelMotorPower);

@@ -23,7 +23,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   public static final class LiftConstants {
 
     // pid constants
-    public static final double k_P = 0.00003;
+    public static final double k_P = 0.000105;
     public static final double k_I = 0.0000000;
     public static final double k_D = 0.0000;
 
@@ -40,14 +40,14 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     // lift positions
     public static final int k_groundCollectionValue = 0;
     public static final int k_carryValue = Lift.inchesToTicks(5);
-    public static final int k_shelfCollectionValue = Lift.inchesToTicks(17.7);
-    public static final int k_lowPoleValue = Lift.inchesToTicks(16.7);
-    public static final int k_highPoleValue = Lift.inchesToTicks(18);
+    public static final int k_shelfCollectionValue = Lift.inchesToTicks(18.5);
+    public static final int k_lowPoleValue = Lift.inchesToTicks(18.2); //16.7
+    public static final int k_highPoleValue = Lift.inchesToTicks(21.0); //18
     public static final int k_highPoleTiltValue = Lift.inchesToTicks(15);
     public static final int k_liftPreLoadPosition = Lift.inchesToTicks(15);
 
     // power settings
-    public static final double k_MaxPower = 0.2; // 0.75
+    public static final double k_MaxPower = 0.06; // 0.06
     public static final int k_liftTolerance = Lift.inchesToTicks(0.35);
     public static final int k_depositDelta = 400 * 3000;
 
@@ -56,7 +56,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     public static final double k_hookServoDownPosition = 0.99;
     public static final double k_hookServoUpPosition = 0.5;
 
-    public static final double k_liftGoingDownSpeed = 0.01;
+    public static final double k_liftGoingDownSpeed = 0.02;
 
     public static final double k_swerveTranslationMultiplier = 0.5;
     public static final double k_swerveTurningMultiplier = 0.4;
@@ -325,14 +325,12 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
       case COLLECT_PRELOAD:
         m_liftSetPoint = LiftConstants.k_liftPreLoadPosition;
         break;
-      case RATCHET: {
+      case RATCHET:
         m_liftSetPoint = -69;
         break;
-      }
-      case STOP: {
+      case STOP:
         m_liftSetPoint = -420;
         break;
-      }
     }
   }
 
@@ -438,6 +436,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
       setHookState();
       updateWithPID();
       makeDrivingEasier();
+
       // m_forwardLift.setNeutralMode(NeutralMode.Coast);
       // m_backLift.setNeutralMode(NeutralMode.Coast);
       // m_rightLift.setNeutralMode(NeutralMode.Coast);
