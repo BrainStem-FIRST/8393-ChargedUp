@@ -158,7 +158,8 @@ public class Robot extends TimedRobot {
     for(BrainSTEMSubsystem isubsystem: brainSTEMSubsystems){
       isubsystem.initialize();
     }
-    AutoCenter.sideAuto = true;
+    m_robotContainer.m_lift.m_state = LiftPosition.HIGH_POLE;
+    
   }
 
   
