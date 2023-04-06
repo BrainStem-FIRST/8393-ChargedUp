@@ -128,7 +128,7 @@ public class AutoCenter extends SequentialCommandGroup {
                                 ),
                                 // End 5 meters behind ahead of where we started, rotating 180 degrees, now
                                 // facing forward
-                                new Pose2d(3.6, 0, new Rotation2d(Math.toRadians(0))),
+                                new Pose2d(3.65, 0, new Rotation2d(Math.toRadians(0))), //3.6 before
                                 runBackOntoChargeStationConfig);
 
                 var thetaController = new ProfiledPIDController(
@@ -248,6 +248,7 @@ public class AutoCenter extends SequentialCommandGroup {
 
                 while (pitch > 5 && x < 250000) { //8
                         pitch = s_Swerve.getTilt();
+                     
                         double power = MathUtil.clamp(m_balancePID.calculate(pitch, 0), -0.25, 0.25);
 
                         m_teleopSwerve = new TeleopSwerve(

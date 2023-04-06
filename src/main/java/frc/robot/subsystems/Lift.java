@@ -23,7 +23,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   public static final class LiftConstants {
 
     // pid constants
-    public static final double k_P = 0.000105;
+    public static final double k_P = 0.000125;
     public static final double k_I = 0.0000000;
     public static final double k_D = 0.0000;
 
@@ -42,7 +42,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     // lift positions
     public static final int k_groundCollectionValue = 0;
     public static final int k_carryValue = Lift.inchesToTicks(5);
-    public static final int k_shelfCollectionValue = Lift.inchesToTicks(18.5);
+    public static final int k_shelfCollectionValue = Lift.inchesToTicks(18.6);
     public static final int k_lowPoleValue = Lift.inchesToTicks(18.2); // 16.7
     public static final int k_highPoleValue = Lift.inchesToTicks(21.0); // 18
     public static final int k_highPoleTiltValue = Lift.inchesToTicks(15);
@@ -58,7 +58,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     public static final double k_hookServoDownPosition = 0.99;
     public static final double k_hookServoUpPosition = 0.5;
 
-    public static final double k_liftGoingDownSpeed = 0.15;
+    public static final double k_liftGoingDownSpeed = 0.12;
 
     public static final double k_swerveTranslationMultiplier = 0.5;
     public static final double k_swerveTurningMultiplier = 0.4;
@@ -147,13 +147,13 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     m_backLift.set(TalonFXControlMode.PercentOutput, 0);
     m_rightLift.set(TalonFXControlMode.PercentOutput, 0);
 
-    m_forwardLift.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 40.0, 40.0, 0.01));
-    m_backLift.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 40.0, 40.0, 0.01));
-    m_rightLift.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 40.0, 40.0, 0.01));
+    m_forwardLift.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 38.0, 38.0, 0.01));
+    m_backLift.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 38.0, 38.0, 0.01));
+    m_rightLift.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 38.0, 38.0, 0.01));
 
-    m_forwardLift.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 40.0, 40.0, 0.01));
-    m_backLift.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 40.0, 40.0, 0.01));
-    m_rightLift.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 40.0, 40.0, 0.01));
+    m_forwardLift.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 38.0, 38.0, 0.01));
+    m_backLift.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 38.0, 38.0, 0.01));
+    m_rightLift.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 38.0, 38.0, 0.01));
 
     m_forwardLift.configNeutralDeadband(0.03);
     m_backLift.configNeutralDeadband(0.03);
@@ -325,7 +325,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
         m_liftSetPoint = LiftConstants.k_liftPreLoadPosition;
         break;
       case RATCHET:
-        m_liftSetPoint = 27001;
+        m_liftSetPoint = 70001;
         break;
     }
   }
@@ -346,7 +346,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   
       double liftPosition = m_forwardLift.getSelectedSensorPosition();
   
-      if (m_liftSetPoint > 27000) {
+      if (m_liftSetPoint > 70000) {
         m_forwardLift.set(ControlMode.PercentOutput, 0.04);
         m_backLift.set(ControlMode.PercentOutput, 0.04);
         m_rightLift.set(ControlMode.PercentOutput, 0.04);
