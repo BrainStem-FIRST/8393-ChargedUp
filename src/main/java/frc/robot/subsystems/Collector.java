@@ -189,8 +189,13 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem {
     SmartDashboard.putBoolean("1AC - Current Conditoin ",
         (m_wheelMotor2.getOutputCurrent() > 5 || (m_clawMotorEncoder.getVelocity() < 4500)));
 
-    m_wheelMotor.set(m_adjustableWheelMotorPower);
-    m_wheelMotor2.set(m_adjustableWheelMotorPower);
+    if((m_clawMotorEncoder.getVelocity() < 4500) && (m_clawMotorEncoder.getPosition() > 2500)) {
+      collectorHold();
+    } else {
+      m_wheelMotor.set(m_adjustableWheelMotorPower);
+      m_wheelMotor2.set(m_adjustableWheelMotorPower);
+    }
+    
 
   }
 
