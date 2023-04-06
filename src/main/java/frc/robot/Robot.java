@@ -116,7 +116,7 @@ public class Robot extends TimedRobot {
     brainSTEMSubsystemsWithoutSwerve.remove(m_robotContainer.m_swerve);
     
   }
-  
+
   /**
    * This function is called every robot packet, no matter the mode. Use this for items like
    * diagnostics that you want ran during disabled, autonomous, teleoperated and test.
@@ -331,7 +331,6 @@ public class Robot extends TimedRobot {
         m_robotContainer.m_collector.m_collectingByCommand = true;
 
       } else if (m_driver1_A.getState() && !hasGroundCollectionRun) {
-
         SmartDashboard.putString("Lift Extension", "Ground");
         m_robotContainer.m_groundCollection.schedule();
         hasGroundCollectionRun = true;
@@ -346,7 +345,7 @@ public class Robot extends TimedRobot {
           hasShelfCarryRetractedRun = true;
           new ShelfCarryRetractedCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift, m_robotContainer.m_collector).schedule();
           m_robotContainer.m_collector.overLimit = false;
-          m_robotContainer.m_collector.m_intakeState = IntakeState.OFF;
+          new InstantCommand(() -> m_robotContainer.m_collector.m_intakeState = IntakeState.HOLD_IN).schedule();
 
         } else if (!hasCarryRetractedRun){
 
@@ -354,7 +353,7 @@ public class Robot extends TimedRobot {
           m_robotContainer.m_collector.overLimit = false;
           hasCarryRetractedRun = true;
           m_robotContainer.m_carryRetracted.schedule();
-          m_robotContainer.m_collector.m_intakeState = IntakeState.OFF;
+          new InstantCommand(() -> m_robotContainer.m_collector.m_intakeState = IntakeState.HOLD_IN).schedule();
 
 
         }

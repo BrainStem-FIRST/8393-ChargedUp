@@ -15,6 +15,7 @@ import frc.robot.subsystems.Collector;
 import frc.robot.subsystems.Extension;
 import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Collector.CollectorConstants;
+import frc.robot.subsystems.Collector.IntakeState;
 import frc.robot.subsystems.Extension.TelescopePosition;
 import frc.robot.subsystems.Lift.LiftPosition;
 
@@ -24,7 +25,8 @@ public class LowPoleApproachCommandGroup extends SequentialCommandGroup {
         addCommands(
             new LiftLowPoleCommand(lift)
             , new WaitCommand(0.35)
-            ,new LowPoleExtensionCommandGroup(extension)
+            ,new LowPoleExtensionCommandGroup(extension),
+            new InstantCommand(() -> collector.m_intakeState = IntakeState.OFF)
         );
       
     }

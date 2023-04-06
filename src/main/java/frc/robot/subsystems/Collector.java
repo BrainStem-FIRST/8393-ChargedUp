@@ -44,7 +44,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   public enum IntakeState {
     IN,
     OFF,
-    OUT
+    OUT,
+    HOLD_IN
   }
 
   public CollectorState m_collectorState = CollectorState.OFF;
@@ -200,7 +201,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     SmartDashboard.putBoolean("1AC - Current Conditoin ", (m_wheelMotor2.getOutputCurrent() > 5 || (m_clawMotorEncoder.getVelocity() < 4500)));
 
     
-    if ((m_wheelMotor2.getOutputCurrent() > 12 || (m_clawMotorEncoder.getVelocity() < 2000)) && m_clawMotorEncoder.getPosition() > 4500) {
+    if (false) { //m_wheelMotor2.getOutputCurrent() > 12 || ((m_clawMotorEncoder.getVelocity() < 2000)) && m_clawMotorEncoder.getPosition() > 4500
       m_wheelMotor.set(0.04);
       m_wheelMotor2.set(0.04);
     } else {
@@ -221,16 +222,16 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   private void collectorOff() {
     m_wheelMotor.setIdleMode(IdleMode.kBrake);
     m_wheelMotor2.setIdleMode(IdleMode.kBrake);
-    m_wheelMotor.set(0);
-    m_wheelMotor2.set(0);
+    m_wheelMotor.set(0.1);
+    m_wheelMotor2.set(0.1);
     m_clawMotorEncoder.setPosition(0);
   }
 
   private void stopCollector() {
     m_wheelMotor.setIdleMode(IdleMode.kBrake);
     m_wheelMotor2.setIdleMode(IdleMode.kBrake);
-    m_wheelMotor.set(0);
-    m_wheelMotor2.set(0);
+    m_wheelMotor.set(0.0);
+    m_wheelMotor2.set(0.0);
   }
 
 
@@ -304,10 +305,13 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
         collectorIn();
         break;
       case OFF:
-        collectorOff();
+        stopCollector();
         break;
       case OUT:
         collectorOut();
+        break;
+      case HOLD_IN:
+        collectorOff();
         break;
     } 
   }
