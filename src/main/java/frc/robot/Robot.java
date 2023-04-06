@@ -186,7 +186,7 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-
+    
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
@@ -213,24 +213,32 @@ public class Robot extends TimedRobot {
   }
 
   private void setRobotState() {
-    if (m_robotContainer.m_driver2AButton.getAsBoolean()) {
+    if (m_robotContainer.m_driver2BButton.getAsBoolean()) {
       m_driver1_X.setState(false);
       m_driver1_A.setState(false);
-      new InstantCommand(() -> m_robotContainer.m_collector.m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed).schedule();
       m_robotContainer.m_collector.m_collectorState = CollectorState.CLOSED;
       s_robotMode = RobotMode.COLLECTING;
-    } else if (m_robotContainer.m_driver2BButton.getAsBoolean()) {
+    } else if (m_robotContainer.m_driver2XButton.getAsBoolean()) {
       m_driver1_X.setState(false);
       m_driver1_A.setState(false);
       s_robotMode = RobotMode.DEPOSITING;
     }
   }
 
+
   
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+
+    if(m_robotContainer.m_driver2AButton.getAsBoolean()) {
+      new InstantCommand(() -> m_robotContainer.m_collector.m_adjustableWheelHoldingPower = 0).schedule();
+      new InstantCommand(() -> m_robotContainer.m_collector.m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed / 2).schedule();
+    } else if (m_robotContainer.m_driver2YButton.getAsBoolean()) {
+      new InstantCommand(() -> m_robotContainer.m_collector.m_adjustableWheelHoldingPower = CollectorConstants.k_wheelMotorHoldingSpeed).schedule();
+      new InstantCommand(() -> m_robotContainer.m_collector.m_adjustableWheelMotorPower =  CollectorConstants.k_wheelMotorSpeed).schedule();
+    }
 
     // if (m_robotContainer.m_driver2YButton.getAsBoolean()) {
     //   new InstantCommand(() -> m_robotContainer.m_lift.liftRawPower(-0.085)).schedule();
@@ -245,6 +253,8 @@ public class Robot extends TimedRobot {
     // if(m_robotContainer.m_driver2XButton.getAsBoolean()) {
     //   new AlignWheels(m_robotContainer.m_swerve).schedule();
     // }
+
+    
 
     // MONK DRIVE & OTHER STUFF? //////////////////////////////////////////////////////////
     if(m_robotContainer.m_driver1BButton.getAsBoolean()) {
@@ -364,13 +374,13 @@ public class Robot extends TimedRobot {
          m_robotContainer.m_collector.firstTIme = true;
       }
 
-      /* Intake Control */
-      if (m_robotContainer.m_driver2.getRawAxis(JoystickConstants.k_rightTrigger) > 0.5) {
-        m_robotContainer.m_collector.m_intakeState = IntakeState.IN;
-        m_robotContainer.m_collector.m_collectingByCommand = false;
-      } else if (!m_robotContainer.m_collector.m_collectingByCommand) {
-        m_robotContainer.m_collector.m_intakeState = IntakeState.OFF;
-      }
+      // /* Intake Control */
+      // if (m_robotContainer.m_driver2.getRawAxis(JoystickConstants.k_rightTrigger) > 0.5) {
+      //   m_robotContainer.m_collector.m_intakeState = IntakeState.IN;
+      //   m_robotContainer.m_collector.m_collectingByCommand = false;
+      // } else if (!m_robotContainer.m_collector.m_collectingByCommand) {
+      //   m_robotContainer.m_collector.m_intakeState = IntakeState.OFF;
+      // }
 
     }
 

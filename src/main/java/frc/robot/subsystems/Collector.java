@@ -13,22 +13,20 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
-  
+public class Collector extends SubsystemBase implements BrainSTEMSubsystem {
+
   public static final class CollectorConstants {
     public static final int k_wheelMotor2ID = 19;
     public static final int k_wheelMotorID = 22;
     public static final int k_clawDepositPosition = 509;
     public static final double k_clawMotorCurrentDrawLimit = 6.50;
-    public static final double k_clawMotorHoldingSpeed = 0.20;
-    public static final double k_clawMotorCloseSpeed = 0.20;
-    public static final double k_depositingSpeed = -0.4; //0.4
-    public static final double k_clawMotorOpenSpeed = -0.03;
-    public static final double k_wheelMotorSpeed = 0.50; //FIXME
-    public static final double k_wheelMotorCurrentDrawLimit = 40; //FIXME
-    public static final double k_p = 0.0005; //FIXME
-    public static final double k_i = 0; //FIXME
-    public static final double k_d = 0; //FIXME
+    public static final double k_wheelMotorHoldingSpeed = 0.10;
+    public static final double k_depositingSpeed = -0.4; // 0.4
+    public static final double k_wheelMotorSpeed = 0.50; // FIXME
+    public static final double k_wheelMotorCurrentDrawLimit = 40; // FIXME
+    public static final double k_p = 0.0005; // FIXME
+    public static final double k_i = 0; // FIXME
+    public static final double k_d = 0; // FIXME
 
     public static final double k_feedForwardkS = 1;
     public static final double k_feedForwardkV = 12;
@@ -37,7 +35,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   public enum CollectorState {
     OPEN,
     CLOSED,
-    OFF, 
+    OFF,
     BEGINNING_AUTO
   }
 
@@ -70,28 +68,25 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
 
   public boolean overLimit = false;
 
-
-
   public boolean objectCollected = false;
-
-  public double m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed;
 
   public double m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed;
 
-  public double m_adjustableClawMotorOpenPower = CollectorConstants.k_clawMotorOpenSpeed;
+  public double m_adjustableWheelHoldingPower = CollectorConstants.k_wheelMotorHoldingSpeed;
 
   public boolean m_collectingByCommand = false;
 
-  //double clawMotorSetPoint = CollectorConstants.clawOpenPosition;
+  // double clawMotorSetPoint = CollectorConstants.clawOpenPosition;
   public Collector() {
     m_wheelMotor2 = new CANSparkMax(CollectorConstants.k_wheelMotor2ID, MotorType.kBrushless);
     m_clawMotorEncoder = m_wheelMotor2.getEncoder();
     m_wheelMotor = new CANSparkMax(CollectorConstants.k_wheelMotorID, MotorType.kBrushless);
-    m_wheelMotor.setInverted(true); 
+    m_wheelMotor.setInverted(true);
     m_collectorPID = new PIDController(CollectorConstants.k_p, CollectorConstants.k_i, CollectorConstants.k_d);
     m_clawMotorEncoder.setPositionConversionFactor(42);
 
-    m_wheelMotorFeedForward = new SimpleMotorFeedforward(CollectorConstants.k_feedForwardkS, CollectorConstants.k_feedForwardkV);
+    m_wheelMotorFeedForward = new SimpleMotorFeedforward(CollectorConstants.k_feedForwardkS,
+        CollectorConstants.k_feedForwardkV);
   }
 
   @Override
@@ -101,41 +96,40 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     m_wheelMotor2.set(0);
     m_wheelMotor.setIdleMode(IdleMode.kBrake);
     m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed;
-    m_adjustableClawMotorPower = CollectorConstants.k_clawMotorHoldingSpeed;
-    m_adjustableClawMotorOpenPower = CollectorConstants.k_clawMotorOpenSpeed;
+    m_adjustableWheelHoldingPower = CollectorConstants.k_wheelMotorHoldingSpeed;
     m_wheelMotor.set(0);
     m_clawButtonPressed = false;
     m_intakeButtonPressed = false;
     m_collectorState = CollectorState.OFF;
-    m_intakeState = IntakeState.OFF; 
+    m_intakeState = IntakeState.OFF;
     enablePeriodic();
   }
 
   @Override
-  public void enablePeriodic(){
+  public void enablePeriodic() {
     m_collectorPeriodicEnabled = true;
   }
 
   @Override
-  public void disablePeriodic(){
+  public void disablePeriodic() {
     m_collectorPeriodicEnabled = false;
   }
 
-  public void resetLiftEncoder(){
+  public void resetLiftEncoder() {
     m_clawMotorEncoder.setPosition(0);
   }
 
   public CommandBase exampleMethodCommand() {
     return runOnce(
-        () -> { 
+        () -> {
 
         });
   }
 
   public CommandBase runOnceCommand() {
     return runOnce(
-        () -> { 
-            resetCollectionMotor();
+        () -> {
+          resetCollectionMotor();
         });
   }
 
@@ -165,10 +159,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
 
   public void resetCollectorTimer() {
 
-    int i =0;
+    int i = 0;
 
-
-    
     if (firstTIme) {
       i += 1;
       SmartDashboard.putNumber("A TEST", i);
@@ -176,54 +168,47 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
       m_timer.start();
       firstTime = false;
     }
-    
+
   }
 
   private void collectorIn() {
     double currentDraw = CollectorConstants.k_clawMotorCurrentDrawLimit;
 
-
     double speed = m_adjustableWheelMotorPower;
-    
-   
-
-
-    
 
     // if (hasCollectorReachVelocity()) {
-    //   runOnceCommand();
+    // runOnceCommand();
     // }
 
     runOnceCommand();
-    SmartDashboard.putBoolean("1AC - CONDITION ", ((m_wheelMotor2.getOutputCurrent() > 5 || (m_clawMotorEncoder.getVelocity() < 4500)) && m_clawMotorEncoder.getPosition() > 2500 ));
+    SmartDashboard.putBoolean("1AC - CONDITION ",
+        ((m_wheelMotor2.getOutputCurrent() > 5 || (m_clawMotorEncoder.getVelocity() < 4500))
+            && m_clawMotorEncoder.getPosition() > 2500));
     SmartDashboard.putBoolean("1AC - ENCODER ", m_clawMotorEncoder.getPosition() > 2500);
     SmartDashboard.putNumber("1AC - ENCODER Position", m_clawMotorEncoder.getPosition());
-    SmartDashboard.putBoolean("1AC - Current Conditoin ", (m_wheelMotor2.getOutputCurrent() > 5 || (m_clawMotorEncoder.getVelocity() < 4500)));
+    SmartDashboard.putBoolean("1AC - Current Conditoin ",
+        (m_wheelMotor2.getOutputCurrent() > 5 || (m_clawMotorEncoder.getVelocity() < 4500)));
 
-    
-    if (false) { //m_wheelMotor2.getOutputCurrent() > 12 || ((m_clawMotorEncoder.getVelocity() < 2000)) && m_clawMotorEncoder.getPosition() > 4500
-      m_wheelMotor.set(0.04);
-      m_wheelMotor2.set(0.04);
-    } else {
-      m_wheelMotor.set(m_adjustableWheelMotorPower);
-      m_wheelMotor2.set(m_adjustableWheelMotorPower);
-    }
+    m_wheelMotor.set(m_adjustableWheelMotorPower);
+    m_wheelMotor2.set(m_adjustableWheelMotorPower);
+
   }
 
-  private boolean hasCollectorReachVelocity() { return m_clawMotorEncoder.getVelocity() > 5000; }
-
+  private boolean hasCollectorReachVelocity() {
+    return m_clawMotorEncoder.getVelocity() > 5000;
+  }
 
   private void collectorOut() {
     m_wheelMotor.set(CollectorConstants.k_depositingSpeed);
     m_wheelMotor2.set(CollectorConstants.k_depositingSpeed);
     m_clawMotorEncoder.setPosition(0);
   }
-  
-  private void collectorOff() {
+
+  private void collectorHold() {
     m_wheelMotor.setIdleMode(IdleMode.kBrake);
     m_wheelMotor2.setIdleMode(IdleMode.kBrake);
-    m_wheelMotor.set(0.1);
-    m_wheelMotor2.set(0.1);
+    m_wheelMotor.set(m_adjustableWheelHoldingPower);
+    m_wheelMotor2.set(m_adjustableWheelHoldingPower);
     m_clawMotorEncoder.setPosition(0);
   }
 
@@ -234,25 +219,26 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     m_wheelMotor2.set(0.0);
   }
 
-
-  public void stopCollectorAndIntake(){
+  public void stopCollectorAndIntake() {
     m_collectorState = CollectorState.OFF;
     m_intakeState = IntakeState.OFF;
   }
 
   private void openCollector() {
-    // if (m_wheelMotor2.getOutputCurrent() < CollectorConstants.k_clawMotorCurrentDrawLimit) {
-    //   m_wheelMotor2.set(m_adjustableClawMotorOpenPower);
+    // if (m_wheelMotor2.getOutputCurrent() <
+    // CollectorConstants.k_clawMotorCurrentDrawLimit) {
+    // m_wheelMotor2.set(m_adjustableClawMotorOpenPower);
     // } else {
-    //   m_wheelMotor2.set(CollectorConstants.k_clawMotorHoldingSpeed);
+    // m_wheelMotor2.set(CollectorConstants.k_clawMotorHoldingSpeed);
     // }
   }
 
   private void closeCollector() {
-    // if (m_clawMotor.getOutputCurrent() < CollectorConstants.k_clawMotorCurrentDrawLimit) {
-    //   m_clawMotor.set(CollectorConstants.k_clawMotorCloseSpeed);
+    // if (m_clawMotor.getOutputCurrent() <
+    // CollectorConstants.k_clawMotorCurrentDrawLimit) {
+    // m_clawMotor.set(CollectorConstants.k_clawMotorCloseSpeed);
     // } else {
-    //   m_clawMotor.set(CollectorConstants.k_clawMotorHoldingSpeed);
+    // m_clawMotor.set(CollectorConstants.k_clawMotorHoldingSpeed);
     // }
     // m_wheelMotor2.set(m_adjustableClawMotorPower);
   }
@@ -298,7 +284,6 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
     m_intakeButtonPressed = false;
   }
 
-
   private void setIntakeState() {
     switch (m_intakeState) {
       case IN:
@@ -311,9 +296,9 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
         collectorOut();
         break;
       case HOLD_IN:
-        collectorOff();
+        collectorHold();
         break;
-    } 
+    }
   }
 
   private void setCollectorState() {
@@ -332,15 +317,15 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
 
   public void updateWithFeedForward() {
 
-    double feedForwardOutput = m_wheelMotorFeedForward.calculate(0.1); 
+    double feedForwardOutput = m_wheelMotorFeedForward.calculate(0.1);
     m_wheelMotor2.setVoltage(feedForwardOutput);
     m_wheelMotor.setVoltage(feedForwardOutput);
   }
 
   @Override
   public void periodic() {
-    if(m_collectorPeriodicEnabled){
-      if(m_collectorState == CollectorState.BEGINNING_AUTO) {
+    if (m_collectorPeriodicEnabled) {
+      if (m_collectorState == CollectorState.BEGINNING_AUTO) {
         m_wheelMotor.set(0.1);
         m_wheelMotor2.set(0.1);
       } else {
@@ -348,20 +333,18 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
       }
 
       // updateWithFeedForward();
-    
-
 
       // COLLECTOR TELEMETRY
       SmartDashboard.putNumber("C - Collector Wheel  Current Draw ", m_wheelMotor.getOutputCurrent());
       SmartDashboard.putNumber("C - Collector Wheel 2 Current Draw ", m_wheelMotor2.getOutputCurrent());
       SmartDashboard.putNumber("C - Collector Wheel 2 Encoder Position", m_clawMotorEncoder.getPosition());
       SmartDashboard.putNumber("C - COllector Wheel 2 Velocity ", m_clawMotorEncoder.getVelocity());
-      
+
     }
   }
 
   @Override
   public void simulationPeriodic() {
-  
+
   }
 }
