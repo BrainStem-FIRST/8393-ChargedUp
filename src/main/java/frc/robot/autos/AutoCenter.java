@@ -246,26 +246,26 @@ public class AutoCenter extends SequentialCommandGroup {
 
                 int x = 0;
 
-                while (pitch > 5 && x < 250000) { //8
-                        pitch = s_Swerve.getTilt();
+                // while (pitch > 5 && x < 250000) { //8
+                //         pitch = s_Swerve.getTilt();
                      
-                        double power = MathUtil.clamp(m_balancePID.calculate(pitch, 0), -0.25, 0.25);
+                //         double power = MathUtil.clamp(m_balancePID.calculate(pitch, 0), -0.25, 0.25);
 
-                        m_teleopSwerve = new TeleopSwerve(
-                                        s_Swerve,
-                                        () -> -power * 0.73,
-                                        () -> 0,
-                                        () -> 0,
-                                        () -> false);
+                //         m_teleopSwerve = new TeleopSwerve(
+                //                         s_Swerve,
+                //                         () -> -power * 0.73,
+                //                         () -> 0,
+                //                         () -> 0,
+                //                         () -> false);
 
-                        x++;
-                        m_teleopSwerve.execute();
-                        counter++;
-                        SmartDashboard.putNumber("Auto Pitch", pitch);
-                        SmartDashboard.putNumber("Balance Power", power);
-                        SmartDashboard.putNumber("Counter", counter);
-                        SmartDashboard.putNumber("Timer", m_Timer.getFPGATimestamp());
-                }
+                //         x++;
+                //         m_teleopSwerve.execute();
+                //         counter++;
+                //         SmartDashboard.putNumber("Auto Pitch", pitch);
+                //         SmartDashboard.putNumber("Balance Power", power);
+                //         SmartDashboard.putNumber("Counter", counter);
+                //         SmartDashboard.putNumber("Timer", m_Timer.getFPGATimestamp());
+                // }
 
                 m_teleopSwerve = new TeleopSwerve(
                                 s_Swerve,
