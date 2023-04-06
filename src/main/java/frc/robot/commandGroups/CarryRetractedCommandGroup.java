@@ -17,6 +17,7 @@ import frc.robot.subsystems.Collector;
 import frc.robot.subsystems.Extension;
 import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Collector.CollectorConstants;
+import frc.robot.subsystems.Extension.TelescopePosition;
 
 
 public class CarryRetractedCommandGroup extends SequentialCommandGroup {
@@ -26,7 +27,8 @@ public class CarryRetractedCommandGroup extends SequentialCommandGroup {
         
         addCommands(
             new LiftCarryCommand(lift)
-            ,new WaitCommand(0.1)
+            ,new WaitCommand(0.1),
+            new InstantCommand(() -> extension.m_telescopeState = TelescopePosition.RETRACTED)
     
         );
       

@@ -58,7 +58,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     public static final double k_hookServoDownPosition = 0.99;
     public static final double k_hookServoUpPosition = 0.5;
 
-    public static final double k_liftGoingDownSpeed = 0.12;
+    public static final double k_liftGoingDownSpeed = 0.15;
 
     public static final double k_swerveTranslationMultiplier = 0.5;
     public static final double k_swerveTurningMultiplier = 0.4;
