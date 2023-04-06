@@ -128,7 +128,7 @@ public class AutoCenter extends SequentialCommandGroup {
                                 ),
                                 // End 5 meters behind ahead of where we started, rotating 180 degrees, now
                                 // facing forward
-                                new Pose2d(3.65, 0, new Rotation2d(Math.toRadians(0))), //3.6 before
+                                new Pose2d(3.7, 0, new Rotation2d(Math.toRadians(0))), //3.65 before
                                 runBackOntoChargeStationConfig);
 
                 var thetaController = new ProfiledPIDController(

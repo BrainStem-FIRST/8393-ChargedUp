@@ -201,8 +201,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
 
     
     if ((m_wheelMotor2.getOutputCurrent() > 12 || (m_clawMotorEncoder.getVelocity() < 2000)) && m_clawMotorEncoder.getPosition() > 4500) {
-      m_wheelMotor.set(0);
-      m_wheelMotor2.set(0);
+      m_wheelMotor.set(0.04);
+      m_wheelMotor2.set(0.04);
     } else {
       m_wheelMotor.set(m_adjustableWheelMotorPower);
       m_wheelMotor2.set(m_adjustableWheelMotorPower);
