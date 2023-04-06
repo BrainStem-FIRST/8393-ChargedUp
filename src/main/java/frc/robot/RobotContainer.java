@@ -151,7 +151,8 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
 
     // auto Center
-     return new AutoCenter(m_swerve, m_lift, m_collector, m_extension);
+    //return null;
+    return new AutoCenter(m_swerve, m_lift, m_collector, m_extension);
 
     // 1 + 1 block auto 
     //return new OnePlusOneAuto(m_swerve, m_lift, m_collector, m_extension);

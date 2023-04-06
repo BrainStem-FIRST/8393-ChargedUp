@@ -7,6 +7,7 @@ import frc.robot.commandGroups.HighPoleApproachCommandGroup;
 import frc.robot.commandGroups.LowPoleApproachCommandGroup;
 import frc.robot.commands.BalanceCommand;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.WaitCommand;
 import frc.robot.commands.collectorCommands.CollectorCloseCommand;
 import frc.robot.commands.collectorCommands.IntakeInCommand;
 import frc.robot.commands.collectorCommands.IntakeOffCommand;
@@ -155,21 +156,25 @@ public class AutoCenter extends SequentialCommandGroup {
                                 s_Swerve);
 
                 addCommands(
-
+                                new WaitCommand(0.1),
+                                new InstantCommand(() -> m_collector.m_collectorState = CollectorState.CLOSED),
                                 new InstantCommand(() -> s_Swerve.setGyroRobotFacingReverse()),
                                 // collect pre load command here
 
                                 // score on low pole command here
                                 new InstantCommand(() -> m_Timer.start()),
-                                new RaiseToUnlockRatchetCommand(m_lift),
+                                // new RaiseToUnlockRatchetCommand(m_lift),
+                                // new InstantCommand(() -> m_lift.m_state = LiftPosition.RATCHET),
+                                
+                                // new InstantCommand(() -> m_lift.m_state = LiftPosition.HIGH_POLE),
 
                                 new InstantCommand(() -> s_Swerve
                                                 .resetOdometry(runOverChargeStationTrajectory.getInitialPose())),
                                 m_highPoleApproach,
                                 m_depositSequenceCommandGroup,
                                 m_intakeOff,
-                                // runOverChargeStationCommand,
-                                // runBackOntoChargeStationCommand
+                                runOverChargeStationCommand,
+                                runBackOntoChargeStationCommand,
 
                                 new InstantCommand(() -> autoBalance(s_Swerve, m_Timer))
 
@@ -241,7 +246,7 @@ public class AutoCenter extends SequentialCommandGroup {
 
                 int x = 0;
 
-                while (pitch > 8 && x < 250000) {
+                while (pitch > 5 && x < 250000) { //8
                         pitch = s_Swerve.getTilt();
                         double power = MathUtil.clamp(m_balancePID.calculate(pitch, 0), -0.25, 0.25);
 

@@ -150,6 +150,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
      m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+     m_robotContainer.m_lift.resetLiftEncoder();
+    m_robotContainer.m_lift.liftRawPower(0.09);
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -158,8 +160,8 @@ public class Robot extends TimedRobot {
     for(BrainSTEMSubsystem isubsystem: brainSTEMSubsystems){
       isubsystem.initialize();
     }
-    m_robotContainer.m_lift.m_state = LiftPosition.HIGH_POLE;
-    
+    m_robotContainer.m_lift.m_state = LiftPosition.RATCHET;
+    m_robotContainer.m_collector.m_collectorState = CollectorState.BEGINNING_AUTO;
   }
 
   

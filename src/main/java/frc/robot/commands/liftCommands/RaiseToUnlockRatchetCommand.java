@@ -1,5 +1,6 @@
 package frc.robot.commands.liftCommands;
 
+import edu.wpi.first.networktables.LogMessage;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -18,8 +19,7 @@ public class RaiseToUnlockRatchetCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        m_timer.reset();
-        m_timer.start();
+        
     }
 
     @Override
@@ -29,15 +29,7 @@ public class RaiseToUnlockRatchetCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        SmartDashboard.putNumber("Ratchet Timer", m_timer.get());
-        if(m_timer.get() > 0.1) {
-            m_lift.m_state = LiftPosition.STOP;
-            SmartDashboard.putBoolean("L - 💀 Got in return true", true);
-            return true;
-        } else {
-            return false;
-        }
+        return true;
     }
 
-    
 }

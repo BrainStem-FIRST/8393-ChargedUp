@@ -37,7 +37,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   public enum CollectorState {
     OPEN,
     CLOSED,
-    OFF
+    OFF, 
+    BEGINNING_AUTO
   }
 
   public enum IntakeState {
@@ -335,7 +336,12 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem{
   @Override
   public void periodic() {
     if(m_collectorPeriodicEnabled){
-      setIntakeState();
+      if(m_collectorState == CollectorState.BEGINNING_AUTO) {
+        m_wheelMotor.set(0.1);
+        m_wheelMotor2.set(0.1);
+      } else {
+        setIntakeState();
+      }
 
       // updateWithFeedForward();
     
