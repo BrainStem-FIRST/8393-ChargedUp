@@ -42,7 +42,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     // lift positions
     public static final int k_groundCollectionValue = 0;
     public static final int k_carryValue = Lift.inchesToTicks(5);
-    public static final int k_shelfCollectionValue = Lift.inchesToTicks(18.6);
+    public static final int k_shelfCollectionValue = Lift.inchesToTicks(19.05); //18.6
     public static final int k_lowPoleValue = Lift.inchesToTicks(18.2); // 16.7
     public static final int k_highPoleValue = Lift.inchesToTicks(21.0); // 18
     public static final int k_highPoleTiltValue = Lift.inchesToTicks(15);

@@ -21,8 +21,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem {
     public static final int k_clawDepositPosition = 509;
     public static final double k_clawMotorCurrentDrawLimit = 6.50;
     public static final double k_wheelMotorHoldingSpeed = 0.06;
-    public static final double k_depositingSpeed = -0.4; // 0.4
-    public static final double k_wheelMotorSpeed = 0.5; // FIXME
+    public static final double k_depositingSpeed = -0.35; // 0.4
+    public static final double k_wheelMotorSpeed = 0.6; // FIXME
     public static final double k_wheelMotorCurrentDrawLimit = 40; // FIXME
     public static final double k_p = 0.0005; // FIXME
     public static final double k_i = 0; // FIXME
