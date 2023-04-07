@@ -336,7 +336,8 @@ public class Robot extends TimedRobot {
       if (m_driver1_X.getState()) {
 
         SmartDashboard.putString("Lift Extension", "Shelf");
-        m_robotContainer.m_shelfCollection.schedule();   
+        m_robotContainer.m_shelfCollection.schedule();
+        new InstantCommand(() -> m_robotContainer.m_collector.m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed).schedule(); 
         m_robotContainer.m_collector.m_intakeState = IntakeState.IN;     
         m_robotContainer.m_collector.m_collectingByCommand = true;
 
@@ -363,6 +364,7 @@ public class Robot extends TimedRobot {
           m_robotContainer.m_collector.overLimit = false;
           hasCarryRetractedRun = true;
           m_robotContainer.m_carryRetracted.schedule();
+          new InstantCommand(() -> m_robotContainer.m_collector.m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed).schedule(); 
           new InstantCommand(() -> m_robotContainer.m_collector.m_intakeState = IntakeState.HOLD_IN).schedule();
 
 

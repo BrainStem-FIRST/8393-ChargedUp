@@ -29,6 +29,7 @@ public class GroundCollectionCommandGroup extends SequentialCommandGroup {
     public GroundCollectionCommandGroup(Extension extension, Lift p_lift, Collector collector) {
         m_lift = p_lift;
             addCommands(
+                new InstantCommand(() -> collector.m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed * 1.25),
                  new LiftCarryCommand(p_lift)
                 ,new InstantCommand(() -> extension.m_telescopeState = TelescopePosition.GROUND_COLLECTION)
                 ,new InstantCommand(() -> m_lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower/2)
