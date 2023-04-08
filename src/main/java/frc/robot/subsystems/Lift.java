@@ -24,7 +24,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
 
     // pid constants
     public static final double k_P = 0.000125;
-    public static final double k_I = 0.0000000;
+    public static final double k_I = 0.000001;
     public static final double k_D = 0.0000;
 
     // units r volts

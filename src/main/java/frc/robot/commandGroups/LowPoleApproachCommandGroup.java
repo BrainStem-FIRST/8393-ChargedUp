@@ -24,7 +24,7 @@ public class LowPoleApproachCommandGroup extends SequentialCommandGroup {
     public LowPoleApproachCommandGroup(Extension extension, Lift lift, Collector collector) {
         addCommands(
             new LiftLowPoleCommand(lift)
-            , new WaitCommand(0.35)
+            , new WaitCommand(0.45)
             ,new LowPoleExtensionCommandGroup(extension),
             new InstantCommand(() -> collector.m_intakeState = IntakeState.OFF)
         );
