@@ -170,9 +170,9 @@ public class AutoCenter extends SequentialCommandGroup {
 
                                 new InstantCommand(() -> s_Swerve
                                                 .resetOdometry(runOverChargeStationTrajectory.getInitialPose())),
-                                m_highPoleApproach,
-                                m_depositSequenceCommandGroup,
-                                m_intakeOff,
+                                // m_highPoleApproach,
+                                // m_depositSequenceCommandGroup,
+                                // m_intakeOff,
                                 runOverChargeStationCommand,
                                 runBackOntoChargeStationCommand,
 

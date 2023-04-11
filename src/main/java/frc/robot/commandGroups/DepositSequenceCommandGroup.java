@@ -37,7 +37,7 @@ public class DepositSequenceCommandGroup extends SequentialCommandGroup {
         addCommands(
             new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF),
             new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OUT)
-            ,new WaitCommand(0.25)
+            ,new WaitCommand(0.75)
             ,new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF)
             ,new ShelfCarryRetractedCommandGroup(m_extension, m_lift, m_collector)
             ,new InstantCommand(() -> m_lift.lowerLiftToCarry())

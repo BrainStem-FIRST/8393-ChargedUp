@@ -23,8 +23,8 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   public static final class LiftConstants {
 
     // pid constants
-    public static final double k_P = 0.000125;
-    public static final double k_I = 0.000001;
+    public static final double k_P = 0.00011;
+    public static final double k_I = 0.000175;
     public static final double k_D = 0.0000;
 
     // units r volts
@@ -44,7 +44,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     public static final int k_carryValue = Lift.inchesToTicks(5);
     public static final int k_shelfCollectionValue = Lift.inchesToTicks(19.05); //18.6
     public static final int k_lowPoleValue = Lift.inchesToTicks(18.2); // 16.7
-    public static final int k_highPoleValue = Lift.inchesToTicks(21.0); // 18
+    public static final int k_highPoleValue = Lift.inchesToTicks(21.1); // 18
     public static final int k_highPoleTiltValue = Lift.inchesToTicks(15);
     public static final int k_liftPreLoadPosition = Lift.inchesToTicks(15);
 
