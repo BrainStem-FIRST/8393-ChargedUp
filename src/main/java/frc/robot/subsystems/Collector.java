@@ -81,7 +81,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem {
     m_wheelMotor2 = new CANSparkMax(CollectorConstants.k_wheelMotor2ID, MotorType.kBrushless);
     m_clawMotorEncoder = m_wheelMotor2.getEncoder();
     m_wheelMotor = new CANSparkMax(CollectorConstants.k_wheelMotorID, MotorType.kBrushless);
-    m_wheelMotor.setInverted(true); 
+    m_wheelMotor.setInverted(false); 
+    m_wheelMotor2.setInverted(true);
     m_collectorPID = new PIDController(CollectorConstants.k_p, CollectorConstants.k_i, CollectorConstants.k_d);
     m_clawMotorEncoder.setPositionConversionFactor(42);
 
