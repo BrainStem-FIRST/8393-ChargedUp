@@ -2,6 +2,7 @@ package frc.robot.autos;
 
 import frc.robot.autoCommands.LiftCollectPreLoad;
 import frc.robot.autoCommands.autoCommandGroups.collectPreLoadCommand;
+import frc.robot.commandGroups.AutoGroundCollectionCommandGroup;
 import frc.robot.commandGroups.DepositSequenceCommandGroup;
 import frc.robot.commandGroups.GroundCollectionCommandGroup;
 import frc.robot.commandGroups.HighPoleApproachCommandGroup;
@@ -151,14 +152,15 @@ public class OnePlusOneAuto extends SequentialCommandGroup {
                 // m_intakeOff,
 
                 // go to collect block
-                new InstantCommand(() -> s_Swerve.resetOdometry(goOutToCollectTrajectory.getInitialPose())),
-                goOutToCollectCommand
+                new InstantCommand(() -> s_Swerve.resetOdometry(goOutToCollectTrajectory.getInitialPose()))
+                // ,goOutToCollectCommand
                 // ,new InstantCommand(() -> stopDT(s_Swerve, m_Timer))
                 // ,m_groundCollection
+                ,new AutoGroundCollectionCommandGroup(m_Lift, m_extension, s_Swerve, m_collector)
 
                 // come to blue line for pose estimate w/ april tag
-                , new InstantCommand(() -> s_Swerve.resetOdometry(depositTrajectory.getInitialPose())),
-                runBackToMoveBlueLineCommand
+                , new InstantCommand(() -> s_Swerve.resetOdometry(depositTrajectory.getInitialPose()))
+                // ,runBackToMoveBlueLineCommand
 
         // ,m_driveWithLimelightRIGHT
 
