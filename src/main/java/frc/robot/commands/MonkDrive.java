@@ -72,7 +72,7 @@ public class MonkDrive extends CommandBase {
                 } else {
                         currentYaw = LimelightHelpers.getTX("limelight-b");
                         rotationPower = autoPIDController.calculate(currentYaw, -2);
-                        double power = (currentYaw > 0) ? -0.1 : 0.1;
+                        
                         /* Drive */
 
                         m_swerve.drive(
