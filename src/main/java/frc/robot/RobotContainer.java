@@ -139,6 +139,7 @@ public class RobotContainer {
     // Basic Testing and Commands
     ShuffleboardTab commandTab = Shuffleboard.getTab("Commands");
     commandTab.add("Reset Extension", m_extension.resetExtensionBase());
+    commandTab.add("Reset Modules To Absolute", m_swerve.resetModuleBase());
 
     SmartDashboard.putNumber("S - Turning ", m_lift.m_swerveTurningMultiplyer);
     SmartDashboard.putNumber("S - Translation ", m_lift.m_swerveMultiplyerTranslation);

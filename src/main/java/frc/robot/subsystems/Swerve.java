@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.SwerveModule;
 import frc.robot.utilities.BrainSTEMSubsystem;
 import frc.lib.util.COTSFalconSwerveConstants;
@@ -277,6 +278,10 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem{
         for(SwerveModule mod : mSwerveMods){
             mod.resetToAbsolute();
         }
+    }
+
+    public CommandBase resetModuleBase() {
+        return runOnce(this::resetModulesToAbsolute);
     }
 
     @Override
