@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import frc.robot.SwerveModule;
 import frc.robot.utilities.BrainSTEMSubsystem;
 import frc.lib.util.COTSFalconSwerveConstants;
@@ -27,6 +28,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.utilities.LimelightHelpers;
 
 public class Swerve extends SubsystemBase implements BrainSTEMSubsystem {
     public static final class SwerveConstants {
@@ -161,7 +163,7 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem {
         }
     }
 
-    public SwerveDriveOdometry swerveOdometry;
+    public SwerveDrivePoseEstimator swerveOdometry;
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
     public boolean m_enableSwervePeriodic = false;
@@ -193,7 +195,7 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem {
         Timer.delay(1.0);
         resetModulesToAbsolute();
 
-        swerveOdometry = new SwerveDriveOdometry(SwerveConstants.k_swerveKinematics, getYaw(), getModulePositions());
+        swerveOdometry = new SwerveDrivePoseEstimator(SwerveConstants.k_swerveKinematics, getYaw(), getModulePositions(), new Pose2d());
     }
 
     public SwerveAutoBuilder getAutoBuilder(HashMap<String, Command> eventMap) {
@@ -254,7 +256,13 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem {
     }
 
     public Pose2d getPose() {
-        return swerveOdometry.getPoseMeters();
+        return swerveOdometry.getEstimatedPosition();
+    }
+
+    public void updatePoseWithVision() {
+        swerveOdometry.addVisionMeasurement(
+                LimelightHelpers.getBotPose2d("limelight-a"),
+                LimelightHelpers.getLatency_Capture("limelight-a"));
     }
 
     public void resetOdometry(Pose2d pose) {
@@ -304,6 +312,7 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem {
     public void periodic() {
         if (m_enableSwervePeriodic) { // m_enableSwervePeriodic
             swerveOdometry.update(getYaw(), getModulePositions());
+            updatePoseWithVision();
             for (SwerveModule mod : mSwerveMods) {
                 mod.setModuleNeutralMode(m_adjustableDriveNeutralMode, m_adjustableAngleNeutralMode);
 
