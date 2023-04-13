@@ -24,7 +24,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
 
     // pid constants
     public static final double k_P = 0.00011;
-    public static final double k_I = 0.000175;
+    public static final double k_I = 0.000000001;
     public static final double k_D = 0.0000;
 
     // units r volts
@@ -44,7 +44,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     public static final int k_carryValue = Lift.inchesToTicks(5);
     public static final int k_shelfCollectionValue = Lift.inchesToTicks(19.05); //18.6
     public static final int k_lowPoleValue = Lift.inchesToTicks(18.2); // 16.7
-    public static final int k_highPoleValue = Lift.inchesToTicks(21.1); // 18
+    public static final int k_highPoleValue = Lift.inchesToTicks(22.3); // 18
     public static final int k_highPoleTiltValue = Lift.inchesToTicks(15);
     public static final int k_liftPreLoadPosition = Lift.inchesToTicks(15);
 
@@ -87,6 +87,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
 
   public Lift() {
     m_liftPID = new PIDController(LiftConstants.k_P, LiftConstants.k_I, LiftConstants.k_D);
+    m_liftPID.setIntegratorRange(-0.005, 0.05);
     m_liftFeedForward = new ElevatorFeedforward(LiftConstants.k_S, LiftConstants.k_G, LiftConstants.k_V);
     m_forwardLift = new TalonFX(LiftConstants.k_forwardLiftMotorID);
     m_backLift = new TalonFX(LiftConstants.k_backLiftMotorID);
