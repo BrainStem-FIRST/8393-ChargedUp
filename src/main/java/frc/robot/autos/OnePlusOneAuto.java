@@ -116,6 +116,8 @@ public class OnePlusOneAuto extends SequentialCommandGroup {
                 new Pose2d(1, 0, new Rotation2d(Math.toRadians(179))),
                 config);
 
+        
+
         var thetaController = new ProfiledPIDController(
                 AutoConstants.k_pThetaController * 2, 0, 0, AutoConstants.k_thetaControllerConstraints);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
@@ -152,14 +154,15 @@ public class OnePlusOneAuto extends SequentialCommandGroup {
                 // m_intakeOff,
 
                 // go to collect block
-                new InstantCommand(() -> s_Swerve.resetOdometry(goOutToCollectTrajectory.getInitialPose()))
+                // new InstantCommand(() -> s_Swerve.resetOdometry(goOutToCollectTrajectory.getInitialPose()))
                 // ,goOutToCollectCommand
                 // ,new InstantCommand(() -> stopDT(s_Swerve, m_Timer))
                 // ,m_groundCollection
-                ,new AutoGroundCollectionCommandGroup(m_Lift, m_extension, s_Swerve, m_collector)
+                // ,new AutoGroundCollectionCommandGroup(m_Lift, m_extension, s_Swerve, m_collector)
+                new PickupSideAuto(s_Swerve, m_Lift, m_collector, m_extension)
 
                 // come to blue line for pose estimate w/ april tag
-                , new InstantCommand(() -> s_Swerve.resetOdometry(depositTrajectory.getInitialPose()))
+                // , new InstantCommand(() -> s_Swerve.resetOdometry(depositTrajectory.getInitialPose()))
                 // ,runBackToMoveBlueLineCommand
 
         // ,m_driveWithLimelightRIGHT
