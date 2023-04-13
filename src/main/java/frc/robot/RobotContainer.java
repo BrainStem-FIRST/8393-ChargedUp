@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -125,6 +127,9 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    ShuffleboardTab commandTab = Shuffleboard.getTab("Commands");
+    commandTab.add("Reset Extension", m_extension.resetExtensionBase());
 
     SmartDashboard.putNumber("S - Turning ", m_lift.m_swerveTurningMultiplyer);
     SmartDashboard.putNumber("S - Translation ", m_lift.m_swerveMultiplyerTranslation);

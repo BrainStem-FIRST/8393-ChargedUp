@@ -9,6 +9,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commandGroups.CollectionExtensionCommandGroup;
 import frc.robot.commandGroups.HighPoleExtensionCommandGroup;
@@ -250,6 +251,13 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
         
 
 
+  }
+
+  public Command resetExtensionBase() {
+    return runOnce(() -> {
+      m_frontMotor.setSelectedSensorPosition(0.0);
+      m_backMotor.setSelectedSensorPosition(0.0);
+    });
   }
 
   @Override
