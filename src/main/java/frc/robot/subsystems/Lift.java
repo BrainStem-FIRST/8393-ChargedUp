@@ -23,7 +23,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   public static final class LiftConstants {
 
     // pid constants
-    public static final double k_P = 0.00011;
+    public static final double k_P = 0.00015;
     public static final double k_I = 0.000000001;
     public static final double k_D = 0.0000;
 

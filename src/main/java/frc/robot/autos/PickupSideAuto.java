@@ -93,10 +93,10 @@ public class PickupSideAuto extends SequentialCommandGroup {
                 // .andThen(new WaitCommand(0.4)));
 
                 addRequirements(m_collector, m_swerve, m_lift, m_extension);
-                // addCommands(m_swerve.getAutoBuilder(m_eventMap).fullAuto(
-                //                 PathPlanner.loadPathGroup("LeftSideAuto",
-                //                                 PickupSideAutoConstants.goOutToCollectConstraints)));
-                addCommands(m_eventMap.get("startingPosition"));
+                addCommands(m_swerve.getAutoBuilder(m_eventMap).fullAuto(
+                                PathPlanner.loadPathGroup("LeftSideAuto",
+                                                PickupSideAutoConstants.goOutToCollectConstraints)));
+                // addCommands(m_eventMap.get("startingPosition"));
         }
 
 }
