@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.9286222920962792,
-        "y": 5.029727005958249
+        "x": 2.0100709587012395,
+        "y": 5.04095186421305
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.443795638474046,
-        "y": 4.57242810583785
+        "x": 3.5252443050790054,
+        "y": 4.583652964092651
       },
       "holonomicAngle": -180.0,
       "isReversal": false,
@@ -78,15 +78,21 @@
   ],
   "markers": [
     {
-      "position": 1.014133522727273,
+      "position": 1.0218039772727268,
       "names": [
         "turnOffCollectorPoint"
       ]
     },
     {
-      "position": 0.8415482954545451,
+      "position": 0.7353693181818182,
       "names": [
         "startToCollect"
+      ]
+    },
+    {
+      "position": 1.875568181818187,
+      "names": [
+        "startToDeposit"
       ]
     }
   ]

@@ -14,7 +14,7 @@ public class AutoHighPoleExtensionCommandGroup extends SequentialCommandGroup {
     public AutoHighPoleExtensionCommandGroup(Extension extension) {
 
         addCommands(
-            new ExtensionCommand(extension, TelescopePosition.AUTO_HIGH_POLE)
+            new ExtensionCommand(extension, TelescopePosition.HIGH_POLE)
         );
        
     }

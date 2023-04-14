@@ -35,6 +35,7 @@ public class AutoGroundCollectionCommandGroup extends SequentialCommandGroup {
                         () -> m_collector.m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed / 2),
                 new InstantCommand(() -> m_collector.m_intakeState = IntakeState.IN),
                 new LiftCarryCommand(m_lift),
+                new WaitCommand(1),
                 new InstantCommand(() -> m_extension.m_telescopeState = TelescopePosition.AUTO_CUBE_COLLECT),
                 new InstantCommand(() -> m_lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower / 2),
                 new WaitCommand(0.25),

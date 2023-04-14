@@ -33,7 +33,7 @@ public class PickupSideAuto extends SequentialCommandGroup {
 
         public static final class PickupSideAutoConstants {
                 public static final PathConstraints goOutToCollectConstraints = new PathConstraints(
-                                Units.feetToMeters(10),
+                                Units.feetToMeters(15),
                                 OnePlusOneAuto.AutoConstants.k_maxAccelerationMetersPerSecondSquared / 2);
         }
 
@@ -50,7 +50,8 @@ public class PickupSideAuto extends SequentialCommandGroup {
                 this.m_swerve = p_swerve;
                 this.m_lift = p_lift;
                 this.m_extension = p_extension;
-                AutoHighPoleApproachCommandGroup m_highPoleApproach = new AutoHighPoleApproachCommandGroup(m_extension, m_lift,
+                AutoHighPoleApproachCommandGroup m_highPoleApproach = new AutoHighPoleApproachCommandGroup(m_extension,
+                                m_lift,
                                 m_collector);
 
                 DepositSequenceCommandGroup m_depositSequenceCommandGroup = new DepositSequenceCommandGroup(
@@ -82,11 +83,13 @@ public class PickupSideAuto extends SequentialCommandGroup {
 
                 m_eventMap.put("turnOffCollectorPoint",
                                 new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF));
+                m_eventMap.put("startToDeposit", new HighPoleApproachCommandGroup(m_extension, m_lift,
+                                m_collector));
 
-                m_eventMap.put("depositCubePosition", new HighPoleApproachCommandGroup(m_extension, m_lift,
-                                m_collector).andThen(
-                                                new DepositSequenceCommandGroup(m_lift, m_extension,
-                                                                m_collector)));
+                m_eventMap.put("depositCubePosition",
+                                new DepositSequenceCommandGroup(m_lift, m_extension,
+                                                m_collector));
+
                 // m_eventMap.put("depositCubePosition", new InstantCommand(() -> m_lift.m_state
                 // = LiftPosition.HIGH_POLE)
                 // .andThen(m_highPoleApproach).andThen(m_depositSequenceCommandGroup).andThen(m_intakeOff)

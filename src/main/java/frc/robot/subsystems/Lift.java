@@ -330,7 +330,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
         m_liftSetPoint = 70001;
         break;
       case AUTO_DEPOSIT:
-        m_liftSetPoint = (int)((LiftConstants.k_highPoleValue - depositDelta) * 0.93);
+        m_liftSetPoint = (int)((LiftConstants.k_highPoleValue - depositDelta) * 0.945);
         break;
     }
   }
