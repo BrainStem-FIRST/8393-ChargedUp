@@ -68,8 +68,9 @@ public class PickupSideAuto extends SequentialCommandGroup {
                 // m_collector)));
 
                 m_eventMap.put("startToCollect",
-                                // add collect in to hold cone here FIXME
-                                new AutoGroundCollectionCommandGroup(m_extension, m_lift, m_collector));
+                                new InstantCommand(() -> m_collector.m_intakeState = IntakeState.HOLD_IN)
+                                                .andThen(new AutoGroundCollectionCommandGroup(m_extension, m_lift,
+                                                                m_collector)));
                 m_eventMap.put("collectCubePosition",
                                 new WaitCommand(1)
                                                 .andThen(new InstantCommand(
