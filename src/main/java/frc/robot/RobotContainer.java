@@ -2,12 +2,22 @@ package frc.robot;
 
 import java.util.ArrayList;
 
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPoint;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.lib.util.PathPlannerFlipper;
 import frc.robot.autos.*;
 import frc.robot.commandGroups.CarryRetractedCommandGroup;
 import frc.robot.commandGroups.CollectCommandGroup;
@@ -126,8 +136,24 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
+    // Basic Testing and Commands
+    ShuffleboardTab commandTab = Shuffleboard.getTab("Commands");
+    commandTab.add("Reset Extension", m_extension.resetExtensionBase());
+    commandTab.add("Reset Modules To Absolute", m_swerve.resetModuleBase());
+
     SmartDashboard.putNumber("S - Turning ", m_lift.m_swerveTurningMultiplyer);
     SmartDashboard.putNumber("S - Translation ", m_lift.m_swerveMultiplyerTranslation);
+
+    Field2d trajTest = new Field2d();
+    PathPlannerTrajectory testTraj = PathPlanner.generatePath(
+            new PathConstraints(1.0, 1.0),
+            new PathPoint(new Translation2d(), new Rotation2d()),
+            new PathPoint(new Translation2d(1.0, 1.0), new Rotation2d())
+    );
+    trajTest.getObject("Original traj").setTrajectory(testTraj);
+    trajTest.getObject("Flipped traj").setTrajectory(PathPlannerFlipper.flipTrajectory(testTraj, new PathConstraints(1.0, 1.0)));
+
+    SmartDashboard.putData("Traj Field", trajTest);
   }
 
   /**

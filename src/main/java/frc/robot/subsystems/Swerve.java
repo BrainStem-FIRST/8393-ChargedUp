@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import frc.robot.SwerveModule;
 import frc.robot.utilities.BrainSTEMSubsystem;
@@ -311,6 +312,10 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem {
         for (SwerveModule mod : mSwerveMods) {
             mod.resetToAbsolute();
         }
+    }
+
+    public CommandBase resetModuleBase() {
+        return runOnce(this::resetModulesToAbsolute);
     }
 
     @Override
