@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commandGroups.AutoDepositSequenceCommandGroup;
 import frc.robot.commandGroups.AutoGroundCollectionCommandGroup;
+import frc.robot.commandGroups.AutoHighPoleApproachCommandGroup;
 import frc.robot.commandGroups.CarryRetractedCommandGroup;
 import frc.robot.commandGroups.DepositSequenceCommandGroup;
 import frc.robot.commandGroups.GroundCollectionCommandGroup;
@@ -49,7 +50,7 @@ public class PickupSideAuto extends SequentialCommandGroup {
                 this.m_swerve = p_swerve;
                 this.m_lift = p_lift;
                 this.m_extension = p_extension;
-                HighPoleApproachCommandGroup m_highPoleApproach = new HighPoleApproachCommandGroup(m_extension, m_lift,
+                AutoHighPoleApproachCommandGroup m_highPoleApproach = new AutoHighPoleApproachCommandGroup(m_extension, m_lift,
                                 m_collector);
 
                 DepositSequenceCommandGroup m_depositSequenceCommandGroup = new DepositSequenceCommandGroup(
@@ -59,7 +60,8 @@ public class PickupSideAuto extends SequentialCommandGroup {
                 IntakeOffCommand m_intakeOff = new IntakeOffCommand(m_collector);
 
                 m_eventMap.put("startingPosition", new RaiseToUnlockRatchetCommand(m_lift)
-                                .andThen(m_highPoleApproach).andThen(m_depositSequenceCommandGroup));
+                                .andThen(m_highPoleApproach)
+                                .andThen(m_depositSequenceCommandGroup));
 
                 // m_eventMap.put("startingPosition", new
                 // HighPoleApproachCommandGroup(m_extension, m_lift,
@@ -91,9 +93,10 @@ public class PickupSideAuto extends SequentialCommandGroup {
                 // .andThen(new WaitCommand(0.4)));
 
                 addRequirements(m_collector, m_swerve, m_lift, m_extension);
-                addCommands(m_swerve.getAutoBuilder(m_eventMap).fullAuto(
-                                PathPlanner.loadPathGroup("LeftSideAuto",
-                                                PickupSideAutoConstants.goOutToCollectConstraints)));
+                // addCommands(m_swerve.getAutoBuilder(m_eventMap).fullAuto(
+                //                 PathPlanner.loadPathGroup("LeftSideAuto",
+                //                                 PickupSideAutoConstants.goOutToCollectConstraints)));
+                addCommands(m_eventMap.get("startingPosition"));
         }
 
 }

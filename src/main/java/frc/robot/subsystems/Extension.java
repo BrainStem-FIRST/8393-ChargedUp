@@ -30,18 +30,18 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     private static final int k_backExtensionMotorID = 31;
     private static final int k_extensionServoID = 9;
     private static final double k_proportional = 0.00007;
-    private static final double k_integral = 0;
+    private static final double k_integral = 0.0000000;
     private static final double k_derivative = 0;
     private static final int k_retractedTelescopeValue = 0; // 20000
     private static final int k_collectionTelescopeValue = (int) ((220000 / 1.8) * k_gearRatioMultiplication);
     private static final int k_lowPoleTelescopeValue = (int) ((int) (162000 * k_gearRatioMultiplication) * 1.04); // *1.1
     private static final int k_highPoleTelescopeValue = (int) ((int) ((240000 * k_gearRatioMultiplication)) * 1.3);
-    private static final int k_telescopeTolerance = (int) (1000 * k_gearRatioMultiplication);
+    private static final int k_telescopeTolerance = (int) (1200 * k_gearRatioMultiplication);
     private static final double k_telescopeMaxPower = 1.00; // 1.00
     public static final int k_backMotorOffRatchetValue = (int) ((75000 * k_gearRatioMultiplication) / 2); // FIXME
     public static final double k_backOffMotorSpeed = -0.01; // FIXME
   }
-
+  
   public enum RatchetPosition {
     ENGAGED,
     DISENGAGED
@@ -53,6 +53,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     GROUND_COLLECTION,
     LOW_POLE,
     HIGH_POLE,
+    AUTO_HIGH_POLE,
     TRANSITION,
     AUTO_CUBE_COLLECT
   }
@@ -189,18 +190,25 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
   }
 
   public TelescopePosition getM_telescopeState() {
-    if (inTolerance((int) m_backMotor.getSelectedSensorPosition(), ExtensionConstants.k_retractedTelescopeValue,
-        ExtensionConstants.k_telescopeTolerance)) {
+    if ((inTolerance((int) m_backMotor.getSelectedSensorPosition(), ExtensionConstants.k_retractedTelescopeValue,
+        ExtensionConstants.k_telescopeTolerance)) && (m_telescopeState == TelescopePosition.RETRACTED)) {
       return TelescopePosition.RETRACTED;
-    } else if (inTolerance((int) m_backMotor.getSelectedSensorPosition(),
-        ExtensionConstants.k_collectionTelescopeValue, ExtensionConstants.k_telescopeTolerance)) {
+    } else if ((inTolerance((int) m_backMotor.getSelectedSensorPosition(),
+        ExtensionConstants.k_collectionTelescopeValue, ExtensionConstants.k_telescopeTolerance))
+        && (m_telescopeState == TelescopePosition.COLLECTION)) {
       return TelescopePosition.COLLECTION;
-    } else if (inTolerance((int) m_backMotor.getSelectedSensorPosition(),
-        ExtensionConstants.k_lowPoleTelescopeValue, ExtensionConstants.k_telescopeTolerance)) {
+    } else if ((inTolerance((int) m_backMotor.getSelectedSensorPosition(),
+        ExtensionConstants.k_lowPoleTelescopeValue, ExtensionConstants.k_telescopeTolerance))
+        && (m_telescopeState == TelescopePosition.LOW_POLE)) {
       return TelescopePosition.LOW_POLE;
-    } else if (inTolerance((int) m_backMotor.getSelectedSensorPosition(),
-        ExtensionConstants.k_highPoleTelescopeValue, ExtensionConstants.k_telescopeTolerance)) {
+    } else if ((inTolerance((int) m_backMotor.getSelectedSensorPosition(),
+        ExtensionConstants.k_highPoleTelescopeValue, ExtensionConstants.k_telescopeTolerance))
+        && (m_telescopeState == TelescopePosition.HIGH_POLE)) {
       return TelescopePosition.HIGH_POLE;
+    } else if ((inTolerance((int) m_backMotor.getSelectedSensorPosition(),
+        (int) (ExtensionConstants.k_highPoleTelescopeValue * 0.95), ExtensionConstants.k_telescopeTolerance))
+        && (m_telescopeState == TelescopePosition.AUTO_HIGH_POLE)) {
+      return TelescopePosition.AUTO_HIGH_POLE;
     } else {
       return TelescopePosition.TRANSITION;
     }
@@ -234,6 +242,9 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
         break;
       case AUTO_CUBE_COLLECT:
         m_telescopeSetPoint = (int) (ExtensionConstants.k_lowPoleTelescopeValue * 1.5);
+        break;
+      case AUTO_HIGH_POLE:
+        m_telescopeSetPoint = (int) (ExtensionConstants.k_highPoleTelescopeValue * 0.95);
         break;
     }
   }
@@ -286,6 +297,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
       SmartDashboard.putNumber("E - Telescope Set Point", m_telescopeSetPoint);
       SmartDashboard.putNumber("E - Telescope Current Position", m_backMotor.getSelectedSensorPosition());
       SmartDashboard.putNumber("E - Extension amps", m_backMotor.getSupplyCurrent());
+      SmartDashboard.putString("E - Returning State", getM_telescopeState().toString());
     }
   }
 

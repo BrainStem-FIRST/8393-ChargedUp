@@ -35,7 +35,6 @@ public class DepositSequenceCommandGroup extends SequentialCommandGroup {
         this.m_collector = p_collector;
         
         addCommands(
-            new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF),
             new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OUT)
             ,new WaitCommand(0.75)
             ,new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF)
