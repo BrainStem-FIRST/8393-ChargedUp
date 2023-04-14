@@ -24,6 +24,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -106,8 +107,8 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem {
         public static final double k_driveKV = (1.51 / 12);
         public static final double k_driveKA = (0.27 / 12);
 
-        public static final PIDConstants translationConstants = new PIDConstants(3.0, 0, 0);
-        public static final PIDConstants thetaConstants = new PIDConstants(3.0, 0, 0);
+        public static final PIDConstants translationConstants = new PIDConstants(4.0, 0, 0);
+        public static final PIDConstants thetaConstants = new PIDConstants(4.0, 0, 0);
 
         /* Swerve Profiling Values */
         /** Meters per Second */
@@ -172,8 +173,9 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem {
     public SwerveModuleState[] swerveModuleStates;
 
     public boolean isOpenLoop;
-
+    public Field2d field2d ;
     public Swerve() {
+        
         gyro = new Pigeon2(SwerveConstants.k_pigeonID, "CANivore_dt");
         gyro.configFactoryDefault();
         zeroGyro();
@@ -184,6 +186,9 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem {
                 new SwerveModule(2, SwerveConstants.Mod2Constants.k_constants),
                 new SwerveModule(3, SwerveConstants.Mod3Constants.k_constants)
         };
+
+        field2d = new Field2d();
+        SmartDashboard.putData("Field", field2d);
 
         /*
          * By pausing init for a second before setting module offsets, we avoid a bug
@@ -308,6 +313,7 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem {
                 mod.setModuleNeutralMode(m_adjustableDriveNeutralMode, m_adjustableAngleNeutralMode);
 
             }
+            field2d.setRobotPose(getPose());
 
             for (SwerveModule mod : mSwerveMods) {
                 SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());

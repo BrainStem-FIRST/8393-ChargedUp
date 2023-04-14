@@ -205,8 +205,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem {
   }
 
   private void collectorOut() {
-    m_wheelMotor.set(-0.7); //CollectorConstants.k_depositingSpeed / 3);
-    m_wheelMotor2.set(-0.2); //CollectorConstants.k_depositingSpeed
+    m_wheelMotor.set(-0.85); //CollectorConstants.k_depositingSpeed / 3);
+    m_wheelMotor2.set(-0.35); //CollectorConstants.k_depositingSpeed
     m_clawMotorEncoder.setPosition(0);
   }
 

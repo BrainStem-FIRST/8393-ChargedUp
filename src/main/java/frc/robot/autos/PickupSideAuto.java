@@ -57,16 +57,17 @@ public class PickupSideAuto extends SequentialCommandGroup {
         //         new RaiseToUnlockRatchetCommand(m_lift)
         //                 .andThen(new InstantCommand(() -> m_lift.m_state = LiftPosition.RATCHET))
         //                 .andThen(new InstantCommand(() -> m_lift.m_state = LiftPosition.HIGH_POLE))
-        //                 .andThen(m_highPoleApproach).andThen(m_depositSequenceCommandGroup).andThen(m_intakeOff));
-        // m_eventMap.put("collectCubePosition", new GroundCollectionCommandGroup(m_extension, m_lift, m_collector)
-        //         .andThen(new WaitCommand(1)).andThen(new CarryRetractedCommandGroup(m_extension, m_lift, m_collector)));
+        //                 .andThen(m_highPoleApproach).andThen(m_depositSequenceCommandGroup)
+        //                 .andThen(m_intakeOff));
+        m_eventMap.put("collectCubePosition", new GroundCollectionCommandGroup(m_extension, m_lift, m_collector)
+                .andThen(new WaitCommand(1)).andThen(new CarryRetractedCommandGroup(m_extension, m_lift, m_collector)));
         // m_eventMap.put("depositCubePosition", new InstantCommand(() -> m_lift.m_state = LiftPosition.HIGH_POLE)
         //         .andThen(m_highPoleApproach).andThen(m_depositSequenceCommandGroup).andThen(m_intakeOff)
         //         .andThen(new WaitCommand(0.4)));
 
         addRequirements(m_collector, m_swerve, m_lift, m_extension);
-        addCommands(m_swerve.getAutoBuilder(new HashMap<>()).fullAuto(
-                PathPlanner.loadPath("LeftSideAuto", PickupSideAutoConstants.goOutToCollectConstraints)));
+        addCommands(m_swerve.getAutoBuilder(m_eventMap).fullAuto(
+                PathPlanner.loadPathGroup("LeftSideAuto", PickupSideAutoConstants.goOutToCollectConstraints)));
     }
 
 }
