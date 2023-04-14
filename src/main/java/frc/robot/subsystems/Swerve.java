@@ -110,8 +110,8 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem {
         public static final double k_driveKV = (1.51 / 12);
         public static final double k_driveKA = (0.27 / 12);
 
-        public static final PIDConstants translationConstants = new PIDConstants(4.0, 0, 0);
-        public static final PIDConstants thetaConstants = new PIDConstants(4.0, 0, 0);
+        public static final PIDConstants translationConstants = new PIDConstants(5.0, 0, 0);
+        public static final PIDConstants thetaConstants = new PIDConstants(5.0, 0, 0);
 
         /* Swerve Profiling Values */
         /** Meters per Second */
@@ -322,7 +322,7 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem {
     public void periodic() {
         if (m_enableSwervePeriodic) { // m_enableSwervePeriodic
             swerveOdometry.update(getYaw(), getModulePositions());
-            updatePoseWithVision();
+            //updatePoseWithVision();
             for (SwerveModule mod : mSwerveMods) {
                 mod.setModuleNeutralMode(m_adjustableDriveNeutralMode, m_adjustableAngleNeutralMode);
 
