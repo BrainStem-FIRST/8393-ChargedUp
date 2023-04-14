@@ -1,0 +1,16 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Commands/Reset Extension": "Command",
+      "/SmartDashboard/Traj Field": "Field2d"
+    },
+    "windows": {
+      "/SmartDashboard/Traj Field": {
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  }
+}
