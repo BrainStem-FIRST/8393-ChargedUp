@@ -208,6 +208,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem {
     m_wheelMotor.set(-0.85); //CollectorConstants.k_depositingSpeed / 3);
     m_wheelMotor2.set(-0.35); //CollectorConstants.k_depositingSpeed
     m_clawMotorEncoder.setPosition(0);
+    SmartDashboard.putBoolean("C- Collector Out", true);
   }
 
   private void collectorHold() {
@@ -345,6 +346,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem {
       SmartDashboard.putNumber("C - Collector Wheel 2 Current Draw ", m_wheelMotor2.getOutputCurrent());
       SmartDashboard.putNumber("C - Collector Wheel 2 Encoder Position", m_clawMotorEncoder.getPosition());
       SmartDashboard.putNumber("C - COllector Wheel 2 Velocity ", m_clawMotorEncoder.getVelocity());
+      SmartDashboard.putString("C - Collector State", m_intakeState.toString());
 
     }
   }

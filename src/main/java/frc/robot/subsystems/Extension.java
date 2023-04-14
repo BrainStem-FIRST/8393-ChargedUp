@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commandGroups.AutoCubeCollectionExtensionCommandGroup;
 import frc.robot.commandGroups.CollectionExtensionCommandGroup;
 import frc.robot.commandGroups.HighPoleExtensionCommandGroup;
 import frc.robot.commandGroups.LowPoleExtensionCommandGroup;
@@ -52,7 +53,8 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     GROUND_COLLECTION,
     LOW_POLE,
     HIGH_POLE,
-    TRANSITION
+    TRANSITION,
+    AUTO_CUBE_COLLECT
   }
 
   public boolean m_telescopeBackOff = false;
@@ -180,6 +182,9 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
       case HIGH_POLE:
         m_highPoleExtensionCommandGroup.schedule();
         break;
+      case AUTO_CUBE_COLLECT:
+        new AutoCubeCollectionExtensionCommandGroup(this).schedule();
+        break;
     }
   }
 
@@ -226,6 +231,9 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
         break;
       case HIGH_POLE:
         m_telescopeSetPoint = ExtensionConstants.k_highPoleTelescopeValue;
+        break;
+      case AUTO_CUBE_COLLECT:
+        m_telescopeSetPoint = (int) (ExtensionConstants.k_lowPoleTelescopeValue * 1.5);
         break;
     }
   }
