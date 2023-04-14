@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
@@ -21,20 +23,20 @@ import frc.robot.utilities.BrainSTEMSubsystem;
 public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
 
   public static final class ExtensionConstants {
-    private static final double k_gearRatioMultiplication = 7.0/12.0;
+    private static final double k_gearRatioMultiplication = 7.0 / 12.0;
 
-    private static final int k_frontExtensionMotorID = 14; 
-    private static final int k_backExtensionMotorID = 31; 
+    private static final int k_frontExtensionMotorID = 14;
+    private static final int k_backExtensionMotorID = 31;
     private static final int k_extensionServoID = 9;
-    private static final double k_proportional = 0.00008;
+    private static final double k_proportional = 0.00007;
     private static final double k_integral = 0;
     private static final double k_derivative = 0;
-    private static final int k_retractedTelescopeValue = 0; //20000
-    private static final int k_collectionTelescopeValue = (int)((220000/1.8) * k_gearRatioMultiplication);
-    private static final int k_lowPoleTelescopeValue = (int) ((int)(162000 * k_gearRatioMultiplication) * 0.98); //*1.1 
-    private static final int k_highPoleTelescopeValue = (int) ((int)((240000 * k_gearRatioMultiplication)) * 1.20);
-    private static final int k_telescopeTolerance = (int)(1000 * k_gearRatioMultiplication);
-    private static final double k_telescopeMaxPower = 1.00;
+    private static final int k_retractedTelescopeValue = 0; // 20000
+    private static final int k_collectionTelescopeValue = (int) ((220000 / 1.8) * k_gearRatioMultiplication);
+    private static final int k_lowPoleTelescopeValue = (int) ((int) (162000 * k_gearRatioMultiplication) * 1.04); // *1.1
+    private static final int k_highPoleTelescopeValue = (int) ((int) ((240000 * k_gearRatioMultiplication)) * 1.3);
+    private static final int k_telescopeTolerance = (int) (1000 * k_gearRatioMultiplication);
+    private static final double k_telescopeMaxPower = 1.00; // 1.00
     public static final int k_backMotorOffRatchetValue = (int) ((75000 * k_gearRatioMultiplication) / 2); // FIXME
     public static final double k_backOffMotorSpeed = -0.01; // FIXME
   }
@@ -86,6 +88,11 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     m_telescopePIDController.setTolerance(ExtensionConstants.k_telescopeTolerance);
     // extensionServo.setBounds(1200, 125, 1100, 75, 1000);
 
+    m_backMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 38.0, 38.0, 0.01));
+    m_frontMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 38.0, 38.0, 0.01));
+
+    m_backMotor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 38.0, 38.0, 0.01));
+    m_frontMotor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 38.0, 38.0, 0.01));
 
   }
 
@@ -237,20 +244,17 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
 
     if (m_telescopeState != TelescopePosition.RETRACTED) {
       m_backMotor.set(
-        TalonFXControlMode.PercentOutput,
-        MathUtil.clamp(
-            m_telescopePIDController.calculate(m_backMotor.getSelectedSensorPosition(), m_telescopeSetPoint),
-            -k_MaxPower, k_MaxPower));
+          TalonFXControlMode.PercentOutput,
+          MathUtil.clamp(
+              m_telescopePIDController.calculate(m_backMotor.getSelectedSensorPosition(), m_telescopeSetPoint),
+              -k_MaxPower, k_MaxPower));
     } else {
       m_backMotor.set(
-        TalonFXControlMode.PercentOutput,
-        (MathUtil.clamp(
-            m_telescopePIDController.calculate(m_backMotor.getSelectedSensorPosition(), m_telescopeSetPoint),
-            -k_MaxPower, k_MaxPower)));
-    } 
-    
-        
-
+          TalonFXControlMode.PercentOutput,
+          (MathUtil.clamp(
+              m_telescopePIDController.calculate(m_backMotor.getSelectedSensorPosition(), m_telescopeSetPoint),
+              -k_MaxPower, k_MaxPower)));
+    }
 
   }
 
@@ -269,9 +273,11 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
       updateWithPID();
       m_frontMotor.follow(m_backMotor);
 
-      // Extensoin TELEMETRY ////////////////////////////////////////////////////////////////////////////////
+      // Extensoin TELEMETRY
+      // ////////////////////////////////////////////////////////////////////////////////
       SmartDashboard.putNumber("E - Telescope Set Point", m_telescopeSetPoint);
       SmartDashboard.putNumber("E - Telescope Current Position", m_backMotor.getSelectedSensorPosition());
+      SmartDashboard.putNumber("E - Extension amps", m_backMotor.getSupplyCurrent());
     }
   }
 

@@ -5,6 +5,7 @@ import java.time.Instant;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.WaitCommand;
 import frc.robot.commands.collectorCommands.CollectorOpenCommand;
 import frc.robot.commands.extensionCommands.BackMotorOffRatchetCommand;
 import frc.robot.commands.extensionCommands.ExtensionCommand;
@@ -26,20 +27,21 @@ import frc.robot.subsystems.Lift.LiftPosition;
 
 public class GroundCollectionCommandGroup extends SequentialCommandGroup {
     private Lift m_lift;
+
     public GroundCollectionCommandGroup(Extension extension, Lift p_lift, Collector collector) {
         m_lift = p_lift;
-            addCommands(
-                new InstantCommand(() -> collector.m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed * 1.25),
-                 new LiftCarryCommand(p_lift)
-                ,new InstantCommand(() -> extension.m_telescopeState = TelescopePosition.GROUND_COLLECTION)
-                ,new InstantCommand(() -> m_lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower/2)
-                ,new LiftGroundCommand(p_lift)
-                ,new InstantCommand(() -> m_lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower)
-                ,new CollectorOpenCommand(collector)
-                ,new InstantCommand(() -> collector.m_intakeState = IntakeState.IN)
-            );
-        
-      
+        addCommands(
+                new InstantCommand(
+                        () -> collector.m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed * 1.25),
+                new LiftCarryCommand(p_lift),
+                new InstantCommand(() -> extension.m_telescopeState = TelescopePosition.GROUND_COLLECTION),
+                new InstantCommand(() -> m_lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower / 2),
+                new WaitCommand(0.25), 
+                new LiftGroundCommand(p_lift),
+                new InstantCommand(() -> m_lift.m_adjustableLiftSpeed = LiftConstants.k_MaxPower),
+                new CollectorOpenCommand(collector),
+                new InstantCommand(() -> collector.m_intakeState = IntakeState.IN));
+
     }
 
 }

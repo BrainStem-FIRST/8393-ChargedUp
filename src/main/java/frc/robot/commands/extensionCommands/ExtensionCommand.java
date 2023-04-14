@@ -9,6 +9,7 @@ public class ExtensionCommand extends CommandBase {
     
     private final Extension m_extension;
     private final TelescopePosition m_telescopePosition;
+    private boolean isFinished;
 
     public ExtensionCommand(Extension extension, TelescopePosition telescopePosition) {
         m_extension = extension;
@@ -18,14 +19,18 @@ public class ExtensionCommand extends CommandBase {
 
     @Override
     public void initialize() {
+        isFinished = false;
         m_extension.m_telescopeState = m_telescopePosition;
+        isFinished = true;
+        
     }
 
     @Override
     public boolean isFinished() {
       
         // SmartDashboard.putNumber("Telescope Position", m_extension.getTelescopeMotorPosition());
-        return m_extension.getM_telescopeState() == m_telescopePosition;
+        
+        return (m_extension.getM_telescopeState() == m_telescopePosition) && isFinished;
     }
 
     

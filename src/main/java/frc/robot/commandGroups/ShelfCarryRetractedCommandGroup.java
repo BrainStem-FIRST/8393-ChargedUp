@@ -26,17 +26,13 @@ import frc.robot.subsystems.Lift.LiftConstants;
 import frc.robot.subsystems.Lift.LiftPosition;
 
 public class ShelfCarryRetractedCommandGroup extends SequentialCommandGroup {
-    
+
     public ShelfCarryRetractedCommandGroup(Extension extension, Lift lift, Collector p_collector) {
 
-        
         addCommands(
-            new RetractedExtensionCommandGroup(extension)
-            ,new LiftCarryCommand(lift)
-            
-            
-        );
-      
+                new ExtensionCommand(extension, TelescopePosition.RETRACTED),
+                new LiftCarryCommand(lift));
+
     }
 
 }

@@ -22,7 +22,7 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem {
     public static final double k_clawMotorCurrentDrawLimit = 6.50;
     public static final double k_wheelMotorHoldingSpeed = 0.06;
     public static final double k_depositingSpeed = -0.95; // 0.4
-    public static final double k_wheelMotorSpeed = 0.6; // FIXME
+    public static final double k_wheelMotorSpeed = 0.9; // FIXME
     public static final double k_wheelMotorCurrentDrawLimit = 40; // FIXME
     public static final double k_p = 0.0005; // FIXME
     public static final double k_i = 0; // FIXME
@@ -205,8 +205,8 @@ public class Collector extends SubsystemBase implements BrainSTEMSubsystem {
   }
 
   private void collectorOut() {
-    m_wheelMotor.set(CollectorConstants.k_depositingSpeed * 1.0);
-    m_wheelMotor2.set(CollectorConstants.k_depositingSpeed * 1.0);
+    m_wheelMotor.set(-0.85); //CollectorConstants.k_depositingSpeed / 3);
+    m_wheelMotor2.set(-0.35); //CollectorConstants.k_depositingSpeed
     m_clawMotorEncoder.setPosition(0);
   }
 

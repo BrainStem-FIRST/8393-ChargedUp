@@ -395,10 +395,17 @@ public class Robot extends TimedRobot {
 
         } else if (!hasCarryRetractedRun) {
 
-          m_robotContainer.m_collector.objectCollected = false;
-          m_robotContainer.m_collector.overLimit = false;
+          // m_robotContainer.m_collector.objectCollected = false;
+          // m_robotContainer.m_collector.overLimit = false;
+          
           hasCarryRetractedRun = true;
-          m_robotContainer.m_carryRetracted.schedule();
+          if(m_robotContainer.m_lift.m_state == LiftPosition.SHELF_COLLECTION) {
+            new ShelfCarryRetractedCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift,
+              m_robotContainer.m_collector).schedule();
+          } else {
+            m_robotContainer.m_carryRetracted.schedule();
+          }
+          
           new InstantCommand(
               () -> m_robotContainer.m_collector.m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed)
               .schedule();
