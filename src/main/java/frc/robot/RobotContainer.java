@@ -134,7 +134,8 @@ public class RobotContainer {
             () -> false));
 
     autoChooser.setDefaultOption("Center Auto", new AutoCenter(m_swerve, m_lift, m_collector, m_extension));
-    autoChooser.addOption("Right Side Auto", new PickupSideAuto(m_swerve, m_lift, m_collector, m_extension));
+    autoChooser.addOption("Barrier Side Auto", new BarrierSideAuto(m_swerve, m_lift, m_collector, m_extension));
+    autoChooser.addOption("Wire Side Auto", new WireSideAuto(m_swerve, m_lift, m_collector, m_extension));
 
     // m_limelight.setDefaultCommand(new DefaultLimelightCommand(m_limelight));
 

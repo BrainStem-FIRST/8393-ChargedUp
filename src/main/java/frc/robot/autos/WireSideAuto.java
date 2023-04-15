@@ -29,9 +29,9 @@ import frc.robot.subsystems.Collector.CollectorConstants;
 import frc.robot.subsystems.Collector.IntakeState;
 import frc.robot.subsystems.Lift.LiftPosition;
 
-public class PickupSideAuto extends SequentialCommandGroup {
+public class WireSideAuto extends SequentialCommandGroup {
 
-        public static final class PickupSideAutoConstants {
+        public static final class WireSideAutoConstants {
                 public static final PathConstraints goOutToCollectConstraints = new PathConstraints(
                                 Units.feetToMeters(18),
                                 OnePlusOneAuto.AutoConstants.k_maxAccelerationMetersPerSecondSquared);
@@ -43,7 +43,7 @@ public class PickupSideAuto extends SequentialCommandGroup {
         private Lift m_lift;
         private HashMap<String, Command> m_eventMap;
 
-        public PickupSideAuto(Swerve p_swerve, Lift p_lift, Collector p_collector, Extension p_extension) {
+        public WireSideAuto(Swerve p_swerve, Lift p_lift, Collector p_collector, Extension p_extension) {
                 m_eventMap = new HashMap<>();
 
                 this.m_collector = p_collector;
@@ -97,8 +97,8 @@ public class PickupSideAuto extends SequentialCommandGroup {
 
                 addRequirements(m_collector, m_swerve, m_lift, m_extension);
                 addCommands(m_swerve.getAutoBuilder(m_eventMap).fullAuto(
-                                PathPlanner.loadPathGroup("LeftSideAuto",
-                                                PickupSideAutoConstants.goOutToCollectConstraints)));
+                                PathPlanner.loadPathGroup("WireSideAuto",
+                                                WireSideAutoConstants.goOutToCollectConstraints)));
                 // addCommands(m_eventMap.get("startingPosition"));
         }
 

@@ -159,7 +159,7 @@ public class OnePlusOneAuto extends SequentialCommandGroup {
                 // ,new InstantCommand(() -> stopDT(s_Swerve, m_Timer))
                 // ,m_groundCollection
                 // ,new AutoGroundCollectionCommandGroup(m_Lift, m_extension, s_Swerve, m_collector)
-                new PickupSideAuto(s_Swerve, m_Lift, m_collector, m_extension)
+                new BarrierSideAuto(s_Swerve, m_Lift, m_collector, m_extension)
 
                 // come to blue line for pose estimate w/ april tag
                 // , new InstantCommand(() -> s_Swerve.resetOdometry(depositTrajectory.getInitialPose()))

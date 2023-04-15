@@ -173,7 +173,7 @@ public class Robot extends TimedRobot {
       isubsystem.initialize();
     }
 
-    // m_robotContainer.m_lift.m_state = LiftPosition.CARRY;
+    //m_robotContainer.m_lift.m_state = LiftPosition.CARRY;
     m_robotContainer.m_lift.m_state = LiftPosition.RATCHET;
     
   }
