@@ -35,7 +35,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     private static final int k_retractedTelescopeValue = 0; // 20000
     private static final int k_collectionTelescopeValue = (int) ((220000 / 1.8) * k_gearRatioMultiplication);
     private static final int k_lowPoleTelescopeValue = (int) ((int) (162000 * k_gearRatioMultiplication) * 1.04); // *1.1
-    private static final int k_highPoleTelescopeValue = (int) ((int) ((240000 * k_gearRatioMultiplication)) * 1.4);
+    private static final int k_highPoleTelescopeValue = (int)(185508);
     private static final int k_telescopeTolerance = (int) (1200 * k_gearRatioMultiplication);
     private static final double k_telescopeMaxPower = 1.00; // 1.00
     public static final int k_backMotorOffRatchetValue = (int) ((75000 * k_gearRatioMultiplication) / 2); // FIXME
@@ -206,7 +206,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
         && (m_telescopeState == TelescopePosition.HIGH_POLE)) {
       return TelescopePosition.HIGH_POLE;
     } else if ((inTolerance((int) m_backMotor.getSelectedSensorPosition(),
-        (int) (ExtensionConstants.k_highPoleTelescopeValue * 0.95), ExtensionConstants.k_telescopeTolerance))
+        (int) (ExtensionConstants.k_highPoleTelescopeValue * 1.00), ExtensionConstants.k_telescopeTolerance))
         && (m_telescopeState == TelescopePosition.AUTO_HIGH_POLE)) {
       return TelescopePosition.AUTO_HIGH_POLE;
     } else {
@@ -244,7 +244,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
         m_telescopeSetPoint = (int) (ExtensionConstants.k_lowPoleTelescopeValue * 1.5);
         break;
       case AUTO_HIGH_POLE:
-        m_telescopeSetPoint = (int) (ExtensionConstants.k_highPoleTelescopeValue * 0.95);
+        m_telescopeSetPoint = (int) (ExtensionConstants.k_highPoleTelescopeValue * 1.00);
         break;
     }
   }
@@ -287,10 +287,12 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
   @Override
   public void periodic() {
     if (m_enableExtensionPeriodic) {
-      setRatchetState();
-      setTelescopeState();
-      updateWithPID();
-      m_frontMotor.follow(m_backMotor);
+      // setRatchetState();
+      // setTelescopeState();
+      // updateWithPID();
+      // m_frontMotor.follow(m_backMotor);
+      m_frontMotor.setNeutralMode(NeutralMode.Coast);
+      m_backMotor.setNeutralMode(NeutralMode.Coast);
 
       // Extensoin TELEMETRY
       // ////////////////////////////////////////////////////////////////////////////////
