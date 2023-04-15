@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -90,7 +91,6 @@ public class RobotContainer {
   public final JoystickButton m_driver2XButton = new JoystickButton(m_driver2, JoystickConstants.k_xButton);
   public final JoystickButton m_driver2LeftBumper = new JoystickButton(m_driver2, JoystickConstants.k_leftBumper);
   public final JoystickButton m_driver2RightBumper = new JoystickButton(m_driver2, JoystickConstants.k_rightBumper);
-  
 
   /* Subsystems */
   Swerve m_swerve = new Swerve();
@@ -98,22 +98,25 @@ public class RobotContainer {
   Extension m_extension = new Extension();
   Collector m_collector = new Collector();
 
-
   /* Command Groups */
   public LowPoleApproachCommandGroup m_lowPoleApproach = new LowPoleApproachCommandGroup(m_extension, m_lift,
       m_collector);
   public GroundRetractedCommandGroup m_groundRetracted = new GroundRetractedCommandGroup(m_extension, m_lift);
   public CarryRetractedCommandGroup m_carryRetracted = new CarryRetractedCommandGroup(m_extension, m_lift, m_collector);
   public CollectCommandGroup m_collectCommandGroup = new CollectCommandGroup(m_collector);
-  public GroundCollectionCommandGroup m_groundCollection = new GroundCollectionCommandGroup(m_extension, m_lift, m_collector);
-  public ShelfCollectionApproachCommandGroup m_shelfCollection = new ShelfCollectionApproachCommandGroup(m_extension, m_lift);
+  public GroundCollectionCommandGroup m_groundCollection = new GroundCollectionCommandGroup(m_extension, m_lift,
+      m_collector);
+  public ShelfCollectionApproachCommandGroup m_shelfCollection = new ShelfCollectionApproachCommandGroup(m_extension,
+      m_lift);
   public MonkDrive monkDrive = new MonkDrive(m_swerve, false);
   public DriveUntilLimelightCommand leftGreenMonkDrive = new DriveUntilLimelightCommand(true, m_swerve, () -> false);
   public DriveUntilLimelightCommand rightGreenMonkDrive = new DriveUntilLimelightCommand(false, m_swerve, () -> false);
-  
+  public SendableChooser<Command> autoChooser = new SendableChooser<>();
 
-  // public CANSparkMax m_collectorMotor1 = new CANSparkMax(19, MotorType.kBrushless);
-  // public CANSparkMax m_collectorMotor2 = new CANSparkMax(22, MotorType.kBrushless);
+  // public CANSparkMax m_collectorMotor1 = new CANSparkMax(19,
+  // MotorType.kBrushless);
+  // public CANSparkMax m_collectorMotor2 = new CANSparkMax(22,
+  // MotorType.kBrushless);
 
   // public DefaultLimelightCommand m_limelightCommand = new
   // DefaultLimelightCommand(m_Limelight);
@@ -122,7 +125,6 @@ public class RobotContainer {
    */
   public RobotContainer() {
 
-
     m_swerve.setDefaultCommand(
         new TeleopSwerve(
             m_swerve,
@@ -130,6 +132,9 @@ public class RobotContainer {
             () -> -(m_driver1.getRawAxis(k_strafeAxis) * m_lift.m_swerveMultiplyerTranslation),
             () -> -(m_driver1.getRawAxis(k_rotationAxis) * m_lift.m_swerveTurningMultiplyer),
             () -> false));
+
+    autoChooser.setDefaultOption("Center Auto", new AutoCenter(m_swerve, m_lift, m_collector, m_extension));
+    autoChooser.addOption("Right Side Auto", new PickupSideAuto(m_swerve, m_lift, m_collector, m_extension));
 
     // m_limelight.setDefaultCommand(new DefaultLimelightCommand(m_limelight));
 
@@ -146,14 +151,15 @@ public class RobotContainer {
 
     Field2d trajTest = new Field2d();
     PathPlannerTrajectory testTraj = PathPlanner.generatePath(
-            new PathConstraints(1.0, 1.0),
-            new PathPoint(new Translation2d(), new Rotation2d()),
-            new PathPoint(new Translation2d(1.0, 1.0), new Rotation2d())
-    );
+        new PathConstraints(1.0, 1.0),
+        new PathPoint(new Translation2d(), new Rotation2d()),
+        new PathPoint(new Translation2d(1.0, 1.0), new Rotation2d()));
     trajTest.getObject("Original traj").setTrajectory(testTraj);
-    trajTest.getObject("Flipped traj").setTrajectory(PathPlannerFlipper.flipTrajectory(testTraj, new PathConstraints(1.0, 1.0)));
+    trajTest.getObject("Flipped traj")
+        .setTrajectory(PathPlannerFlipper.flipTrajectory(testTraj, new PathConstraints(1.0, 1.0)));
 
     SmartDashboard.putData("Traj Field", trajTest);
+    SmartDashboard.putData(autoChooser);
   }
 
   /**
@@ -175,18 +181,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-
-    // auto Center
-  
-  //return new AutoCenter(m_swerve, m_lift, m_collector, m_extension);
-
-
-    //return new OnePlusOneSideAuto(m_swerve, m_lift, m_collector, m_extension);
-    // 1 + 1 block auto 
-    return new OnePlusOneAuto(m_swerve, m_lift, m_collector, m_extension);
-
-    // more to come...
-    
+    return autoChooser.getSelected();
   }
 
   public ArrayList<BrainSTEMSubsystem> getBrainSTEMSubsystems() {
@@ -197,7 +192,5 @@ public class RobotContainer {
     brainSTEMSubsystems.add(m_collector);
     return brainSTEMSubsystems;
   }
-
-
 
 }

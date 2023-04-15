@@ -34,7 +34,7 @@ public class PickupSideAuto extends SequentialCommandGroup {
         public static final class PickupSideAutoConstants {
                 public static final PathConstraints goOutToCollectConstraints = new PathConstraints(
                                 Units.feetToMeters(18),
-                                OnePlusOneAuto.AutoConstants.k_maxAccelerationMetersPerSecondSquared / 2);
+                                OnePlusOneAuto.AutoConstants.k_maxAccelerationMetersPerSecondSquared);
         }
 
         private Swerve m_swerve;
