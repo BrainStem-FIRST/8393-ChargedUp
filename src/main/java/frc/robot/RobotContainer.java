@@ -138,8 +138,13 @@ public class RobotContainer {
 
     // Basic Testing and Commands
     ShuffleboardTab commandTab = Shuffleboard.getTab("Commands");
-    commandTab.add("Reset Extension", m_extension.resetExtensionBase());
-    commandTab.add("Reset Modules To Absolute", m_swerve.resetModuleBase().ignoringDisable(true));
+    commandTab.add("Reset Extension", m_extension.resetExtensionBase()).withSize(2, 1);
+    commandTab.add("Reset Modules To Absolute", m_swerve.resetModuleBase().ignoringDisable(true)).withSize(2, 1);
+
+    commandTab.add("Enable lift brake", m_lift.enableBrakeModeBase()).withSize(2, 1);
+    commandTab.add("Disable lift brake", m_lift.disableBrakeModeBase()).withSize(2, 1);
+    commandTab.add("Enable ext brake", m_extension.enableBrakeModeBase()).withSize(2, 1);
+    commandTab.add("Disable ext brake", m_extension.disableBrakeModeBase()).withSize(2, 1);
 
     SmartDashboard.putNumber("S - Turning ", m_lift.m_swerveTurningMultiplyer);
     SmartDashboard.putNumber("S - Translation ", m_lift.m_swerveMultiplyerTranslation);

@@ -443,6 +443,22 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     }
   }
 
+  public CommandBase disableBrakeModeBase() {
+    return runOnce(() -> {
+      m_backLift.setNeutralMode(NeutralMode.Coast);
+      m_rightLift.setNeutralMode(NeutralMode.Coast);
+      m_forwardLift.setNeutralMode(NeutralMode.Coast);
+    });
+  }
+
+  public CommandBase enableBrakeModeBase() {
+    return runOnce(() -> {
+      m_backLift.setNeutralMode(NeutralMode.Brake);
+      m_rightLift.setNeutralMode(NeutralMode.Brake);
+      m_forwardLift.setNeutralMode(NeutralMode.Brake);
+    });
+  }
+
   @Override
   public void simulationPeriodic() {
 

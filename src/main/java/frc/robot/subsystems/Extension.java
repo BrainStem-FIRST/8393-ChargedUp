@@ -289,6 +289,20 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     }
   }
 
+  public CommandBase disableBrakeModeBase() {
+    return runOnce(() -> {
+      m_backMotor.setNeutralMode(NeutralMode.Coast);
+      m_frontMotor.setNeutralMode(NeutralMode.Coast);
+    });
+  }
+
+  public CommandBase enableBrakeModeBase() {
+    return runOnce(() -> {
+      m_backMotor.setNeutralMode(NeutralMode.Brake);
+      m_frontMotor.setNeutralMode(NeutralMode.Brake);
+    });
+  }
+
   @Override
   public void simulationPeriodic() {
 
