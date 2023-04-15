@@ -150,7 +150,7 @@ public class Robot extends TimedRobot {
       isubsystem.disablePeriodic();
     }
 
-    m_robotContainer.m_swerve.resetModuleBase().schedule();
+    //m_robotContainer.m_swerve.resetModuleBase().schedule();
   }
 
   @Override
@@ -177,7 +177,7 @@ public class Robot extends TimedRobot {
 
     //m_robotContainer.m_lift.m_state = LiftPosition.CARRY;
     m_robotContainer.m_lift.m_state = LiftPosition.RATCHET;
-    m_robotContainer.m_swerve.resetModuleBase().schedule();
+    // m_robotContainer.m_swerve.resetModuleBase().schedule();
     
   }
 
