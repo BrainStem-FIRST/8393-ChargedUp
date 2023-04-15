@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commandGroups.AutoDepositSequenceCommandGroup;
 import frc.robot.commandGroups.AutoGroundCollectionCommandGroup;
+import frc.robot.commandGroups.AutoHighPoleApproachCommandGroup;
 import frc.robot.commandGroups.CarryRetractedCommandGroup;
 import frc.robot.commandGroups.DepositSequenceCommandGroup;
 import frc.robot.commandGroups.GroundCollectionCommandGroup;
@@ -28,12 +29,12 @@ import frc.robot.subsystems.Collector.CollectorConstants;
 import frc.robot.subsystems.Collector.IntakeState;
 import frc.robot.subsystems.Lift.LiftPosition;
 
-public class PickupSideAuto extends SequentialCommandGroup {
+public class WireSideAuto extends SequentialCommandGroup {
 
-        public static final class PickupSideAutoConstants {
+        public static final class WireSideAutoConstants {
                 public static final PathConstraints goOutToCollectConstraints = new PathConstraints(
-                                Units.feetToMeters(10),
-                                OnePlusOneAuto.AutoConstants.k_maxAccelerationMetersPerSecondSquared / 2);
+                                Units.feetToMeters(18),
+                                OnePlusOneAuto.AutoConstants.k_maxAccelerationMetersPerSecondSquared);
         }
 
         private Swerve m_swerve;
@@ -42,14 +43,15 @@ public class PickupSideAuto extends SequentialCommandGroup {
         private Lift m_lift;
         private HashMap<String, Command> m_eventMap;
 
-        public PickupSideAuto(Swerve p_swerve, Lift p_lift, Collector p_collector, Extension p_extension) {
+        public WireSideAuto(Swerve p_swerve, Lift p_lift, Collector p_collector, Extension p_extension) {
                 m_eventMap = new HashMap<>();
 
                 this.m_collector = p_collector;
                 this.m_swerve = p_swerve;
                 this.m_lift = p_lift;
                 this.m_extension = p_extension;
-                HighPoleApproachCommandGroup m_highPoleApproach = new HighPoleApproachCommandGroup(m_extension, m_lift,
+                AutoHighPoleApproachCommandGroup m_highPoleApproach = new AutoHighPoleApproachCommandGroup(m_extension,
+                                m_lift,
                                 m_collector);
 
                 DepositSequenceCommandGroup m_depositSequenceCommandGroup = new DepositSequenceCommandGroup(
@@ -59,7 +61,8 @@ public class PickupSideAuto extends SequentialCommandGroup {
                 IntakeOffCommand m_intakeOff = new IntakeOffCommand(m_collector);
 
                 m_eventMap.put("startingPosition", new RaiseToUnlockRatchetCommand(m_lift)
-                                .andThen(m_highPoleApproach).andThen(m_depositSequenceCommandGroup));
+                                .andThen(m_highPoleApproach)
+                                .andThen(m_depositSequenceCommandGroup));
 
                 // m_eventMap.put("startingPosition", new
                 // HighPoleApproachCommandGroup(m_extension, m_lift,
@@ -68,8 +71,9 @@ public class PickupSideAuto extends SequentialCommandGroup {
                 // m_collector)));
 
                 m_eventMap.put("startToCollect",
-                                // add collect in to hold cone here FIXME
-                                new AutoGroundCollectionCommandGroup(m_extension, m_lift, m_collector));
+                                new InstantCommand(() -> m_collector.m_intakeState = IntakeState.HOLD_IN)
+                                                .andThen(new AutoGroundCollectionCommandGroup(m_extension, m_lift,
+                                                                m_collector)));
                 m_eventMap.put("collectCubePosition",
                                 new WaitCommand(1)
                                                 .andThen(new InstantCommand(
@@ -79,11 +83,13 @@ public class PickupSideAuto extends SequentialCommandGroup {
 
                 m_eventMap.put("turnOffCollectorPoint",
                                 new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OFF));
+                m_eventMap.put("startToDeposit", new HighPoleApproachCommandGroup(m_extension, m_lift,
+                                m_collector));
 
-                m_eventMap.put("depositCubePosition", new HighPoleApproachCommandGroup(m_extension, m_lift,
-                                m_collector).andThen(
-                                                new DepositSequenceCommandGroup(m_lift, m_extension,
-                                                                m_collector)));
+                m_eventMap.put("depositCubePosition",
+                                new DepositSequenceCommandGroup(m_lift, m_extension,
+                                                m_collector));
+
                 // m_eventMap.put("depositCubePosition", new InstantCommand(() -> m_lift.m_state
                 // = LiftPosition.HIGH_POLE)
                 // .andThen(m_highPoleApproach).andThen(m_depositSequenceCommandGroup).andThen(m_intakeOff)
@@ -91,8 +97,9 @@ public class PickupSideAuto extends SequentialCommandGroup {
 
                 addRequirements(m_collector, m_swerve, m_lift, m_extension);
                 addCommands(m_swerve.getAutoBuilder(m_eventMap).fullAuto(
-                                PathPlanner.loadPathGroup("LeftSideAuto",
-                                                PickupSideAutoConstants.goOutToCollectConstraints)));
+                                PathPlanner.loadPathGroup("WireSideAuto",
+                                                WireSideAutoConstants.goOutToCollectConstraints)));
+                // addCommands(m_eventMap.get("startingPosition"));
         }
 
 }

@@ -9,9 +9,9 @@ import frc.robot.commands.extensionCommands.RatchetUnlockCommand;
 import frc.robot.subsystems.Extension;
 import frc.robot.subsystems.Extension.TelescopePosition;
 
-public class HighPoleExtensionCommandGroup extends SequentialCommandGroup {
+public class AutoHighPoleExtensionCommandGroup extends SequentialCommandGroup {
     
-    public HighPoleExtensionCommandGroup(Extension extension) {
+    public AutoHighPoleExtensionCommandGroup(Extension extension) {
 
         addCommands(
             new ExtensionCommand(extension, TelescopePosition.HIGH_POLE)

@@ -149,6 +149,8 @@ public class Robot extends TimedRobot {
     for (BrainSTEMSubsystem isubsystem : brainSTEMSubsystems) {
       isubsystem.disablePeriodic();
     }
+
+    m_robotContainer.m_swerve.resetModuleBase().schedule();
   }
 
   @Override
@@ -173,8 +175,9 @@ public class Robot extends TimedRobot {
       isubsystem.initialize();
     }
 
-    // m_robotContainer.m_lift.m_state = LiftPosition.CARRY;
+    //m_robotContainer.m_lift.m_state = LiftPosition.CARRY;
     m_robotContainer.m_lift.m_state = LiftPosition.RATCHET;
+    m_robotContainer.m_swerve.resetModuleBase().schedule();
     
   }
 
@@ -209,6 +212,7 @@ public class Robot extends TimedRobot {
     }
 
     m_robotContainer.m_lift.m_state = LiftPosition.CARRY;
+    m_robotContainer.m_swerve.resetModuleBase().schedule();
   }
 
   private void setToggleButtons() {

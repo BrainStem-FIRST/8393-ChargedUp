@@ -23,7 +23,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   public static final class LiftConstants {
 
     // pid constants
-    public static final double k_P = 0.00011;
+    public static final double k_P = 0.00015;
     public static final double k_I = 0.000000001;
     public static final double k_D = 0.0000;
 
@@ -126,7 +126,8 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     DEPOSIT_LOWER,
     COLLECT_PRELOAD,
     RATCHET,
-    STOP
+    STOP,
+    AUTO_DEPOSIT
   }
 
   public enum HookState {
@@ -327,6 +328,9 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
         break;
       case RATCHET:
         m_liftSetPoint = 70001;
+        break;
+      case AUTO_DEPOSIT:
+        m_liftSetPoint = (int)((LiftConstants.k_highPoleValue - depositDelta) * 0.945);
         break;
     }
   }
