@@ -315,7 +315,7 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem {
     }
 
     public CommandBase resetModuleBase() {
-        return runOnce(this::resetModulesToAbsolute);
+        return runOnce(this::resetModulesToAbsolute).ignoringDisable(true);
     }
 
     @Override
