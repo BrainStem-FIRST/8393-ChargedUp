@@ -22,6 +22,7 @@ import frc.robot.subsystems.Lift.LiftPosition;
 public class LowPoleApproachCommandGroup extends SequentialCommandGroup {
     
     public LowPoleApproachCommandGroup(Extension extension, Lift lift, Collector collector) {
+        addRequirements(extension, lift, collector);
         addCommands(
             new LiftLowPoleCommand(lift)
             , new WaitCommand(0.45)

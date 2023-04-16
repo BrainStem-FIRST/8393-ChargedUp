@@ -33,6 +33,7 @@ public class DepositSequenceCommandGroup extends SequentialCommandGroup {
         this.m_lift = p_lift;
         this.m_extension = p_extension;
         this.m_collector = p_collector;
+        addRequirements(m_lift, m_extension, m_collector);
         
         addCommands(
             new InstantCommand(() -> m_collector.m_intakeState = IntakeState.OUT)

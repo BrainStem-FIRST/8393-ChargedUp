@@ -27,6 +27,7 @@ import frc.robot.subsystems.Lift.LiftPosition;
 public class HighPoleApproachCommandGroup extends SequentialCommandGroup {
     
     public HighPoleApproachCommandGroup(Extension extension, Lift lift, Collector collector) {
+        addRequirements(extension, lift, collector);
         addCommands(
             new LiftHighPoleCommand(lift)
             , new WaitCommand(0.45)

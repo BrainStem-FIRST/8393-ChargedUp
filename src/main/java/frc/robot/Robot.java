@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer.JoystickConstants;
 import frc.robot.autos.AutoCenter;
 import frc.robot.commandGroups.CarryRetractedCommandGroup;
@@ -43,6 +44,7 @@ import frc.robot.subsystems.Lift.HookState;
 import frc.robot.subsystems.Lift.LiftPosition;
 import frc.robot.utilities.BrainSTEMSubsystem;
 import frc.robot.utilities.LimelightHelpers;
+import frc.robot.utilities.RunOnce;
 import frc.robot.utilities.ToggleButton;
 
 /**
@@ -73,6 +75,7 @@ public class Robot extends TimedRobot {
 
   private ToggleButton m_driver1_A = new ToggleButton();
   private ToggleButton m_driver1_X = new ToggleButton();
+  private ToggleButton m_driver1_Y = new ToggleButton();
   private ToggleButton m_driver1_BackButton = new ToggleButton();
   private ToggleButton m_driver1_B = new ToggleButton();
 
@@ -98,6 +101,10 @@ public class Robot extends TimedRobot {
   private boolean hasMonkDriveCanceled = true;
   private boolean hasLimelightMonkDriveCanceled = true;
 
+  private boolean hasHighPoleApproached = false;
+  private boolean hasLowPoleApproached = false;
+  private boolean returnedCarryFromHigh = false;
+  private boolean returnedCarryFromLow = false;
   public static double limelightCurrent;
   // private boolean hasLimelightRun = false;
 
@@ -150,7 +157,7 @@ public class Robot extends TimedRobot {
       isubsystem.disablePeriodic();
     }
 
-    //m_robotContainer.m_swerve.resetModuleBase().schedule();
+    // m_robotContainer.m_swerve.resetModuleBase().schedule();
   }
 
   @Override
@@ -175,10 +182,10 @@ public class Robot extends TimedRobot {
       isubsystem.initialize();
     }
 
-    //m_robotContainer.m_lift.m_state = LiftPosition.CARRY;
+    // m_robotContainer.m_lift.m_state = LiftPosition.CARRY;
     m_robotContainer.m_lift.m_state = LiftPosition.RATCHET;
     // m_robotContainer.m_swerve.resetModuleBase().schedule();
-    
+
   }
 
   /** This function is called periodically during autonomous. */
@@ -222,6 +229,7 @@ public class Robot extends TimedRobot {
     // !m_robotContainer.m_driver1AButton.getAsBoolean());
     m_driver1_A.update(m_robotContainer.m_driver1AButton.getAsBoolean());
     m_driver1_X.update(m_robotContainer.m_driver1XButton.getAsBoolean());
+    m_driver1_Y.update(m_robotContainer.m_driver1YButton.getAsBoolean());
     // m_driver1_B.update(m_robotContainer.m_driver1BButton.getAsBoolean());
     if (m_robotContainer.m_driver1AButton.getAsBoolean()) {
       m_driver1_X.setState(false);
@@ -234,11 +242,17 @@ public class Robot extends TimedRobot {
     if (m_robotContainer.m_driver2BButton.getAsBoolean()) {
       m_driver1_X.setState(false);
       m_driver1_A.setState(false);
+      m_driver1_Y.setState(false);
       m_robotContainer.m_collector.m_collectorState = CollectorState.CLOSED;
       s_robotMode = RobotMode.COLLECTING;
     } else if (m_robotContainer.m_driver2XButton.getAsBoolean()) {
+      hasHighPoleApproached = false;
+      hasLowPoleApproached = false;
+      returnedCarryFromHigh = true;
+      returnedCarryFromLow = true;
       m_driver1_X.setState(false);
       m_driver1_A.setState(false);
+      m_driver1_Y.setState(false);
       s_robotMode = RobotMode.DEPOSITING;
     }
   }
@@ -331,29 +345,44 @@ public class Robot extends TimedRobot {
 
     if (s_robotMode == RobotMode.DEPOSITING) {
 
-      if (m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) > 0.7) { // && !hasDepositingRun
+      if (m_robotContainer.m_driver1.getRawAxis(JoystickConstants.k_rightTrigger) > 0.7) {
         hasDepositingRun = true;
         new DepositSequenceCommandGroup(m_robotContainer.m_lift, m_robotContainer.m_extension,
             m_robotContainer.m_collector).schedule();
       }
 
-      if (m_robotContainer.m_driver1XButton.getAsBoolean()
-          && (m_robotContainer.m_lift.m_state != LiftPosition.HIGH_POLE_TILT)
-          && (m_robotContainer.m_lift.m_state != LiftPosition.HIGH_POLE)) { // && (m_robotContainer.m_lift.m_state !=
-                                                                            // LiftPosition.HIGH_POLE_TILT) &&
-                                                                            // (m_robotContainer.m_lift.m_state !=
-                                                                            // LiftPosition.HIGH_POLE)
-        s_depositLocation = DepositLocation.LOW;
+      if (m_driver1_X.getState() && !hasLowPoleApproached) {
         new LowPoleApproachCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift,
             m_robotContainer.m_collector).schedule();
+        hasLowPoleApproached = true;
+        returnedCarryFromLow = false;
+      } else if (!m_driver1_X.getState() && !returnedCarryFromLow) {
+        new SequentialCommandGroup(
+            new ShelfCarryRetractedCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift,
+                m_robotContainer.m_collector),
+            new InstantCommand(() -> m_robotContainer.m_lift.lowerLiftToCarry()),
+            new InstantCommand(() -> m_robotContainer.m_collector.m_intakeState = IntakeState.OFF))
+            .schedule();
+
+        returnedCarryFromLow = true;
+        hasLowPoleApproached = false;
       }
 
-      if (m_robotContainer.m_driver1YButton.getAsBoolean()
-          && (m_robotContainer.m_lift.m_state != LiftPosition.LOW_POLE)) { // && (m_robotContainer.m_lift.m_state !=
-                                                                           // LiftPosition.LOW_POLE)
-        s_depositLocation = DepositLocation.HIGH;
+      if (m_driver1_Y.getState() && !hasHighPoleApproached) {
         new HighPoleApproachCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift,
             m_robotContainer.m_collector).schedule();
+        hasHighPoleApproached = true;
+        returnedCarryFromHigh = false;
+      } else if (!m_driver1_Y.getState() && !returnedCarryFromHigh) {
+        new SequentialCommandGroup(
+            new ShelfCarryRetractedCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift,
+                m_robotContainer.m_collector),
+            new InstantCommand(() -> m_robotContainer.m_lift.lowerLiftToCarry()),
+            new InstantCommand(() -> m_robotContainer.m_collector.m_intakeState = IntakeState.OFF))
+            .schedule();
+        returnedCarryFromHigh = true;
+        hasHighPoleApproached = false;
+
       }
 
     } else {
@@ -401,15 +430,15 @@ public class Robot extends TimedRobot {
 
           // m_robotContainer.m_collector.objectCollected = false;
           // m_robotContainer.m_collector.overLimit = false;
-          
+
           hasCarryRetractedRun = true;
-          if(m_robotContainer.m_lift.m_state == LiftPosition.SHELF_COLLECTION) {
+          if (m_robotContainer.m_lift.m_state == LiftPosition.SHELF_COLLECTION) {
             new ShelfCarryRetractedCommandGroup(m_robotContainer.m_extension, m_robotContainer.m_lift,
-              m_robotContainer.m_collector).schedule();
+                m_robotContainer.m_collector).schedule();
           } else {
             m_robotContainer.m_carryRetracted.schedule();
           }
-          
+
           new InstantCommand(
               () -> m_robotContainer.m_collector.m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed)
               .schedule();
