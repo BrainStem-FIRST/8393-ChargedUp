@@ -222,19 +222,19 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
         ExtensionConstants.k_telescopeTolerance)) && (m_telescopeState == TelescopePosition.RETRACTED)) {
       return TelescopePosition.RETRACTED;
     } else if ((inTolerance((int) m_backMotor.getSelectedSensorPosition(),
-        (int)m_adjustableShelfCollectionValue, ExtensionConstants.k_telescopeTolerance))
+        (int)(m_adjustableShelfCollectionValue*m_adjustableShelfCollectionMultiplier), ExtensionConstants.k_telescopeTolerance))
         && (m_telescopeState == TelescopePosition.COLLECTION)) {
       return TelescopePosition.COLLECTION;
     } else if ((inTolerance((int) m_backMotor.getSelectedSensorPosition(),
-        (int)m_adjustableLowPoleTelescopeValue, ExtensionConstants.k_telescopeTolerance))
+        (int)(m_adjustableLowPoleTelescopeValue*m_adjustableLowMultiplier), ExtensionConstants.k_telescopeTolerance))
         && (m_telescopeState == TelescopePosition.LOW_POLE)) {
       return TelescopePosition.LOW_POLE;
     } else if ((inTolerance((int) m_backMotor.getSelectedSensorPosition(),
-        (int)m_adjustableHighPoleTelescopeValue, ExtensionConstants.k_telescopeTolerance))
+        (int)(m_adjustableHighPoleTelescopeValue*m_adjustableHighMultiplier), ExtensionConstants.k_telescopeTolerance))
         && (m_telescopeState == TelescopePosition.HIGH_POLE)) {
       return TelescopePosition.HIGH_POLE;
     } else if ((inTolerance((int) m_backMotor.getSelectedSensorPosition(),
-        (int) (ExtensionConstants.k_highPoleTelescopeValue * 1.00), ExtensionConstants.k_telescopeTolerance))
+        (int) (ExtensionConstants.k_highPoleTelescopeValue), ExtensionConstants.k_telescopeTolerance))
         && (m_telescopeState == TelescopePosition.AUTO_HIGH_POLE)) {
       return TelescopePosition.AUTO_HIGH_POLE;
     } else {
@@ -257,16 +257,16 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
         m_telescopeSetPoint = ExtensionConstants.k_retractedTelescopeValue;
         break;
       case COLLECTION:
-        m_telescopeSetPoint = ExtensionConstants.k_collectionTelescopeValue;
+        m_telescopeSetPoint = (int)(ExtensionConstants.k_collectionTelescopeValue*m_adjustableShelfCollectionMultiplier);
         break;
       case GROUND_COLLECTION:
         m_telescopeSetPoint = (int) (ExtensionConstants.k_collectionTelescopeValue * 0.7);
         break;
       case LOW_POLE:
-        m_telescopeSetPoint = ExtensionConstants.k_lowPoleTelescopeValue;
+        m_telescopeSetPoint = (int)(ExtensionConstants.k_lowPoleTelescopeValue*m_adjustableLowMultiplier);
         break;
       case HIGH_POLE:
-        m_telescopeSetPoint = ExtensionConstants.k_highPoleTelescopeValue;
+        m_telescopeSetPoint = (int)(ExtensionConstants.k_highPoleTelescopeValue*m_adjustableHighMultiplier);
         break;
       case AUTO_CUBE_COLLECT:
         m_telescopeSetPoint = (int) (ExtensionConstants.k_lowPoleTelescopeValue * 1.3);

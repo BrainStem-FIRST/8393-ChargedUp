@@ -96,7 +96,7 @@ public class BarrierSideAuto extends SequentialCommandGroup {
                 // .andThen(new WaitCommand(0.4)));
 
                 addRequirements(m_collector, m_swerve, m_lift, m_extension);
-                addCommands(m_swerve.getAutoBuilder(m_eventMap).fullAuto(
+                addCommands(m_swerve.getAutoBuilder(m_eventMap).fullAuto( //.fullAuto
                                 PathPlanner.loadPathGroup("BarrierSideAuto",
                                                 PickupSideAutoConstants.goOutToCollectConstraints)));
                 // addCommands(m_eventMap.get("startingPosition"));

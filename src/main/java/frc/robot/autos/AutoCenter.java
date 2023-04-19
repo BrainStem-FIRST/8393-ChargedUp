@@ -171,16 +171,16 @@ public class AutoCenter extends SequentialCommandGroup {
 
                                 // score on low pole command here
                                 new InstantCommand(() -> m_Timer.start()),
-                                // new RaiseToUnlockRatchetCommand(m_lift),
-                                // new InstantCommand(() -> m_lift.m_state = LiftPosition.RATCHET),
+                                new RaiseToUnlockRatchetCommand(m_lift),
+                                new InstantCommand(() -> m_lift.m_state = LiftPosition.RATCHET),
                                 
-                                // new InstantCommand(() -> m_lift.m_state = LiftPosition.HIGH_POLE),
+                                new InstantCommand(() -> m_lift.m_state = LiftPosition.HIGH_POLE),
 
                                 new InstantCommand(() -> s_Swerve
                                                 .resetOdometry(runOverChargeStationTrajectory.getInitialPose())),
-                                // m_highPoleApproach,
-                                // m_depositSequenceCommandGroup,
-                                // m_intakeOff,
+                                m_highPoleApproach,
+                                m_depositSequenceCommandGroup,
+                                m_intakeOff,
                                 runOverChargeStationCommand,
                                 runBackOntoChargeStationCommand,
 

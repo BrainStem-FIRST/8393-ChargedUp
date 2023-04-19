@@ -162,30 +162,31 @@ public class RobotContainer {
     commandTab.add("Disable ext brake", m_extension.disableBrakeModeBase()).withSize(2, 1);
 
 
-    adjustmentsTab.add("E - Adjust High →", new InstantCommand(() -> m_extension.adjustExtensionValue("high", 0.02))).withSize(2, 1);
-    adjustmentsTab.add("E - Adjust High ←", new InstantCommand(() -> m_extension.adjustExtensionValue("high", -0.02))).withSize(2, 1);
-    adjustmentsTab.add("E - Adjust Low →", new InstantCommand(() -> m_extension.adjustExtensionValue("low", 0.02))).withSize(2, 1);
-    adjustmentsTab.add("E - Adjust Low ←", new InstantCommand(() -> m_extension.adjustExtensionValue("low", -0.02))).withSize(2, 1);
-    adjustmentsTab.add("E - Adjust Shelf →", new InstantCommand(() -> m_extension.adjustExtensionValue("low", 0.02))).withSize(2, 1);
-    adjustmentsTab.add("E - Adjust Shelf ←", new InstantCommand(() -> m_extension.adjustExtensionValue("low", -0.02))).withSize(2, 1);
+    adjustmentsTab.add("E - Adjust High Forward", new InstantCommand(() -> m_extension.adjustExtensionValue("high", 0.02))).withSize(2, 1);
+    adjustmentsTab.add("E - Adjust High Back", new InstantCommand(() -> m_extension.adjustExtensionValue("high", -0.02))).withSize(2, 1);
+    adjustmentsTab.add("E - Adjust Low Forward", new InstantCommand(() -> m_extension.adjustExtensionValue("low", 0.02))).withSize(2, 1);
+    adjustmentsTab.add("E - Adjust Low Back", new InstantCommand(() -> m_extension.adjustExtensionValue("low", -0.02))).withSize(2, 1);
+    adjustmentsTab.add("E - Adjust Shelf Forward", new InstantCommand(() -> m_extension.adjustExtensionValue("low", 0.02))).withSize(2, 1);
+    adjustmentsTab.add("E - Adjust Shelf Back", new InstantCommand(() -> m_extension.adjustExtensionValue("low", -0.02))).withSize(2, 1);
     adjustmentsTab.addNumber("E - High %", () -> m_extension.m_adjustableHighMultiplier * 100);
     adjustmentsTab.addNumber("E - Low %", () -> m_extension.m_adjustableLowMultiplier * 100);
     adjustmentsTab.addNumber("E - Shelf %", () -> m_extension.m_adjustableShelfCollectionMultiplier * 100);
 
-    adjustmentsTab.add("L - Adjust High ↑", m_lift.adjustLiftValue("high", 0.02)).withSize(2, 1);
-    adjustmentsTab.add("L - Adjust High ↓", m_lift.adjustLiftValue("high", -0.02)).withSize(2, 1);
-    adjustmentsTab.add("L - Adjust Low ↑", m_lift.adjustLiftValue("low", 0.02)).withSize(2, 1);
-    adjustmentsTab.add("L - Adjust Low ↓", m_lift.adjustLiftValue("low", -0.02)).withSize(2, 1);
-    adjustmentsTab.add("L - Adjust Shelf ↑", m_lift.adjustLiftValue("low", 0.02)).withSize(2, 1);
-    adjustmentsTab.add("L - Adjust Shelf ↓", m_lift.adjustLiftValue("low", -0.02)).withSize(2, 1);
+    adjustmentsTab.add("L - Adjust High Up", m_lift.adjustLiftValue("high", 0.02)).withSize(2, 1);
+    adjustmentsTab.add("L - Adjust High Down", m_lift.adjustLiftValue("high", -0.02)).withSize(2, 1);
+    adjustmentsTab.add("L - Adjust Low Up", m_lift.adjustLiftValue("low", 0.02)).withSize(2, 1);
+    adjustmentsTab.add("L - Adjust Low Down", m_lift.adjustLiftValue("low", -0.02)).withSize(2, 1);
+    adjustmentsTab.add("L - Adjust Shelf Up", m_lift.adjustLiftValue("low", 0.02)).withSize(2, 1);
+    adjustmentsTab.add("L - Adjust Shelf Down", m_lift.adjustLiftValue("low", -0.02)).withSize(2, 1);
     adjustmentsTab.addNumber("L - High %", () -> m_lift.m_adjustableHighMultiplier * 100);
     adjustmentsTab.addNumber("L - Low %", () -> m_lift.m_adjustableLowMultiplier * 100);
     adjustmentsTab.addNumber("L - Shelf %", () -> m_lift.m_adjustableShelfCollectionMultiplier * 100);
 
-    autoAdjustmentsTab.add("Center Auto Further Foward", new InstantCommand(() -> m_autoCenter.adjustGoOntoChargeStationTrajectory(-0.02)));
-    autoAdjustmentsTab.add("Center Auto Further Back", new InstantCommand(() -> m_autoCenter.adjustGoOntoChargeStationTrajectory(0.02)));
-    autoAdjustmentsTab.add("High Pole Deposit Adjustment ↑", new InstantCommand(() -> m_lift.m_adjustableAutoDepositMultiplier += 0.02));
-    autoAdjustmentsTab.add("High Pole Deposit Adjustment ↓", new InstantCommand(() -> m_lift.m_adjustableAutoDepositMultiplier -= 0.02));
+    autoAdjustmentsTab.add("Center Auto Further Foward", new InstantCommand(() -> m_autoCenter.adjustGoOntoChargeStationTrajectory(-0.02))).withSize(2, 1);
+    autoAdjustmentsTab.add("Center Auto Further Back", new InstantCommand(() -> m_autoCenter.adjustGoOntoChargeStationTrajectory(0.02))).withSize(2, 1);
+    autoAdjustmentsTab.add("High Pole Deposit Adjustment Up", new InstantCommand(() -> m_lift.m_adjustableAutoDepositMultiplier += 0.02)).withSize(2, 1);
+    autoAdjustmentsTab.add("High Pole Deposit Adjustment Down", new InstantCommand(() -> m_lift.m_adjustableAutoDepositMultiplier -= 0.02)).withSize(2, 1);
+    autoAdjustmentsTab.addNumber("High Pole Deposit %", () -> m_lift.m_adjustableAutoDepositMultiplier);
     autoAdjustmentsTab.addNumber("Center Auto Charge Station Value ", () -> m_autoCenter.m_adjustableGoBackOntoChargeStationValue);
 
 

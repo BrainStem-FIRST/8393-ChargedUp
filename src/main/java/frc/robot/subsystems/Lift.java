@@ -43,8 +43,8 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     public static final int k_groundCollectionValue = 0;
     public static final int k_carryValue = Lift.inchesToTicks(5);
     public static final int k_shelfCollectionValue = Lift.inchesToTicks(19.05); //18.6
-    public static final int k_lowPoleValue = Lift.inchesToTicks(18.7); // 16.7
-    public static final int k_highPoleValue = Lift.inchesToTicks(22.3); // 18
+    public static final int k_lowPoleValue = (int)(Lift.inchesToTicks(18.7)*0.96); // 16.7
+    public static final int k_highPoleValue = (int)(Lift.inchesToTicks(22.3) * 0.9); // 18
     public static final int k_highPoleTiltValue = Lift.inchesToTicks(15);
     public static final int k_liftPreLoadPosition = Lift.inchesToTicks(15);
 
@@ -339,13 +339,13 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
         m_liftSetPoint = LiftConstants.k_carryValue;
         break;
       case SHELF_COLLECTION:
-        m_liftSetPoint = (int)m_adjustableShelfCollectionValue;
+        m_liftSetPoint = (int)(m_adjustableShelfCollectionValue*m_adjustableShelfCollectionMultiplier);
         break;
       case LOW_POLE:
-        m_liftSetPoint = (int)m_adjustableLowPoleValue - depositDelta;
+        m_liftSetPoint = (int)(m_adjustableLowPoleValue*m_adjustableLowMultiplier) - depositDelta;
         break;
       case HIGH_POLE:
-        m_liftSetPoint = (int)m_adjustableHighPoleValue - depositDelta;
+        m_liftSetPoint = (int)(m_adjustableHighPoleValue*m_adjustableHighMultiplier) - depositDelta;
         break;
       case HIGH_POLE_TILT:
         m_liftSetPoint = LiftConstants.k_highPoleTiltValue;
@@ -362,7 +362,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
         m_liftSetPoint = 70001;
         break;
       case AUTO_DEPOSIT:
-        m_liftSetPoint = (int)m_adjustableAutoDepositValue - depositDelta;
+        m_liftSetPoint = (int)(m_adjustableAutoDepositValue*m_adjustableAutoDepositMultiplier) - depositDelta;
         break;
     }
   }
