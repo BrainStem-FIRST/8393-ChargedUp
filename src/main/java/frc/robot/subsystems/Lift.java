@@ -83,7 +83,19 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   public double m_swerveMultiplyerTranslation = 1;
   public double m_swerveTurningMultiplyer = 1;
 
+
+
   public double none = 0;
+
+  public double m_adjustableHighMultiplier = 1.0;
+  public double m_adjustableLowMultiplier = 1.0;
+  public double m_adjustableShelfCollectionMultiplier = 1.0;
+  public double m_adjustableAutoDepositMultiplier = 1.0;
+
+  public double m_adjustableHighPoleValue = LiftConstants.k_highPoleValue * m_adjustableHighMultiplier;
+  public double m_adjustableLowPoleValue = LiftConstants.k_lowPoleValue * m_adjustableLowMultiplier;
+  public double m_adjustableShelfCollectionValue = LiftConstants.k_shelfCollectionValue * m_adjustableShelfCollectionMultiplier;
+  public double m_adjustableAutoDepositValue = LiftConstants.k_highPoleValue * 0.945 * m_adjustableAutoDepositMultiplier;
 
   public Lift() {
     m_liftPID = new PIDController(LiftConstants.k_P, LiftConstants.k_I, LiftConstants.k_D);
@@ -298,6 +310,26 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     }
   }
 
+  public CommandBase adjustLiftValue(String point, double adjustmentAmount) {
+    CommandBase returner = new CommandBase() {
+    };
+    switch(point) {
+      case "high": {
+        returner =  runOnce(() -> m_adjustableHighMultiplier += adjustmentAmount);
+        break;
+      }
+      case "low": {
+        returner = runOnce(() -> m_adjustableLowMultiplier += adjustmentAmount);
+        break;
+      }
+      case "shelfCollection": {
+        returner = runOnce(() -> m_adjustableShelfCollectionValue += adjustmentAmount);
+        break;
+      } 
+    }
+    return returner;
+  }
+
   private void setLiftState() {
     switch (m_state) {
       case GROUND_COLLECTION:
@@ -307,13 +339,13 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
         m_liftSetPoint = LiftConstants.k_carryValue;
         break;
       case SHELF_COLLECTION:
-        m_liftSetPoint = LiftConstants.k_shelfCollectionValue;
+        m_liftSetPoint = (int)m_adjustableShelfCollectionValue;
         break;
       case LOW_POLE:
-        m_liftSetPoint = LiftConstants.k_lowPoleValue - depositDelta;
+        m_liftSetPoint = (int)m_adjustableLowPoleValue - depositDelta;
         break;
       case HIGH_POLE:
-        m_liftSetPoint = LiftConstants.k_highPoleValue - depositDelta;
+        m_liftSetPoint = (int)m_adjustableHighPoleValue - depositDelta;
         break;
       case HIGH_POLE_TILT:
         m_liftSetPoint = LiftConstants.k_highPoleTiltValue;
@@ -330,7 +362,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
         m_liftSetPoint = 70001;
         break;
       case AUTO_DEPOSIT:
-        m_liftSetPoint = (int)((LiftConstants.k_highPoleValue - depositDelta) * 0.945);
+        m_liftSetPoint = (int)m_adjustableAutoDepositValue - depositDelta;
         break;
     }
   }

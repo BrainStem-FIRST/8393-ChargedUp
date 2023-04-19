@@ -58,6 +58,16 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     AUTO_CUBE_COLLECT
   }
 
+
+
+  public double m_adjustableHighMultiplier = 1.0;
+  public double m_adjustableLowMultiplier = 1.0;
+  public double m_adjustableShelfCollectionMultiplier = 1.0;
+
+  public double m_adjustableHighPoleTelescopeValue = ExtensionConstants.k_highPoleTelescopeValue * m_adjustableHighMultiplier;
+  public double m_adjustableLowPoleTelescopeValue = ExtensionConstants.k_lowPoleTelescopeValue * m_adjustableLowMultiplier;
+  public double m_adjustableShelfCollectionValue = ExtensionConstants.k_collectionTelescopeValue * m_adjustableShelfCollectionMultiplier;
+
   public boolean m_telescopeBackOff = false;
 
   public RatchetPosition m_ratchetState = RatchetPosition.ENGAGED;
@@ -127,6 +137,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
 
   public void turnOffExtensionMotor() {
     m_backMotor.set(ControlMode.PercentOutput, 0);
+    m_frontMotor.set(ControlMode.PercentOutput, 0);
   }
 
   public void ratchetDisengage() {
@@ -135,6 +146,23 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
 
   public void ratchetEngage() {
     m_ratchetServo.set(0.6);
+  }
+
+  public void adjustExtensionValue(String point, double adjustmentAmount) {
+    switch(point) {
+      case "high": {
+        m_adjustableHighMultiplier += adjustmentAmount;
+        break;
+      }
+      case "low": {
+        m_adjustableLowMultiplier += adjustmentAmount;
+        break;
+      }
+      case "shelfCollection": {
+        m_adjustableShelfCollectionValue += adjustmentAmount;
+        break;
+      } 
+    }
   }
 
   private void setRatchetState() {
@@ -194,15 +222,15 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
         ExtensionConstants.k_telescopeTolerance)) && (m_telescopeState == TelescopePosition.RETRACTED)) {
       return TelescopePosition.RETRACTED;
     } else if ((inTolerance((int) m_backMotor.getSelectedSensorPosition(),
-        ExtensionConstants.k_collectionTelescopeValue, ExtensionConstants.k_telescopeTolerance))
+        (int)m_adjustableShelfCollectionValue, ExtensionConstants.k_telescopeTolerance))
         && (m_telescopeState == TelescopePosition.COLLECTION)) {
       return TelescopePosition.COLLECTION;
     } else if ((inTolerance((int) m_backMotor.getSelectedSensorPosition(),
-        ExtensionConstants.k_lowPoleTelescopeValue, ExtensionConstants.k_telescopeTolerance))
+        (int)m_adjustableLowPoleTelescopeValue, ExtensionConstants.k_telescopeTolerance))
         && (m_telescopeState == TelescopePosition.LOW_POLE)) {
       return TelescopePosition.LOW_POLE;
     } else if ((inTolerance((int) m_backMotor.getSelectedSensorPosition(),
-        ExtensionConstants.k_highPoleTelescopeValue, ExtensionConstants.k_telescopeTolerance))
+        (int)m_adjustableHighPoleTelescopeValue, ExtensionConstants.k_telescopeTolerance))
         && (m_telescopeState == TelescopePosition.HIGH_POLE)) {
       return TelescopePosition.HIGH_POLE;
     } else if ((inTolerance((int) m_backMotor.getSelectedSensorPosition(),

@@ -8,6 +8,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPoint;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -17,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.lib.util.PathPlannerFlipper;
 import frc.robot.autos.*;
@@ -113,6 +115,10 @@ public class RobotContainer {
   public DriveUntilLimelightCommand rightGreenMonkDrive = new DriveUntilLimelightCommand(false, m_swerve, () -> false);
   public SendableChooser<Command> autoChooser = new SendableChooser<>();
 
+  public AutoCenter m_autoCenter = new AutoCenter(m_swerve, m_lift, m_collector, m_extension);
+  public BarrierSideAuto m_barrierSideAuto = new BarrierSideAuto(m_swerve, m_lift, m_collector, m_extension);
+  public WireSideAuto m_wireSideAuto = new WireSideAuto(m_swerve, m_lift, m_collector, m_extension);
+
   // public CANSparkMax m_collectorMotor1 = new CANSparkMax(19,
   // MotorType.kBrushless);
   // public CANSparkMax m_collectorMotor2 = new CANSparkMax(22,
@@ -133,9 +139,9 @@ public class RobotContainer {
             () -> -(m_driver1.getRawAxis(k_rotationAxis) * m_lift.m_swerveTurningMultiplyer),
             () -> false));
 
-    autoChooser.setDefaultOption("Center Auto", new AutoCenter(m_swerve, m_lift, m_collector, m_extension));
-    autoChooser.addOption("Barrier Side Auto", new BarrierSideAuto(m_swerve, m_lift, m_collector, m_extension));
-    autoChooser.addOption("Wire Side Auto", new WireSideAuto(m_swerve, m_lift, m_collector, m_extension));
+    autoChooser.setDefaultOption("Center Auto", m_autoCenter);
+    autoChooser.addOption("Barrier Side Auto", m_barrierSideAuto);
+    autoChooser.addOption("Wire Side Auto", m_wireSideAuto);
 
     // m_limelight.setDefaultCommand(new DefaultLimelightCommand(m_limelight));
 
@@ -144,6 +150,9 @@ public class RobotContainer {
 
     // Basic Testing and Commands
     ShuffleboardTab commandTab = Shuffleboard.getTab("Commands");
+    ShuffleboardTab adjustmentsTab = Shuffleboard.getTab("Adjustments");
+    ShuffleboardTab autoAdjustmentsTab = Shuffleboard.getTab("Auto Adjustments");
+
     commandTab.add("Reset Extension", m_extension.resetExtensionBase()).withSize(2, 1);
     commandTab.add("Reset Modules To Absolute", m_swerve.resetModuleBase().ignoringDisable(true)).withSize(2, 1);
 
@@ -151,6 +160,36 @@ public class RobotContainer {
     commandTab.add("Disable lift brake", m_lift.disableBrakeModeBase()).withSize(2, 1);
     commandTab.add("Enable ext brake", m_extension.enableBrakeModeBase()).withSize(2, 1);
     commandTab.add("Disable ext brake", m_extension.disableBrakeModeBase()).withSize(2, 1);
+
+
+    adjustmentsTab.add("E - Adjust High →", new InstantCommand(() -> m_extension.adjustExtensionValue("high", 0.02))).withSize(2, 1);
+    adjustmentsTab.add("E - Adjust High ←", new InstantCommand(() -> m_extension.adjustExtensionValue("high", -0.02))).withSize(2, 1);
+    adjustmentsTab.add("E - Adjust Low →", new InstantCommand(() -> m_extension.adjustExtensionValue("low", 0.02))).withSize(2, 1);
+    adjustmentsTab.add("E - Adjust Low ←", new InstantCommand(() -> m_extension.adjustExtensionValue("low", -0.02))).withSize(2, 1);
+    adjustmentsTab.add("E - Adjust Shelf →", new InstantCommand(() -> m_extension.adjustExtensionValue("low", 0.02))).withSize(2, 1);
+    adjustmentsTab.add("E - Adjust Shelf ←", new InstantCommand(() -> m_extension.adjustExtensionValue("low", -0.02))).withSize(2, 1);
+    adjustmentsTab.addNumber("E - High %", () -> m_extension.m_adjustableHighMultiplier * 100);
+    adjustmentsTab.addNumber("E - Low %", () -> m_extension.m_adjustableLowMultiplier * 100);
+    adjustmentsTab.addNumber("E - Shelf %", () -> m_extension.m_adjustableShelfCollectionMultiplier * 100);
+
+    adjustmentsTab.add("L - Adjust High ↑", m_lift.adjustLiftValue("high", 0.02)).withSize(2, 1);
+    adjustmentsTab.add("L - Adjust High ↓", m_lift.adjustLiftValue("high", -0.02)).withSize(2, 1);
+    adjustmentsTab.add("L - Adjust Low ↑", m_lift.adjustLiftValue("low", 0.02)).withSize(2, 1);
+    adjustmentsTab.add("L - Adjust Low ↓", m_lift.adjustLiftValue("low", -0.02)).withSize(2, 1);
+    adjustmentsTab.add("L - Adjust Shelf ↑", m_lift.adjustLiftValue("low", 0.02)).withSize(2, 1);
+    adjustmentsTab.add("L - Adjust Shelf ↓", m_lift.adjustLiftValue("low", -0.02)).withSize(2, 1);
+    adjustmentsTab.addNumber("L - High %", () -> m_lift.m_adjustableHighMultiplier * 100);
+    adjustmentsTab.addNumber("L - Low %", () -> m_lift.m_adjustableLowMultiplier * 100);
+    adjustmentsTab.addNumber("L - Shelf %", () -> m_lift.m_adjustableShelfCollectionMultiplier * 100);
+
+    autoAdjustmentsTab.add("Center Auto Further Foward", new InstantCommand(() -> m_autoCenter.adjustGoOntoChargeStationTrajectory(-0.02)));
+    autoAdjustmentsTab.add("Center Auto Further Back", new InstantCommand(() -> m_autoCenter.adjustGoOntoChargeStationTrajectory(0.02)));
+    autoAdjustmentsTab.add("High Pole Deposit Adjustment ↑", new InstantCommand(() -> m_lift.m_adjustableAutoDepositMultiplier += 0.02));
+    autoAdjustmentsTab.add("High Pole Deposit Adjustment ↓", new InstantCommand(() -> m_lift.m_adjustableAutoDepositMultiplier -= 0.02));
+    autoAdjustmentsTab.addNumber("Center Auto Charge Station Value ", () -> m_autoCenter.m_adjustableGoBackOntoChargeStationValue);
+
+
+
 
     SmartDashboard.putNumber("S - Turning ", m_lift.m_swerveTurningMultiplyer);
     SmartDashboard.putNumber("S - Translation ", m_lift.m_swerveMultiplyerTranslation);

@@ -71,6 +71,13 @@ public class AutoCenter extends SequentialCommandGroup {
                 private static final double k_D = 0.0;
         }
 
+        Trajectory runBackOnToChargeStationTrajectory;
+        TrajectoryConfig runBackOntoChargeStationConfig;
+
+
+        public double m_adjustableGoBackOntoChargeStationValue = 3.7;
+        
+
         public AutoCenter(Swerve s_Swerve, Lift m_lift, Collector m_collector, Extension m_extension) {
                 collectPreLoadCommand m_collectPreLoadCommand = new collectPreLoadCommand(m_lift, m_collector);
                 ExtensionCommand m_extensionCarry = new ExtensionCommand(m_extension, TelescopePosition.COLLECTION);
@@ -94,7 +101,7 @@ public class AutoCenter extends SequentialCommandGroup {
                                 AutoConstants.k_maxAccelerationMetersPerSecondSquared)
                                 .setKinematics(SwerveConstants.k_swerveKinematics).addConstraint(drivetrainRestraint);
 
-                TrajectoryConfig runBackOntoChargeStationConfig = new TrajectoryConfig(
+                runBackOntoChargeStationConfig = new TrajectoryConfig(
                                 AutoConstants.k_maxSpeedMetersPerSecond,
                                 AutoConstants.k_maxAccelerationMetersPerSecondSquared)
                                 .setKinematics(SwerveConstants.k_swerveKinematics);
@@ -117,7 +124,7 @@ public class AutoCenter extends SequentialCommandGroup {
 
                 config.setReversed(false);
                 // An example trajectory to follow. All units in meters.
-                Trajectory runBackOnToChargeStationTrajectory = TrajectoryGenerator.generateTrajectory(
+                runBackOnToChargeStationTrajectory = TrajectoryGenerator.generateTrajectory(
                                 // Set the origin at (5,0) facing the +X direction
                                 // Robot starts facing the poles
                                 new Pose2d(1, 0, new Rotation2d(Math.toRadians(0))),
@@ -128,7 +135,7 @@ public class AutoCenter extends SequentialCommandGroup {
                                 ),
                                 // End 5 meters behind ahead of where we started, rotating 180 degrees, now
                                 // facing forward
-                                new Pose2d(3.7, 0, new Rotation2d(Math.toRadians(0))), //3.68 for blue //3.66 for red
+                                new Pose2d(m_adjustableGoBackOntoChargeStationValue, 0, new Rotation2d(Math.toRadians(0))), //3.68 for blue //3.66 for red
                                 runBackOntoChargeStationConfig);
 
                 var thetaController = new ProfiledPIDController(
@@ -154,6 +161,7 @@ public class AutoCenter extends SequentialCommandGroup {
                                 thetaController,
                                 s_Swerve::setModuleStates,
                                 s_Swerve);
+                
 
                 addCommands(
                                 new WaitCommand(0.1),
@@ -179,6 +187,23 @@ public class AutoCenter extends SequentialCommandGroup {
                                 new InstantCommand(() -> autoBalance(s_Swerve, m_Timer))
 
                 );
+        }
+
+        public void adjustGoOntoChargeStationTrajectory(double adjustment) {
+                m_adjustableGoBackOntoChargeStationValue += adjustment;
+                runBackOnToChargeStationTrajectory = TrajectoryGenerator.generateTrajectory(
+                                // Set the origin at (5,0) facing the +X direction
+                                // Robot starts facing the poles
+                                new Pose2d(1, 0, new Rotation2d(Math.toRadians(0))),
+                                // Pass through these two interior waypoints, making an 's' curve path
+                                List.of(
+                                                new Translation2d(2, 0) // Just kind of a test thing to see if another
+                                                                        // waypooint fixes auto
+                                ),
+                                // End 5 meters behind ahead of where we started, rotating 180 degrees, now
+                                // facing forward
+                                new Pose2d(m_adjustableGoBackOntoChargeStationValue, 0, new Rotation2d(Math.toRadians(0))), //3.68 for blue //3.66 for red
+                                runBackOntoChargeStationConfig);
         }
 
         private void autoBalance(Swerve s_Swerve, Timer m_Timer) {
