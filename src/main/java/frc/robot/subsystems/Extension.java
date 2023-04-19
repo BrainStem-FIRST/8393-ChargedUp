@@ -29,9 +29,9 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     private static final int k_frontExtensionMotorID = 14;
     private static final int k_backExtensionMotorID = 31;
     private static final int k_extensionServoID = 9;
-    private static final double k_proportional = 0.00007;
-    private static final double k_integral = 0.0000000;
-    private static final double k_derivative = 0;
+    private static final double k_proportional = 0.00009;
+    private static final double k_integral = 0.00001;
+    private static final double k_derivative = 0.00001;
     private static final int k_retractedTelescopeValue = 0; // 20000
     private static final int k_collectionTelescopeValue = (int) ((220000 / 1.8) * k_gearRatioMultiplication);
     private static final int k_lowPoleTelescopeValue = (int) ((int) (162000 * k_gearRatioMultiplication) * 1.02); // *1.1
