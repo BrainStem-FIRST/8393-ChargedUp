@@ -173,6 +173,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     m_robotContainer.m_lift.resetLiftEncoder();
+    m_robotContainer.m_extension.resetEncoder();
     m_robotContainer.m_lift.liftRawPower(0.09);
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
