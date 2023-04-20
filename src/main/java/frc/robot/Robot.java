@@ -41,6 +41,7 @@ import frc.robot.subsystems.Collector.CollectorState;
 import frc.robot.subsystems.Collector.IntakeState;
 import frc.robot.subsystems.Extension.TelescopePosition;
 import frc.robot.subsystems.Lift.HookState;
+import frc.robot.subsystems.Lift.LiftConstants;
 import frc.robot.subsystems.Lift.LiftPosition;
 import frc.robot.utilities.BrainSTEMSubsystem;
 import frc.robot.utilities.LimelightHelpers;
@@ -139,6 +140,14 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    SmartDashboard.putString("L - Lift State", m_robotContainer.m_lift.m_state.toString());
+      SmartDashboard.putBoolean("L - Lift Periodic Called", true);
+      SmartDashboard.putNumber("L -  Back Motor Encoder ",  m_robotContainer.m_lift.m_backLift.getSelectedSensorPosition());
+      SmartDashboard.putNumber("L -  Bront Motor Encoder ",  m_robotContainer.m_lift.m_forwardLift.getSelectedSensorPosition());
+      SmartDashboard.putNumber("L -  Bight Motor Encoder ",  m_robotContainer.m_lift.m_rightLift.getSelectedSensorPosition());
+      SmartDashboard.putNumber("L -  Throughbore Encoder Reading",
+          ( m_robotContainer.m_lift.m_liftEncoder.get() +  LiftConstants.k_absoluteEncoderOFfset));
+      SmartDashboard.putBoolean("L -  Throughbore Encoder Connected",  m_robotContainer.m_lift.m_liftEncoder.isConnected());
     // Runs the Scheduler. This is responsible for polling buttons, adding
     // newly-scheduled
     // commands, running already-scheduled commands, removing finished or

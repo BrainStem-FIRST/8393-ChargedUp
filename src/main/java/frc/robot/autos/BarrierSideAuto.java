@@ -50,7 +50,7 @@ public class BarrierSideAuto extends SequentialCommandGroup {
                 this.m_swerve = p_swerve;
                 this.m_lift = p_lift;
                 this.m_extension = p_extension;
-                AutoHighPoleApproachCommandGroup m_highPoleApproach = new AutoHighPoleApproachCommandGroup(m_extension,
+                HighPoleApproachCommandGroup m_highPoleApproach = new HighPoleApproachCommandGroup(m_extension,
                                 m_lift,
                                 m_collector);
 

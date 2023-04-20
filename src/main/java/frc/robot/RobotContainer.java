@@ -160,6 +160,7 @@ public class RobotContainer {
     commandTab.add("Disable lift brake", m_lift.disableBrakeModeBase()).withSize(2, 1);
     commandTab.add("Enable ext brake", m_extension.enableBrakeModeBase()).withSize(2, 1);
     commandTab.add("Disable ext brake", m_extension.disableBrakeModeBase()).withSize(2, 1);
+    commandTab.add("Reset Lift Height", m_lift.resetLiftHeightBase()).withSize(2, 1);
 
 
     adjustmentsTab.add("E - Adjust High Forward", new InstantCommand(() -> m_extension.adjustExtensionValue("high", 0.02))).withSize(2, 1);

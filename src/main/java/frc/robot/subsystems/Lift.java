@@ -44,7 +44,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     public static final int k_carryValue = Lift.inchesToTicks(5);
     public static final int k_shelfCollectionValue = Lift.inchesToTicks(19.05 * 1.0); //18.6
     public static final int k_lowPoleValue = (int)(Lift.inchesToTicks(18.7)*0.96); // 16.7
-    public static final int k_highPoleValue = (int)(Lift.inchesToTicks(22.3) * 0.9 * 1.01); // 18
+    public static final int k_highPoleValue = (int)(Lift.inchesToTicks(22.3) * 0.9 * 1.02); // 18
     public static final int k_highPoleTiltValue = Lift.inchesToTicks(15);
     public static final int k_liftPreLoadPosition = Lift.inchesToTicks(15);
 
@@ -58,19 +58,19 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     public static final double k_hookServoDownPosition = 0.99;
     public static final double k_hookServoUpPosition = 0.5;
 
-    public static final double k_liftGoingDownSpeed = 0.15;
+    public static final double k_liftGoingDownSpeed = 0.2;
 
     public static final double k_swerveTranslationMultiplier = 0.5;
     public static final double k_swerveTurningMultiplier = 0.4;
     
   }
 
-  TalonFX m_forwardLift;
-  TalonFX m_backLift;
-  TalonFX m_rightLift;
+  public TalonFX m_forwardLift;
+  public TalonFX m_backLift;
+  public TalonFX m_rightLift;
   private Servo m_hookServo;
 
-  DutyCycleEncoder m_liftEncoder;
+  public DutyCycleEncoder m_liftEncoder;
 
   private int m_liftSetPoint = 0;
   private boolean m_enableLiftPeriodic = false;
@@ -121,11 +121,13 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     m_liftEncoder = new DutyCycleEncoder(3);
   }
 
-  public CommandBase exampleMethodCommand() {
-    return runOnce(
-        () -> {
+  public void resetLiftHeight() {
+    m_forwardLift.setSelectedSensorPosition(0);
+    // m_backLift.setSelectedSensorPosition(depositDelta0.0)
+  }
 
-        });
+  public CommandBase resetLiftHeightBase() {
+    return runOnce(this::resetLiftHeight);
   }
 
   public enum LiftPosition {
@@ -201,9 +203,8 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   }
 
   public void resetLiftEncoder() {
-    m_forwardLift.setSelectedSensorPosition(absoluteToRelativeConversion());
-    m_backLift.setSelectedSensorPosition(absoluteToRelativeConversion());
-    m_rightLift.setSelectedSensorPosition(absoluteToRelativeConversion());
+    m_forwardLift.setSelectedSensorPosition(26896);
+
   }
 
   public void liftUp() {

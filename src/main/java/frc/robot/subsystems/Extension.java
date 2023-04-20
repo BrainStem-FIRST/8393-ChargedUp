@@ -29,7 +29,7 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
     private static final int k_frontExtensionMotorID = 14;
     private static final int k_backExtensionMotorID = 31;
     private static final int k_extensionServoID = 9;
-    private static final double k_proportional = 0.00009;
+    private static final double k_proportional = 0.00009 * 1.2;
     private static final double k_integral = 0.00003;
     private static final double k_derivative = 0.00001;
     private static final int k_retractedTelescopeValue = 0; // 20000
