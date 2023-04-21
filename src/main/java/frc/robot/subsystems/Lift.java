@@ -60,8 +60,8 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
 
     public static final double k_liftGoingDownSpeed = 0.2;
 
-    public static final double k_swerveTranslationMultiplier = 0.5;
-    public static final double k_swerveTurningMultiplier = 0.4;
+    public static final double k_swerveTranslationMultiplier = 0.75;
+    public static final double k_swerveTurningMultiplier = 0.5;
     
   }
 
@@ -436,7 +436,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
   }
 
   public void makeDrivingEasier() {
-    if (m_forwardLift.getSelectedSensorPosition() > Lift.inchesToTicks(10)) {
+    if (m_forwardLift.getSelectedSensorPosition() > Lift.inchesToTicks(14.5)) {
       m_swerveMultiplyerTranslation = LiftConstants.k_swerveTranslationMultiplier;
       m_swerveTurningMultiplyer = LiftConstants.k_swerveTurningMultiplier;
     } else {
