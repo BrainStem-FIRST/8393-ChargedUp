@@ -177,8 +177,8 @@ public class RobotContainer {
     adjustmentsTab.add("L - Adjust High Down", m_lift.adjustLiftValue("high", -0.02)).withSize(2, 1);
     adjustmentsTab.add("L - Adjust Low Up", m_lift.adjustLiftValue("low", 0.02)).withSize(2, 1);
     adjustmentsTab.add("L - Adjust Low Down", m_lift.adjustLiftValue("low", -0.02)).withSize(2, 1);
-    adjustmentsTab.add("L - Adjust Shelf Up", m_lift.adjustLiftValue("low", 0.02)).withSize(2, 1);
-    adjustmentsTab.add("L - Adjust Shelf Down", m_lift.adjustLiftValue("low", -0.02)).withSize(2, 1);
+    adjustmentsTab.add("L - Adjust Shelf Up", m_lift.adjustLiftValue("shelfCollection", 0.02)).withSize(2, 1);
+    adjustmentsTab.add("L - Adjust Shelf Down", m_lift.adjustLiftValue("shelfCollection", -0.02)).withSize(2, 1);
     adjustmentsTab.addNumber("L - High %", () -> m_lift.m_adjustableHighMultiplier * 100);
     adjustmentsTab.addNumber("L - Low %", () -> m_lift.m_adjustableLowMultiplier * 100);
     adjustmentsTab.addNumber("L - Shelf %", () -> m_lift.m_adjustableShelfCollectionMultiplier * 100);

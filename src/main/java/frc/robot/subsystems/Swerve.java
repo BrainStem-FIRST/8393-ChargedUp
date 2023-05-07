@@ -78,7 +78,7 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem {
         public static final boolean k_angleEnableCurrentLimit = true;
 
         public static final int k_driveContinuousCurrentLimit = 35;
-        public static final int k_drivePeakCurrentLimit = 60;
+        public static final int k_drivePeakCurrentLimit = 40;
         public static final double k_drivePeakCurrentDuration = 0.1;
         public static final boolean k_driveEnableCurrentLimit = true;
 
