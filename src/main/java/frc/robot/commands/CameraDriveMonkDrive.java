@@ -13,8 +13,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class GreenMonkDrive extends CommandBase {
-        public static final class MonkDriveContants {
+public class CameraDriveMonkDrive extends CommandBase {
+        public static final class CameraDriveMonkDriveContants {
                 public static final double k_p = 0.1;
                 public static final double k_i = 0;
                 public static final double k_d = 0;
@@ -33,13 +33,13 @@ public class GreenMonkDrive extends CommandBase {
         private double strafePower = 0.15;
 
 
-        public GreenMonkDrive(Swerve p_swerve, boolean p_targetLeft) {
+        public CameraDriveMonkDrive(Swerve p_swerve, boolean p_targetLeft) {
                 this.m_swerve = p_swerve;
                 this.m_targetLeft = p_targetLeft;
                 addRequirements(p_swerve);
 
-                drivePIDController = new PIDController(MonkDriveContants.k_p, MonkDriveContants.k_i,
-                                MonkDriveContants.k_d);
+                drivePIDController = new PIDController(CameraDriveMonkDriveContants.k_p, CameraDriveMonkDriveContants.k_i,
+                CameraDriveMonkDriveContants.k_d);
         }
 
         @Override
@@ -51,7 +51,7 @@ public class GreenMonkDrive extends CommandBase {
 
                 /* Drive */
                 if (LimelightHelpers.getTV("limelight-a")) {
-                        strafePower = drivePIDController.calculate(LimelightHelpers.getTX("limelight-a"), 0);
+                        strafePower = drivePIDController.calculate(LimelightHelpers.getTY("limelight-a"), 0);
                 } 
                 SmartDashboard.putNumber("Strafe Power", strafePower);
                 new TeleopSwerve(m_swerve, () -> 0, () -> strafePower, () -> 0, () -> false).execute();
