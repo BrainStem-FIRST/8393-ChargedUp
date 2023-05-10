@@ -115,6 +115,10 @@ public class RobotContainer {
   public DriveUntilLimelightCommand rightGreenMonkDrive = new DriveUntilLimelightCommand(false, m_swerve, () -> false);
   public CameraDriveMonkDrive leftCameraDriveMonkDrive = new CameraDriveMonkDrive(m_swerve, true);
   public CameraDriveMonkDrive rightCameraDriveMonkDrive = new CameraDriveMonkDrive(m_swerve, false);
+  public ObjectMonkDrive rightObjectMonkDrive = new ObjectMonkDrive(m_swerve, false);
+  public ObjectMonkDrive leftObjectMonkDrive = new ObjectMonkDrive(m_swerve, true);
+
+  
 
   public SendableChooser<Command> autoChooser = new SendableChooser<>();
 

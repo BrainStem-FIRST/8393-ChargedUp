@@ -310,12 +310,12 @@ public class Robot extends TimedRobot {
       // new InstantCommand(() ->
       // m_robotContainer.m_lift.liftRawPower(-0.15)).schedule();
       // m_robotContainer.monkDrive.schedule();
-      m_robotContainer.leftCameraDriveMonkDrive.schedule();
+      m_robotContainer.rightObjectMonkDrive.schedule();
       hasMonkDriveCanceled = false;
     } else if (!hasMonkDriveCanceled) {
       // new InstantCommand(() ->
       // m_robotContainer.m_lift.liftRawPower(0.0)).schedule();
-      m_robotContainer.monkDrive.cancel();
+      m_robotContainer.rightObjectMonkDrive.cancel();
       hasMonkDriveCanceled = true;
     }
 
