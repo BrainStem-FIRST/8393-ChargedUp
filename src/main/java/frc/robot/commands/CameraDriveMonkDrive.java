@@ -30,7 +30,7 @@ public class CameraDriveMonkDrive extends CommandBase {
         private BooleanSupplier robotCentricSup;
         private PIDController drivePIDController;
         private boolean m_targetLeft = true;
-        private double strafePower = 0.15;
+        private double strafePower = 0.08;
 
 
         public CameraDriveMonkDrive(Swerve p_swerve, boolean p_targetLeft) {
@@ -51,9 +51,10 @@ public class CameraDriveMonkDrive extends CommandBase {
 
                 /* Drive */
                 if (LimelightHelpers.getTV("limelight-a")) {
-                        strafePower = drivePIDController.calculate(LimelightHelpers.getTY("limelight-a"), 0);
+                        strafePower = drivePIDController.calculate(LimelightHelpers.getTX("limelight-a"), 0);
                 } 
-                SmartDashboard.putNumber("Strafe Power", strafePower);
+                SmartDashboard.putNumber("111 - Strafe Power", strafePower);
+                SmartDashboard.putNumber("111 - Limelight TX ", LimelightHelpers.getTX("limelight-a"));
                 new TeleopSwerve(m_swerve, () -> 0, () -> strafePower, () -> 0, () -> false).execute();
                 
         }

@@ -20,6 +20,7 @@ import frc.robot.commandGroups.HighPoleExtensionCommandGroup;
 import frc.robot.commandGroups.LowPoleExtensionCommandGroup;
 import frc.robot.commandGroups.RetractedExtensionCommandGroup;
 import frc.robot.utilities.BrainSTEMSubsystem;
+import frc.robot.utilities.LimelightHelpers;
 
 public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
 
@@ -322,6 +323,10 @@ public class Extension extends SubsystemBase implements BrainSTEMSubsystem {
       // m_backMotor.setNeutralMode(NeutralMode.Coast);
 
       // Extensoin TELEMETRY
+      SmartDashboard.putNumber("111 -Limelight TX ", LimelightHelpers.getTX("limelight-a"));
+      SmartDashboard.putNumber("111 - Robot Camera X ", LimelightHelpers.getBotPose2d("limelight-a").getX());
+      SmartDashboard.putNumber("111 - Robot Camera Y ", LimelightHelpers.getBotPose2d("limelight-a").getY());
+
       // ////////////////////////////////////////////////////////////////////////////////
       SmartDashboard.putNumber("E - Telescope Set Point", m_telescopeSetPoint);
       SmartDashboard.putNumber("E - Telescope Current Position", m_backMotor.getSelectedSensorPosition());
