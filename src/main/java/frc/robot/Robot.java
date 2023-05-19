@@ -267,6 +267,24 @@ public class Robot extends TimedRobot {
       m_driver1_Y.setState(false);
       s_robotMode = RobotMode.DEPOSITING;
     }
+
+    // if (m_robotContainer.m_driver1RightBumper.getAsBoolean()){
+    //   hasHighPoleApproached = false;
+    //   hasLowPoleApproached = false;
+    //   returnedCarryFromHigh = true;
+    //   returnedCarryFromLow = true;
+    //   m_driver1_X.setState(false);
+    //   m_driver1_A.setState(false);
+    //   m_driver1_Y.setState(false);
+    //   s_robotMode = RobotMode.DEPOSITING;
+    // } else if (m_robotContainer.m_driver1LeftBumper.getAsBoolean()) {
+    //   m_driver1_X.setState(false);
+    //   m_driver1_A.setState(false);
+    //   m_driver1_Y.setState(false);
+    //   m_robotContainer.m_collector.m_collectorState = CollectorState.CLOSED;
+    //   m_robotContainer.m_lift.m_state = LiftPosition.CARRY;
+    //   s_robotMode = RobotMode.COLLECTING;
+    // }
   }
 
   /** This function is called periodically during operator control. */
@@ -475,10 +493,10 @@ public class Robot extends TimedRobot {
 
     }
 
-    m_robotContainer.m_driver1LeftBumper
-        .toggleOnTrue(new InstantCommand(() -> m_robotContainer.m_collector.m_collectorState = CollectorState.OPEN));
+    // m_robotContainer.m_driver1LeftBumper
+    //     .toggleOnTrue(new InstantCommand(() -> m_robotContainer.m_collector.m_collectorState = CollectorState.OPEN));
 
-    m_robotContainer.m_zeroGyro.whileTrue(new InstantCommand(() -> m_robotContainer.m_swerve.zeroGyro()));
+    // m_robotContainer.m_zeroGyro.whileTrue(new InstantCommand(() -> m_robotContainer.m_swerve.zeroGyro()));
 
     // TELEMETRY DATA
     // //////////////////////////////////////////////////////////////////////
