@@ -63,6 +63,25 @@ public class RobotContainer {
     public static final int k_rightJoystickButton = 10;
   }
 
+  public static final class PS5JoystickConstants {
+    public static final int k_leftStickXAxis = 0;
+    public static final int k_leftStickYAxis = 1;
+    public static final int k_leftTrigger = 3;
+    public static final int k_rightTrigger = 4;
+    public static final int k_rightStickYAxis = 5;
+    public static final int k_rightStickXAxis = 2;
+    public static final int k_squareButton = 1;
+    public static final int k_triangeButton = 4;
+    public static final int k_OBX = 3;
+    public static final int k_Xbutton = 2;
+    public static final int k_leftBumper = 5;
+    public static final int k_rightBumper = 6;
+    // public static final int k_backButton = 7;
+    // public static final int k_startButton = 8;
+    public static final int k_leftJoystickButton = 11;
+    public static final int k_rightJoystickButton = 12;
+  }
+
   /* Controllers */
   public final Joystick m_driver1 = new Joystick(0);
   public final Joystick m_driver2 = new Joystick(1);
