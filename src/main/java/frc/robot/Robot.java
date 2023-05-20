@@ -291,12 +291,12 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    if (m_robotContainer.m_driver2AButton.getAsBoolean()) {
+    if (m_robotContainer.m_driver1YButton.getAsBoolean() && s_robotMode == RobotMode.COLLECTING) {
       new InstantCommand(() -> m_robotContainer.m_collector.m_adjustableWheelHoldingPower = 0).schedule();
       new InstantCommand(
           () -> m_robotContainer.m_collector.m_adjustableWheelMotorPower = CollectorConstants.k_wheelMotorSpeed / 2)
           .schedule();
-    } else if (m_robotContainer.m_driver2YButton.getAsBoolean()) {
+    } else if (m_robotContainer.m_driver1BButton.getAsBoolean() && s_robotMode == RobotMode.DEPOSITING) {
       new InstantCommand(
           () -> m_robotContainer.m_collector.m_adjustableWheelHoldingPower = CollectorConstants.k_wheelMotorHoldingSpeed)
           .schedule();
