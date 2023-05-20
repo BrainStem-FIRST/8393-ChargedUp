@@ -450,6 +450,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
     return ((liftPosition < m_liftSetPoint + LiftConstants.k_liftTolerance)
         && (liftPosition > m_liftSetPoint - LiftConstants.k_liftTolerance));
   }
+  
 
   @Override
   public void periodic() {
@@ -460,7 +461,7 @@ public class Lift extends SubsystemBase implements BrainSTEMSubsystem {
       updateWithPID();
       makeDrivingEasier();
 
-      
+
       // m_forwardLift.setNeutralMode(NeutralMode.Coast);
       // m_backLift.setNeutralMode(NeutralMode.Coast);
       // m_rightLift.setNeutralMode(NeutralMode.Coast);
