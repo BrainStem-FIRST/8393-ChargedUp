@@ -160,8 +160,8 @@ public class RobotContainer {
     m_swerve.setDefaultCommand(
         new TeleopSwerve(
             m_swerve,
-            () -> -((m_driver1.getRawAxis(k_translationAxis) * m_lift.m_swerveMultiplyerTranslation)) *0.6,
-            () -> -((m_driver1.getRawAxis(k_strafeAxis) * m_lift.m_swerveMultiplyerTranslation)) *0.6,
+            () -> -((m_driver1.getRawAxis(k_translationAxis) * m_lift.m_swerveMultiplyerTranslation)),
+            () -> -((m_driver1.getRawAxis(k_strafeAxis) * m_lift.m_swerveMultiplyerTranslation)),
             () -> -((m_driver1.getRawAxis(k_rotationAxis) * m_lift.m_swerveTurningMultiplyer)),
             () -> false));
 
