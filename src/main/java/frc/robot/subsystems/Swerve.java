@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.LimelightHelpers;
+import frc.robot.utilities.RunOnce;
 
 public class Swerve extends SubsystemBase implements BrainSTEMSubsystem {
     public static final class SwerveConstants {
@@ -293,6 +294,10 @@ public class Swerve extends SubsystemBase implements BrainSTEMSubsystem {
 
     public void zeroGyro() {
         gyro.setYaw(0);
+    }
+
+    public CommandBase zeroGyroShuffleboard() {
+        return runOnce(this::zeroGyro).ignoringDisable(true);
     }
 
     public void setGyroRobotFacingReverse() {

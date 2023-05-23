@@ -251,14 +251,14 @@ public class Robot extends TimedRobot {
   }
 
   private void setRobotState() {
-    if (m_robotContainer.m_driver2BButton.getAsBoolean()) {
+    if (m_robotContainer.m_driver1LeftBumper.getAsBoolean()) {
       m_driver1_X.setState(false);
       m_driver1_A.setState(false);
       m_driver1_Y.setState(false);
       m_robotContainer.m_collector.m_collectorState = CollectorState.CLOSED;
       m_robotContainer.m_lift.m_state = LiftPosition.CARRY;
       s_robotMode = RobotMode.COLLECTING;
-    } else if (m_robotContainer.m_driver2XButton.getAsBoolean()) {
+    } else if (m_robotContainer.m_driver1RightBumper.getAsBoolean()) {
       hasHighPoleApproached = false;
       hasLowPoleApproached = false;
       returnedCarryFromHigh = true;

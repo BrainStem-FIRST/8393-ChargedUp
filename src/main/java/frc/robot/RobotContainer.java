@@ -47,20 +47,20 @@ public class RobotContainer {
   public static final class JoystickConstants {
     public static final int k_leftStickXAxis = 0;
     public static final int k_leftStickYAxis = 1;
-    public static final int k_leftTrigger = 2;
-    public static final int k_rightTrigger = 3;
+    public static final int k_leftTrigger = 3;
+    public static final int k_rightTrigger = 4;
     public static final int k_rightStickYAxis = 5;
-    public static final int k_rightStickXAxis = 4;
-    public static final int k_aButton = 1;
-    public static final int k_bButton = 2;
-    public static final int k_xButton = 3;
+    public static final int k_rightStickXAxis = 2;
+    public static final int k_aButton = 2;
+    public static final int k_bButton = 3;
+    public static final int k_xButton = 1;
     public static final int k_yButton = 4;
     public static final int k_leftBumper = 5;
     public static final int k_rightBumper = 6;
-    public static final int k_backButton = 7;
-    public static final int k_startButton = 8;
-    public static final int k_leftJoystickButton = 9;
-    public static final int k_rightJoystickButton = 10;
+    public static final int k_backButton = 9;
+    public static final int k_startButton = 10;
+    public static final int k_leftJoystickButton = 11;
+    public static final int k_rightJoystickButton = 12;
   }
 
   public static final class PS5JoystickConstants {
@@ -88,9 +88,9 @@ public class RobotContainer {
   public static final double k_stickDeadband = 0.05;
 
   /* Drive Controls */
-  final int k_translationAxis = XboxController.Axis.kLeftY.value;
-  private final int k_strafeAxis = XboxController.Axis.kLeftX.value;
-  private final int k_rotationAxis = XboxController.Axis.kRightX.value;
+  final int k_translationAxis = JoystickConstants.k_leftStickYAxis;
+  private final int k_strafeAxis = JoystickConstants.k_leftStickXAxis;
+  private final int k_rotationAxis = JoystickConstants.k_rightStickXAxis;
 
   /* Toggle Buttons */
   ToggleButton driver1X = new ToggleButton();
@@ -181,6 +181,7 @@ public class RobotContainer {
 
     commandTab.add("Reset Extension", m_extension.resetExtensionBase()).withSize(2, 1);
     commandTab.add("Reset Modules To Absolute", m_swerve.resetModuleBase().ignoringDisable(true)).withSize(2, 1);
+    commandTab.add("Reset Gyro ", m_swerve.zeroGyroShuffleboard()).withSize(2,1);
 
     commandTab.add("Enable lift brake", m_lift.enableBrakeModeBase()).withSize(2, 1);
     commandTab.add("Disable lift brake", m_lift.disableBrakeModeBase()).withSize(2, 1);
@@ -208,6 +209,7 @@ public class RobotContainer {
     adjustmentsTab.addNumber("L - High %", () -> m_lift.m_adjustableHighMultiplier * 100);
     adjustmentsTab.addNumber("L - Low %", () -> m_lift.m_adjustableLowMultiplier * 100);
     adjustmentsTab.addNumber("L - Shelf %", () -> m_lift.m_adjustableShelfCollectionMultiplier * 100);
+
 
     autoAdjustmentsTab.add("Center Auto Further Foward", new InstantCommand(() -> m_autoCenter.adjustGoOntoChargeStationTrajectory(-0.02))).withSize(2, 1);
     autoAdjustmentsTab.add("Center Auto Further Back", new InstantCommand(() -> m_autoCenter.adjustGoOntoChargeStationTrajectory(0.02))).withSize(2, 1);
