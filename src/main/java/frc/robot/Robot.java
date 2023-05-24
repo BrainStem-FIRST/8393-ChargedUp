@@ -256,7 +256,7 @@ public class Robot extends TimedRobot {
       m_driver1_A.setState(false);
       m_driver1_Y.setState(false);
       m_robotContainer.m_collector.m_collectorState = CollectorState.CLOSED;
-      m_robotContainer.m_lift.m_state = LiftPosition.CARRY;
+      //m_robotContainer.m_lift.m_state = LiftPosition.CARRY;
       s_robotMode = RobotMode.COLLECTING;
     } else if (m_robotContainer.m_driver1RightBumper.getAsBoolean()) {
       hasHighPoleApproached = false;
@@ -475,9 +475,6 @@ public class Robot extends TimedRobot {
       // }
 
     }
-
-    m_robotContainer.m_driver1LeftBumper
-        .toggleOnTrue(new InstantCommand(() -> m_robotContainer.m_collector.m_collectorState = CollectorState.OPEN));
 
     m_robotContainer.m_zeroGyro.whileTrue(new InstantCommand(() -> m_robotContainer.m_swerve.zeroGyro()));
 
